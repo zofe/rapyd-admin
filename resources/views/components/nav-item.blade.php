@@ -22,7 +22,7 @@
              $active = url_contains($active);
          }
          if ($route) {
-             $href = route($route, $params);
+             $href = route_lang($route, $params);
              $active = $active ?: request()->routeIs($route);
          } else if ($url){
              $href = url($url);
@@ -38,7 +38,6 @@
 @endphp
 
 <li class="nav-item {{ $active ? 'active' : '' }}">
-
     <x-rpd::nav-link
         :icon="$icon"
         :label="$label"
@@ -47,5 +46,7 @@
         :href="$href"
         :click="$click"
         :params="$params"
-        :attributes="$attributes"/>
+        :attributes="$attributes"
+        fromItem="1"
+    />
 </li>

@@ -1,0 +1,23 @@
+<?php
+
+namespace {{classNamespace}};
+
+use {{baseClass}};
+use {{modelNamespace}}\{{model}};
+
+
+class {{class}} extends {{baseClassName}}
+{
+    public ${{ item }};
+
+    public function mount({{model}} ${{ item }})
+    {
+       $this->{{ item }} = ${{ item }};
+    }
+
+    public function render()
+    {
+        ${{ item }} = $this->{{ item }};
+        return view('{{view}}', compact('{{ item }}'));
+    }
+}

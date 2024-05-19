@@ -5,15 +5,17 @@
 'actions' => null,
 'items'=> null,
 'pagination'=> null,
+'classTitle' => null,
+'btnId' => null
 ])
 @php
 @endphp
 <div class="rpd-view" {{$attributes->only('x-data')}}>
     <form autocomplete="off">
         <div class="d-flex mb-4">
-            <x-rpd::heading :title="$title" />
+            <x-rpd::heading :title="$title" :classTitle="$classTitle" />
             {{ $filters }}
-            <x-rpd::button-group :buttons="$buttons" />
+            <x-rpd::button-group :buttons="$buttons" :id="$btnId" />
         </div>
     </form>
     <div>

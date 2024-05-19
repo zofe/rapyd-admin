@@ -1,0 +1,13 @@
+<?php
+
+namespace {{classNamespace}};
+
+use {{baseClass}};
+
+class {{class}} extends {{baseClassName}}
+{
+    public function render()
+    {
+        return view('{{view}}');
+    }
+}

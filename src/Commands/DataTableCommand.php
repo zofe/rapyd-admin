@@ -6,8 +6,8 @@ use Illuminate\Console\Command;
 
 class DataTableCommand extends Command
 {
-    public $signature = 'rpd:datatable {class} {--table=}';
-    public $description = 'generate datatable component + view';
+    public $signature = 'rpd:datatable {component} {model} {--module=}';
+    public $description = 'generate datatable component';
 
     public function handle()
     {

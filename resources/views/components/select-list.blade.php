@@ -77,6 +77,7 @@
 	    }
 
         });" x-ref="tomSelect" x-cloak {{ $attributes }}>
+            <option value="">{{ $placeholder }}</option>
         @foreach($options as $optionValue => $optionLabel)
             <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
         @endforeach

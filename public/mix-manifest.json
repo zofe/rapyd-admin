@@ -1,7 +1,6 @@
 {
     "/rapyd.js": "/rapyd.js",
     "/bootstrap.js": "/bootstrap.js",
-    "/alpine.js": "/alpine.js",
-    "/rapyd.css": "/rapyd.css",
-    "/bootstrap.css": "/bootstrap.css"
+    "/bootstrap.css": "/bootstrap.css",
+    "/rapyd.css": "/rapyd.css"
 }

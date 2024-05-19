@@ -34,6 +34,8 @@
 
         <x-rpd::check-label :for="$id" :label="$checkLabel"/>
 
+        {{ $slot }}
+
         <x-rpd::error :key="$key"/>
 
         <x-rpd::help :label="$help"/>

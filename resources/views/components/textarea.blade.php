@@ -13,7 +13,7 @@
 ])
 
 @php
-    if ($debounce) $bind = 'debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
+    if ($debounce) $bind = 'live.debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
     else if ($lazy) $bind = 'lazy';
     else $bind = 'defer';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();

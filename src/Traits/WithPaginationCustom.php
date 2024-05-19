@@ -3,10 +3,14 @@
 namespace Zofe\Rapyd\Traits;
 
 use Illuminate\Pagination\Paginator;
+use Livewire\Features\SupportPagination\HandlesPagination;
 
 trait WithPaginationCustom
 {
-    use WithPagination;
+    use HandlesPagination;
+
+    public $perPage = 10;
+    protected $paginationTheme = 'bootstrap';
 
     public function pageName(): string
     {

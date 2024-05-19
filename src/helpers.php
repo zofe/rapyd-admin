@@ -121,7 +121,7 @@ if (! function_exists('route_lang')) {
  * @return string
  */
 if (! function_exists('url_lang')) {
-    function url_lang($lang)
+    function url_lang($lang, $change=false)
     {
         $default = config('app.fallback_locale');
         $segments = request()->segments();
@@ -140,6 +140,6 @@ if (! function_exists('url_lang')) {
             array_unshift($segments, $lang);
         }
 
-        return "/" . implode('/', $segments);
+        return "/" . implode('/', $segments).($change?'?clang=1':'');
     }
 }

@@ -36,7 +36,7 @@ class ModuleServiceProvider extends ServiceProvider
 
     private function enableComponents(): void
     {
-        $componentsBasePath = $componentsPath = app_path(). '/Components';
+        $componentsBasePath = $componentsPath = app_path(). '/Livewire';
 
         $lang_prefix = $this->detectLocaleByPrefix();
         if (File::exists($componentsBasePath.DIRECTORY_SEPARATOR.'routes.php')) {
@@ -44,8 +44,8 @@ class ModuleServiceProvider extends ServiceProvider
         }
 
 
-        $this->loadViewsFrom($componentsPath, 'components');
-        $this->registerComponentDirectory($componentsBasePath, "App\\Components\\", "component::");
+        $this->loadViewsFrom($componentsPath, 'livewire');
+        $this->registerComponentDirectory($componentsBasePath, "App\\Livewire\\", "livewire::");
     }
 
     /**
@@ -88,7 +88,7 @@ class ModuleServiceProvider extends ServiceProvider
                 $this->loadMigrationsFrom($modulePath . 'Database/Migrations');
                 $this->loadTranslationsFrom($modulePath . 'Lang', $moduleName);
 
-                $routePrefix = $lang_prefix . '/' . Str::lower($module);
+                $routePrefix = $lang_prefix . '/';
 
                 //                if (File::exists($modulePath . 'Components/routes.php')) {
                 //                    Route::prefix($routePrefix)->middleware(config($module . '.route_middleware', ['web']))
@@ -116,10 +116,10 @@ class ModuleServiceProvider extends ServiceProvider
                 //                }
 
                 //register livewire components
-                $directory = (string)Str::of($modulePath . 'Components')
+                $directory = (string)Str::of($modulePath . 'Livewire')
                     ->replace(['\\'], '/');
 
-                $namespace = namespace_module('App\\Components\\',  basename($modulePath));//Str::studly($module));
+                $namespace = namespace_module('App\\Livewire\\',  basename($modulePath));//Str::studly($module));
                 $this->registerComponentDirectory($directory, $namespace, Str::lower($module) . '::');
                 $this->registerModuleClassDirectory($modulePath);
             }
@@ -142,7 +142,7 @@ class ModuleServiceProvider extends ServiceProvider
         }
 
         $directories = [];
-        if (basename($directory) == 'Components') {
+        if (basename($directory) == 'Livewire') {
             foreach ($filesystem->directories($directory) as $dir) {
                 $component_namespace = $namespace.basename($dir);
                 $directories[$component_namespace] = $dir;
@@ -174,7 +174,7 @@ class ModuleServiceProvider extends ServiceProvider
                     return is_subclass_of($class, Component::class) && ! (new ReflectionClass($class))->isAbstract();
                 })
                 ->each(function ($class) use ($namespace, $aliasPrefix, $livewire_array, $livewire_manifest) {
-                    $alias = $aliasPrefix.Str::kebab(Str::replace('\\', '', Str::after($class, 'Components\\')));
+                    $alias = $aliasPrefix.Str::kebab(Str::replace('\\', '', Str::after($class, 'Livewire\\')));
 
                     Livewire::component($alias, $class);
 

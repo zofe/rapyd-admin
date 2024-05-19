@@ -2,17 +2,20 @@
 
 namespace Zofe\Rapyd\Http\Livewire;
 
-class RapydApp extends BaseComponent
+use Livewire\Component;
+
+class RapydApp extends Component
 {
     protected $listeners = ['sidebar-toggle' => 'sidebarToggle'];
 
     public function sidebarToggle()
     {
+        dd('qui');
         session()->put('sidebar-show', ! session()->get('sidebar-show'));
     }
 
-//    public function render()
-//    {
-//        return view('rpd::app');
-//    }
+    public function render()
+    {
+        return view('rpd::app');
+    }
 }

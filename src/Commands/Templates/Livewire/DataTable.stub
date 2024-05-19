@@ -10,9 +10,13 @@ class {{class}} extends {{baseClassName}}
 {
     use {{traitClass}};
 
+    public $search = '';
+    public $sortField = 'id';
+
     public function getDataSet()
     {
-        $items = {{model}}::query(); //{{model}}::ssearch($this->search);
+        $items = {{model}}::{{whereSearch}};
+
 
         return $items = $items
             ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')

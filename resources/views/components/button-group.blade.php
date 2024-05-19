@@ -1,7 +1,6 @@
 @props([
 'buttons' => null,
 'position' => 'end',
-'group' => 'btn-group',
 ])
 @php
 
@@ -13,9 +12,15 @@
     ])->merge([
 
     ]);
+
+    $buttonAttributes = optional($buttons)->attributes;
+    if($buttonAttributes) {
+      $buttonAttributes = $buttonAttributes->has('class') ? $buttonAttributes : $buttonAttributes->class(['btn-group']);
+    }
+
 @endphp
 <div {{ $attributes }}>
-    <div class="{{ $group }}">
+    <div {{ $buttonAttributes }}>
         {{ $buttons }}
     </div>
 </div>

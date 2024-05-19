@@ -25,6 +25,10 @@
 @endonce
 
 @php
+    $required = false;
+    if($model && property_exists($this,'rules') && isset($this->rules[$model]) && stristr($this->rules[$model],'required')) {
+       $required = true;
+    }
 
     if ($debounce) $bind = 'debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
     else if ($lazy) $bind = 'lazy';
@@ -42,7 +46,7 @@
 
 
 <div class="{{$col}}" wire:ignore >
-    <x-rpd::label :for="$id" :label="$label"/>
+    <x-rpd::label :for="$id" :label="$label" :required="$required" />
     <div x-data
          x-init="
                quill = new Quill($refs.quillEditor, {theme: 'snow'});

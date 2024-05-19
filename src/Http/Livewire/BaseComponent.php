@@ -31,6 +31,6 @@ abstract class BaseComponent extends Component
 
     public function render()
     {
-        return '';
+        return '<div></div>';
     }
 }

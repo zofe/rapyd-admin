@@ -1,35 +1,60 @@
 # rapyd-livewire
 
-<a href="https://github.com/zofe/rapyd-livewire/actions/workflows/run-tests.yml"><img src="https://github.com/zofe/rapyd-livewire/actions/workflows/run-tests.yml/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/zofe/rapyd-livewire"><img src="https://img.shields.io/packagist/dt/zofe/rapyd-livewire" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/zofe/rapyd-livewire"><img src="https://img.shields.io/packagist/v/zofe/rapyd-livewire" alt="Latest Stable Version"></a>
+<a href="https://github.com/zofe/rapyd/actions/workflows/run-tests.yml"><img src="https://github.com/zofe/rapyd/actions/workflows/run-tests.yml/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/zofe/rapyd"><img src="https://img.shields.io/packagist/dt/zofe/rapyd" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/zofe/rapyd"><img src="https://img.shields.io/packagist/v/zofe/rapyd" alt="Latest Stable Version"></a>
 
 [![rapyd.dev](screencast.gif)](https://rapyd.dev/demo)
 
 
-requirements: laravel ^8.65 | 9.* | 10.*
+requirements: laravel 11.*
 
 Demo: [rapyd.dev](https://rapyd.dev/demo)
 
 
 ## What is it?
 
-is a laravel library of **blade components**, **livewire traits**, and **modules** scaffolder  that you can use to generate 
+is a laravel library of **components** & **modules** that you can use to generate 
 administration interfaces in a concise, reusable, uncluttered, and testable manner.
 
-It also bundles standard frontend libraries like 
-Bootstrap, Vue, Alpine, Tom Select and Quill to be used as fast boilerplate for your laravel admin panels.
+It also bundles standard BALL stack environment (Bootstrap css, Alpine js, Laravel and Livewire)
+to be used as fast boilerplate for your laravel admin panels.
 
 The idea is to speed up and organize the development of large laravel applications:
 - **modular approach** (you can organize your backends into reusable modules, isolating everything, components, views, tests, but also translations, migrations, jobs, each module can be like an isolated laravel application)
 - **livewire component** based (no needed controllers, each component is naturally reactive, you can get away with few pure livewire classes and blade views, easily testable and maintainable)
 - **blade component** based (dozens of available anonymous components to standardize frontend in few "bootstrap based" spacialized tags, which you can eventually extend)
 
+
+## Generators
+
+rapyd has some commands to generate components, views, modules (bundled components & views isolated in a folder) via artisan command line:
+
+```bash
+php artisan rpd:make {ComponentName} {Model}
+php artisan rpd:make UserTable User
+```
+
+will generate 
+
+```
+laravel/
+├─ app/
+│  ├─ Livewire/
+│  │  ├─ UserTable.php
+│  ├─ resources/
+│  │  ├─ views/
+│  │  │  ├─ livewire/
+│  │  ├─ UserTable.php
+```
+
+
+
 ## Modules
 
 example of out of the box module structure you can use after installing rapyd.
 
-- You can create "Modules" folder in you app/ directory of your laravel application.  
+- You can create "Modules" folder in you app/ directory of your laravel application.
 - Then you can create your Module Folder i.e.: `Blog`
 - Livewire components will be searched in the `Components` subfolder
 - You can refer to the views in your module using intuitive shortcut i.e.: `blog::Articles.views.articles_edit`
@@ -51,6 +76,9 @@ laravel/
 │  │  │  │  │  ├─ ArticlesView.php
 │  │  │  │  ├─ routes.php
 ```
+
+
+
 
 Rapyd has also some public modules available via "composer require":
 

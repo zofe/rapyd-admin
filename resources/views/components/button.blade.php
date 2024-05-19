@@ -17,7 +17,7 @@
 ])
 
 @php
-    if ($route) $href = route($route);
+    if ($route) $href = route_lang($route);
     else if ($url) $href = url($url);
     $message = $confirm ? __($confirm) : __('Are you sure?');
     if($click) {
@@ -45,5 +45,5 @@
 <{{ $href ? 'a' : 'button' }} {{ $attributes }}>
 <x-rpd::icon :name="$icon" :style="$iconStyle"/>
 
-{{ $label ?? $slot }}
+{!! $label ?? $slot !!}
 </{{ $href ? 'a' : 'button' }}>

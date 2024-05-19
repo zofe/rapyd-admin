@@ -7,15 +7,20 @@
     'click' => null,
     'params' => [],
     'active' => false,
-    'type'  => 'nav-link'
+    'type'  => 'nav-link',
+    'fromItem' => false,
 ])
 
 @php
     if ($route) {
-        $href = route($route, $params);
+        $href = route_lang($route, $params);
         $active = $active ?: request()->routeIs($route);
     } else if ($url){
         $href = url($url);
+    }
+
+    if($fromItem) {
+        $active = false;
     }
 
     $attributes = $attributes->class([
@@ -26,9 +31,7 @@
         'wire:click.prevent' => $click,
     ]);
 @endphp
-
 <a {{ $attributes }}>
     <x-rpd::icon :name="$icon"/>
-
-    {{ $label ?? $slot }}
+    <span class="text-capitalize pt-1">{{ __($label) ?? $slot }}</span>
 </a>

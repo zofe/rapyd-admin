@@ -13,12 +13,18 @@
 ])
 
 @php
+
+    $required = false;
+    if($model && property_exists($this,'rules') && isset($this->rules[$model]) && stristr($this->rules[$model],'required')) {
+       $required = true;
+    }
+
     if ($type == 'number') $inputmode = 'decimal';
     else if (in_array($type, ['tel', 'search', 'email', 'url'])) $inputmode = $type;
     else $inputmode = 'text';
-    if ($debounce) $bind = 'debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
+    if ($debounce) $bind = 'live.debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
     else if ($lazy) $bind = 'lazy';
-    else $bind = 'debounce.150ms';
+    else $bind = 'live.debounce.150ms';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);
     $id = $attributes->get('id', $model ?? $wireModel);
@@ -38,7 +44,7 @@
 @endphp
 
 <div class="{{$col}}">
-    <x-rpd::label :for="$id" :label="$label"/>
+    <x-rpd::label :for="$id" :label="$label" :required="$required"/>
 
     <div class="input-group">
         <x-rpd::input-addon :icon="$icon" :label="$prepend"/>

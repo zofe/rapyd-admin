@@ -73,7 +73,6 @@ class Manager
     public function generate(string $route, $parameters = null): Collection
     {
         $parameters = Arr::wrap($parameters);
-
         return $this->generator->generate($route, $parameters);
     }
 

@@ -9,6 +9,7 @@
 'active' => false,
 ])
 @php
+   $label = __($label);
    $identifier= \Illuminate\Support\Str::studly($label);
 
     if (strpos($active,'|')) {
@@ -20,7 +21,7 @@
     foreach ($actives as $active) {
 
         if(is_string($active) && strlen($active)>2 && !in_array(strtolower($active),['true','false']) ) {
-            $active = url_contains($active, true);
+            $active = url_contains($active);
         }
         if ($route) {
             $href = route($route, $params);
@@ -51,7 +52,7 @@
         {{ $attributes->only('class') }}>
 
         <x-rpd::icon :name="$icon"/>
-        <span class="text-capitalize">{{ $label }}</span>
+        <span class="text-capitalize pt-1">{{ $label }}</span>
     </a>
     <div id="collapse{{$identifier}}" data-parent="#accordionSidebar" class="collapse {{ $active ? 'show' : '' }}" style="">
         <div class="bg-white py-2 collapse-inner rounded">

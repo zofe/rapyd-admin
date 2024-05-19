@@ -1,12 +1,10 @@
 <x-rpd::table
+    title="{{ title }}"
     :items="$items"
 >
     <x-slot name="filters">
         <div class="col">
             <x-rpd::input debounce="350" model="search"  placeholder="search..." />
-        </div>
-        <div class="col">
-
         </div>
     </x-slot>
 
@@ -14,22 +12,23 @@
             <a href="{{ route('{{routename}}') }}" class="btn btn-outline-dark">reset</a>
     </x-slot>
 
+
     <table class="table">
         <thead>
         <tr>
             <th>
                 <x-rpd::sort model="id" label="id" />
             </th>
-            <th>fields</th>
+            {{fieldNames}}
         </tr>
         </thead>
         <tbody>
         @foreach ($items as ${{modelname}})
             <tr>
                 <td>
-                    <a href="#">{{ ${{modelname}}->id }}</a>
+                    <a data-ref="link-view" href="#">{{ ${{modelname}}->id }}</a>
                 </td>
-                <td>@json(${{modelname}})</td>
+                {{fieldValues}}
             </tr>
         @endforeach
         </tbody>

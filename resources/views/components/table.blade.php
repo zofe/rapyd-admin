@@ -4,12 +4,13 @@
 'items'=> null,
 'pagination'=> null,
 'filters'=>null,
-'actions'=>null
+'actions'=>null,
+'marginbottom' => 1
 ])
 <div class="rpd-table">
     @if($title || $buttons || $filters)
     <form autocomplete="off">
-        <div class="d-flex mb-4">
+        <div class="d-flex @if($marginbottom)mb-4 @endif">
             <div class="flex-grow-1">
                 <div class="row g-2">
                     <x-rpd::heading :title="$title" />

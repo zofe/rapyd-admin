@@ -2,4 +2,4 @@
 Route::get('/{{routepath}}', {{class}}::class)
     ->middleware(['web'])
     ->name('{{routename}}')
-    ->crumbs(fn ($crumbs) => $crumbs->parent('demo')->push('{{routename}}', route('{{routename}}')));
+    ->crumbs(fn ($crumbs) => $crumbs->parent('{{homeroute}}')->push('{{routetitle}}', route('{{routename}}')));

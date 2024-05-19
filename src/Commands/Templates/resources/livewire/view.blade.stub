@@ -1,0 +1,22 @@
+
+<x-rpd::view title="{{ title }}">
+
+    <x-slot name="buttons">
+        <a href="{{ route('{{ routeparent }}') }}" class="btn btn-outline-dark">Back</a>
+    </x-slot>
+
+
+    <x-rpd::card>
+        <x-slot name="buttons">
+
+        </x-slot>
+
+        <dl class="row">
+
+            {{fieldNames}}
+
+        </dl>
+    </x-rpd::card>
+
+</x-rpd::view>
+

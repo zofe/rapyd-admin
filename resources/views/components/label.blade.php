@@ -1,12 +1,12 @@
 @props([
 'label' => null,
+'required' => false,
 ])
 
 @php
-    //$label = $attributes->get('label', null);
     $label = __($label);
     $attributes = $attributes->class([
-        'form-label',
+        'form-label'. ($required ? ' fw-bold':' '),
     ])->merge([
         //
     ]);
