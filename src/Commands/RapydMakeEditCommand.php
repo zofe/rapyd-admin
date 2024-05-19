@@ -34,7 +34,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $routename = $this->getRouteName('edit');
         $routeuri = $routename->replace('.', '/');
         $routeparent = $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? str_replace('.edit','.view', $routename) : 'home';
-        $routeparent_parameter = $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? '[ $'.$item.'->id ]' : '[]';
+        $routeparent_parameter = $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? '$'.$item.'->id' : '[]';
 
         $title = $this->getTitle('edit');
 
@@ -78,7 +78,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
             $items .= "       <x-rpd::input model=\"$item.$field\" label=\"$field\" />\n";
         }
 
-        StubGenerator::from(__DIR__.'/Templates/resources/livewire/view.blade.stub', true)
+        StubGenerator::from(__DIR__.'/Templates/resources/livewire/edit.blade.stub', true)
             ->to(base_path('resources/views/livewire'), true, true)
             ->as($component_name.'.blade')
             ->withReplacers([
@@ -87,6 +87,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'title' => $title,
                 'fieldNames' => $items,
                 'routeparent' => $routeparent,
+                'routeparent_parameter' => $routeparent_parameter,
             ])
             ->save();
 
@@ -98,7 +99,8 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
             'routename' => $routename,
             'routetitle' => Str::plural($this->getModelName()),
             'routeparent' => $routeparent,
-            'modelkey' => "{{$item}:id}",
+            'routeparent_parameter' => $routeparent_parameter,
+            'modelkey' => "{{$item}:id?}",
             'item' => Str::camel($model),
         ]));
 
