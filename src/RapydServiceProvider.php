@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsServiceProvider;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
+use Zofe\Rapyd\Commands\RapydMakeEditCommand;
 use Zofe\Rapyd\Commands\RapydMakeLayoutCommand;
 use Zofe\Rapyd\Commands\RapydMakeTableCommand;
 use Zofe\Rapyd\Commands\RapydMakeViewCommand;
@@ -35,6 +36,7 @@ class RapydServiceProvider extends ServiceProvider
                 RapydMakeLayoutCommand::class,
                 RapydMakeTableCommand::class,
                 RapydMakeViewCommand::class,
+                RapydMakeEditCommand::class,
 
             ]);
         }

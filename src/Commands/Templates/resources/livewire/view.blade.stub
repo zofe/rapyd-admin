@@ -3,6 +3,8 @@
 
     <x-slot name="buttons">
         <a href="{{ route('{{ routeparent }}') }}" class="btn btn-outline-dark">Back</a>
+
+        <a data-ref="link-edit" href="#" class="btn btn-outline-primary">Edit</a>
     </x-slot>
 
 

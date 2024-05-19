@@ -1,0 +1,33 @@
+<?php
+
+namespace {{classNamespace}};
+
+use {{baseClass}};
+use {{modelNamespace}}\{{model}};
+
+
+class {{class}} extends {{baseClassName}}
+{
+    public ${{ item }};
+
+    protected $rules = [
+        {{ rules }}
+    ];
+
+    public function mount({{model}} ${{ item }})
+    {
+       $this->{{ item }} = ${{ item }};
+    }
+
+    public function save()
+    {
+        $this->validate();
+        $this->{{ item }}->save();
+        $this->emit('saved');
+    }
+
+    public function render()
+    {
+        return view('{{view}}');
+    }
+}

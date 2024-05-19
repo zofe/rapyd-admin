@@ -2,7 +2,6 @@
 
 namespace Zofe\Rapyd\Commands;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -14,7 +13,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 {
     public $signature = 'rpd:make:edit {component} {model} {--module=}';
 
-    public $description = 'rapyd command to generate DataView component';
+    public $description = 'rapyd command to generate DataEdit component';
 
 
     public function handle()
@@ -35,6 +34,8 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $routename = $this->getRouteName('edit');
         $routeuri = $routename->replace('.', '/');
         $routeparent = $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? str_replace('.edit','.view', $routename) : 'home';
+        $routeparent_parameter = $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? '[ $'.$item.'->id ]' : '[]';
+
         $title = $this->getTitle('edit');
 
         $componentName = $component;
@@ -46,6 +47,11 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $view = $this->getViewPath($component_name);
 
         //component
+        $rules = "\n";
+        foreach ($fields as $field) {
+            $rules .="               '$item.$field' => 'required',\n";
+        }
+
 
         StubGenerator::from(__DIR__.'/Templates/Livewire/DataEdit.stub', true)
             ->to(base_path($classPath), true, true)
@@ -60,17 +66,17 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'baseClassName' => 'Component',
                 'classNamespace' => $classNamespace,
                 'item' => Str::camel($model),
+                'rules' => $rules,
             ])
             ->save();
 
 
         //view
-        $items = '';
-        foreach ($fields as $field) {
-            $items .= "    <dt class=\"col-5\">$field</dt>\n";
-            $items .= "               <dd class=\"col-7\">{{ \${$item}->{$field} }}</dd>\n";
-        }
+        $items = "\n";
 
+        foreach ($fields as $field) {
+            $items .= "       <x-rpd::input model=\"$item.$field\" label=\"$field\" />\n";
+        }
 
         StubGenerator::from(__DIR__.'/Templates/resources/livewire/view.blade.stub', true)
             ->to(base_path('resources/views/livewire'), true, true)
@@ -96,20 +102,19 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
             'item' => Str::camel($model),
         ]));
 
-        $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/view.stub'));
+        $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/edit.stub'));
         File::append(base_path("routes/web.php"), $substituted);
 
-        $table_view = base_path('resources/views/livewire/'.str_replace('view','table',$component_name).'.blade.php');
-        $this->buildLinkToView($table_view, $routename);
+        $edit_view = base_path('resources/views/livewire/'.str_replace('edit','view',$component_name).'.blade.php');
+        $this->buildLinkToEdit($edit_view, $routename);
         $this->comment("component url: $routeuri ".$routename);
-
     }
 
 
-    protected function buildLinkToView($viewpath, $route)
+    protected function buildLinkToEdit($viewpath, $route)
     {
         $viewContent = File::get($viewpath);
-        if($viewContent && strpos($route,'.view')) {
+        if($viewContent && strpos($route,'.edit')) {
 
             $precompiler = new RapydTagPrecompiler();
             $newViewContent = $precompiler($viewContent, ['route' => $route]);
