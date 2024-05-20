@@ -3,5 +3,5 @@ Route::get('/{{routepath}}/{{modelkey}}', {{class}}::class)
     ->middleware(['web'])
     ->name('{{routename}}')
     ->crumbs(function ($crumbs, ${{item}}) {
-        $crumbs->parent('{{routeparent}}')->push('{{routetitle}}', route('{{routename}}', ${{item}}->id));
+        $crumbs->parent('{{routeparent}}')->push('{{routetitle}}', route('{{routename}}', ${{item}}));
     });

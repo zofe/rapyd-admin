@@ -36,8 +36,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
             $content = $matches[1];
             $viewId = str_replace(['{{', '}}'], '', $content);
             if(count($params) && isset($params['route'])) {
-
-                return '<a href="{{ route(\'' . $params['route'] . '\','.$viewId.') }}">Edit</a>';
+                return '<a href="{{ route(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">Edit</a>';
             }
             return $matches[0];
         }, $value);

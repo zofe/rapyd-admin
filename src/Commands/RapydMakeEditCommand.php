@@ -33,10 +33,14 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
         $routename = $this->getRouteName('edit');
         $routeuri = $routename->replace('.', '/');
-        $routeparent = $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? str_replace('.edit','.view', $routename) : 'home';
-        $routeparent_parameter = $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? '$'.$item.'->id' : '[]';
+
+        $routeparent_table = $this->breadcrumbs->has(str_replace('.edit','.table', $routename))? str_replace('.edit','.table', $routename) : 'home';
+        $routeparent_view =  $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? str_replace('.edit','.view', $routename) : 'home';
+        $routeparent_view_parameter = $this->breadcrumbs->has(str_replace('.edit','.view', $routename)) ? '$'.$item.'->id' : '[]';
 
         $title = $this->getTitle('edit');
+        $title_create = $this->getTitle('edit', 'create');
+        $title_update = $this->getTitle('edit', 'update');
 
         $componentName = $component;
         $component_name = Str::snake($componentName);
@@ -75,7 +79,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $items = "\n";
 
         foreach ($fields as $field) {
-            $items .= "       <x-rpd::input model=\"$item.$field\" label=\"$field\" />\n";
+            $items .= "       <x-rpd::input col=\"col-12\" model=\"$item.$field\" label=\"$field\" />\n";
         }
 
         StubGenerator::from(__DIR__.'/Templates/resources/livewire/edit.blade.stub', true)
@@ -85,9 +89,12 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'routename' => $routename,
                 'modelname' => $item,
                 'title' => $title,
+                'title_create' => $title_create,
+                'title_update' => $title_update,
                 'fieldNames' => $items,
-                'routeparent' => $routeparent,
-                'routeparent_parameter' => $routeparent_parameter,
+                'routeparent_table' => $routeparent_table,
+                'routeparent_view' => $routeparent_view,
+                'routeparent_view_parameter' => $routeparent_view_parameter,
             ])
             ->save();
 
@@ -97,10 +104,13 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
             'class' => "\\".$classNamespace."\\".$componentName,
             'routepath' => $routeuri, //$routeuri
             'routename' => $routename,
-            'routetitle' => Str::plural($this->getModelName()),
-            'routeparent' => $routeparent,
-            'routeparent_parameter' => $routeparent_parameter,
-            'modelkey' => "{{$item}:id?}",
+            'routetitle_update' => $title_update,
+            'routetitle_create' => $title_create,
+            'routeparent_table' => $routeparent_table,
+            'routeparent_view' => $routeparent_view,
+            'routeparent_view_parameter' => $routeparent_view_parameter,
+
+            'modelkey' => "{{$item}?}",
             'item' => Str::camel($model),
         ]));
 

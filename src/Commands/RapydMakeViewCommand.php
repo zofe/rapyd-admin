@@ -36,6 +36,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         $routeuri = $routename->replace('.', '/');
         $routeparent = $this->breadcrumbs->has(str_replace('.view','.table', $routename))? str_replace('.view','.table', $routename) : 'home';
         $title = $this->getTitle('view');
+        $title_detail = $this->getTitle('view', 'detail');
 
         $componentName = $component;
         $component_name = Str::snake($componentName);
@@ -79,6 +80,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
                 'routename' => $routename,
                 'modelname' => $item,
                 'title' => $title,
+                'title_detail' => $title_detail,
                 'fieldNames' => $items,
                 'routeparent' => $routeparent,
             ])
@@ -90,9 +92,9 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
             'class' => "\\".$classNamespace."\\".$componentName,
             'routepath' => $routeuri, //$routeuri
             'routename' => $routename,
-            'routetitle' => Str::plural($this->getModelName()),
+            'routetitle' => $title_detail,
             'routeparent' => $routeparent,
-            'modelkey' => "{{$item}:id}",
+            'modelkey' => "{{$item}}",
             'item' => Str::camel($model),
         ]));
 

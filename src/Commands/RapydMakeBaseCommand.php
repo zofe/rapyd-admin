@@ -69,10 +69,21 @@ class RapydMakeBaseCommand extends Command
             ;
     }
 
-    protected function getTitle($type)
+    protected function getTitle($type, $context = 'table')
     {
         $name = Str::of($this->getComponentName())->headline();
-        return $name->before(ucfirst(strtolower($type)))->trim()->singular()->title();
+        $title = $name->before(ucfirst(strtolower($type)))->trim();
+
+        if($context == 'detail') {
+            return $title->singular()->title().' Detail';
+        } elseif($context == 'update') {
+            return 'Update '.$title->singular()->title();
+        } elseif($context == 'create') {
+            return 'Create '.$title->singular()->title();
+        } else {
+            return $title->singular()->title();
+        }
+
     }
 
     protected function getItem()
