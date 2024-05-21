@@ -3,6 +3,10 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Container\Container;
+use Illuminate\Routing\RouteCollection;
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -17,7 +21,7 @@ class RapydMakeBaseCommand extends Command
     protected $breadcrumbs;
 
     public function __construct(
-        Manager $manager,
+        Manager $manager
     ) {
         parent::__construct();
         $this->breadcrumbs = $manager;
@@ -81,7 +85,7 @@ class RapydMakeBaseCommand extends Command
         } elseif($context == 'create') {
             return 'Create '.$title->singular()->title();
         } else {
-            return $title->singular()->title();
+            return $title->plural()->title();
         }
 
     }

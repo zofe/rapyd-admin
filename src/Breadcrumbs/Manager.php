@@ -17,7 +17,7 @@ class Manager
      *
      * @var Trail
      */
-    protected $generator;
+    public $generator;
 
     /**
      * Create the instance of the manager.

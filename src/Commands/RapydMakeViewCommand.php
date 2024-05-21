@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
+use Zofe\Rapyd\Breadcrumbs\Manager;
 use Zofe\Rapyd\Mechanisms\RapydTagPrecompiler;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
@@ -16,11 +17,18 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
     public $description = 'rapyd command to generate DataView component';
 
+    public function hasTable($component_name)
+    {
+        return File::exists(base_path('resources/views/livewire/'.str_replace('view','table',$component_name).'.blade.php'));
+    }
 
     public function handle()
     {
+        $this->initBreadcrumb();
         $component = $this->getComponentName();
         $model = $this->getModelName();
+        $componentName = $component;
+        $component_name = Str::snake($componentName);
 
         if(count($this->breadcrumbs->generate('home'))<1) {
             $this->call('rpd:make:layout');
@@ -34,12 +42,12 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
         $routename = $this->getRouteName('view');
         $routeuri = $routename->replace('.', '/');
-        $routeparent = $this->breadcrumbs->has(str_replace('.view','.table', $routename))? str_replace('.view','.table', $routename) : 'home';
+
+        $routeparent = $this->hasTable($component_name)? str_replace('.view','.table', $routename) : 'home';
         $title = $this->getTitle('view');
         $title_detail = $this->getTitle('view', 'detail');
 
-        $componentName = $component;
-        $component_name = Str::snake($componentName);
+
 
         $classPath = path_module("app/Livewire", $this->module);
         $classNamespace = namespace_module('App\\Livewire', $this->module);

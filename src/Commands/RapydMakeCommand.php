@@ -2,6 +2,7 @@
 
 namespace Zofe\Rapyd\Commands;
 
+
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -21,12 +22,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
     public function handle()
     {
         $component = $this->getComponentName();
-        $modelName = $this->getModelName();
         $this->module = $this->option('module');
-
-        if(count($this->breadcrumbs->generate('home'))<1) {
-            $this->call('rpd:make:layout');
-        }
 
         //run correct generator
         if (str_ends_with($component, 'Table')) {
@@ -46,8 +42,34 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 '--module' => $this->option('module'),
             ]);
 
+        } elseif (str_ends_with($component, 'Edit')) {
+
+            $this->call('rpd:make:edit', [
+                'component' => $this->argument('component'),
+                'model' => $this->argument('model'),
+                '--module' => $this->option('module'),
+            ]);
+
         } else {
-            $this->warn("invalid component name. valid names ex: UsersTable, PostsTable, DocumentsView");
+
+
+
+            foreach (['Table', 'View', 'Edit'] as $suffix) {
+
+//                Artisan::call('rpd:make:'.strtolower($suffix).' '.$this->argument('model').$this->option('module')? ' --module='.$this->option('module') : '');
+                if($this->option('module')) {
+                    $this->call('rpd:make:'.strtolower($suffix), [
+                        'component' => $component.$suffix,
+                        'model' => $this->argument('model'),
+                        '--module' => $this->option('module'),
+                    ]);
+                }
+                $this->call('rpd:make:'.strtolower($suffix), [
+                    'component' => $component.$suffix,
+                    'model' => $this->argument('model')
+                ]);
+            }
+
         }
 
     }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
+use Zofe\Rapyd\Breadcrumbs\Manager;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand
@@ -18,9 +19,9 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
 
     public function handle()
     {
+        $this->initBreadcrumb();
         $component = $this->getComponentName();
         $model = $this->getModelName();
-
 
         if(count($this->breadcrumbs->generate('home'))<1) {
             $this->call('rpd:make:layout');
@@ -32,10 +33,11 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $item = $this->getItem();
         $fields = $this->getFields();
         $whereSearch = $this->getSearchQuery($fields);
+        $title = $this->getTitle('table');
 
         $routename = $this->getRouteName('table');
         $routeuri = $routename->replace('.', '/');
-        $routetitle = Str::plural($this->getModelName());
+        $routetitle = $title;
 
         $componentName = $component;
         $component_name = Str::snake($componentName);

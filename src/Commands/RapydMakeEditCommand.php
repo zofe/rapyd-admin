@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
+
 use Zofe\Rapyd\Mechanisms\RapydTagPrecompiler;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
@@ -15,11 +16,23 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
     public $description = 'rapyd command to generate DataEdit component';
 
+    public function hasTable($component_name)
+    {
+        return File::exists(base_path('resources/views/livewire/'.str_replace('edit','table',$component_name).'.blade.php'));
+    }
 
+    public function hasView($component_name)
+    {
+        return File::exists(base_path('resources/views/livewire/'.str_replace('edit','view',$component_name).'.blade.php'));
+    }
     public function handle()
     {
+        $this->initBreadcrumb();
         $component = $this->getComponentName();
         $model = $this->getModelName();
+
+        $componentName = $component;
+        $component_name = Str::snake($componentName);
 
         if(count($this->breadcrumbs->generate('home'))<1) {
             $this->call('rpd:make:layout');
@@ -34,16 +47,14 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $routename = $this->getRouteName('edit');
         $routeuri = $routename->replace('.', '/');
 
-        $routeparent_table = $this->breadcrumbs->has(str_replace('.edit','.table', $routename))? str_replace('.edit','.table', $routename) : 'home';
-        $routeparent_view =  $this->breadcrumbs->has(str_replace('.edit','.view', $routename))? str_replace('.edit','.view', $routename) : 'home';
-        $routeparent_view_parameter = $this->breadcrumbs->has(str_replace('.edit','.view', $routename)) ? '$'.$item.'->id' : '[]';
+        $routeparent_table = $this->hasTable($component_name)? str_replace('.edit','.table', $routename) : 'home';
+        $routeparent_view =  $this->hasView($component_name)? str_replace('.edit','.view', $routename) : 'home';
+        $routeparent_view_parameter = $this->hasView($component_name)? '$'.$item.'->id' : '[]';
 
         $title = $this->getTitle('edit');
         $title_create = $this->getTitle('edit', 'create');
         $title_update = $this->getTitle('edit', 'update');
 
-        $componentName = $component;
-        $component_name = Str::snake($componentName);
 
         $classPath = path_module("app/Livewire", $this->module);
         $classNamespace = namespace_module('App\\Livewire', $this->module);

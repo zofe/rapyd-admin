@@ -162,4 +162,11 @@ class Trail
     {
         return $this->registrar->has($name);
     }
+
+    public function reset(): self
+    {
+        $this->breadcrumbs = new Collection;
+
+        return $this;
+    }
 }
