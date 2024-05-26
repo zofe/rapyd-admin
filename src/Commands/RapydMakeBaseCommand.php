@@ -3,10 +3,6 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Container\Container;
-use Illuminate\Routing\RouteCollection;
-use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -36,12 +32,24 @@ class RapydMakeBaseCommand extends Command
     {
         $model = $this->argument('model');
         $module = $this->option('module');
+        $table = $this->option('table');
 
+        //cerco prima il model nel modulo
         $namespace = namespace_module('App\\Models', $module);
-       // ! file_exists(base_path("app/Modules/{$this->module}/Models/{$model}.php")) ? 'App\\Models' : namespace_module('App\\Models', $this->module);
         if (!class_exists($namespace."\\".$model)) {
-            $this->warn($namespace."\\".$model." doesn't exists as model");
-            exit;
+
+          //  $this->warn($namespace."\\".$model." doesn't exists as model");
+            $namespace = namespace_module('App\\Models');
+            //se non lo trovo cerco nel namespace principale
+            if(!class_exists($namespace."\\".$model)) {
+                $this->warn($namespace."\\".$model." doesn't exists as model");
+
+                if($table) {
+                    //todo generare un model eloquent data la tabella
+                }
+
+                exit;
+            }
         }
 
         return $full ? $namespace."\\".$model : $namespace;
@@ -111,7 +119,7 @@ class RapydMakeBaseCommand extends Command
     protected function getViewPath($component_name)
     {
         $viewPrefix = $this->module? Str::lower($this->module).'::' : "";
-        return $viewPrefix.'livewire.'.$component_name;
+        return $viewPrefix.(!$this->module?'livewire.':'').$component_name;
     }
 
     protected function initBreadcrumb()
@@ -134,14 +142,11 @@ class RapydMakeBaseCommand extends Command
 
     protected function addNavItemIfNotExists($filePath, $navItems)
     {
-        // Carica il contenuto del file Blade
         $content = file_get_contents($filePath);
 
-        // Cerca tutti gli elementi x-rpd::nav-item e ottieni le route esistenti
         preg_match_all('/<x-rpd::nav-item[^>]*route="([^"]*)"/', $content, $matches);
         $existingRoutes = $matches[1];
 
-        // Genera nuovi elementi x-rpd::nav-item se non esistono già
         $newNavItems = '';
         foreach ($navItems as $navItem) {
             if (!in_array($navItem['route'], $existingRoutes)) {
@@ -153,12 +158,10 @@ class RapydMakeBaseCommand extends Command
             }
         }
 
-        // Se ci sono nuovi elementi, aggiungili prima della chiusura del tag x-rpd::sidebar
         if ($newNavItems) {
             $content = preg_replace('/(<\/x-rpd::sidebar>)/', $newNavItems . '$1', $content);
         }
 
-        // Salva il contenuto modificato nel file Blade
         file_put_contents($filePath, $content);
     }
 }

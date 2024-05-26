@@ -12,7 +12,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeEditCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:edit {component} {model} {--module=}';
+    public $signature = 'rpd:make:edit {component} {model} {--module=} {--table=} {--fields=}';
 
     public $description = 'rapyd command to generate DataEdit component';
 
@@ -23,10 +23,14 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
     public function hasView($component_name)
     {
-        return File::exists(base_path('resources/views/livewire/'.str_replace('edit','view',$component_name).'.blade.php'));
+        $viewPath = path_module('resources/views/livewire/'.str_replace('edit','view',$component_name).'.blade.php', $this->module);
+        return File::exists(base_path($viewPath));
     }
+
     public function handle()
     {
+        $this->module = $this->option('module');
+
         $this->initBreadcrumb();
         $component = $this->getComponentName();
         $model = $this->getModelName();
@@ -57,6 +61,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
 
         $classPath = path_module("app/Livewire", $this->module);
+        $viewPath = path_module("resources/views/livewire", $this->module);
         $classNamespace = namespace_module('App\\Livewire', $this->module);
         $modelNamespace = $this->getModelNamespace();
         $view = $this->getViewPath($component_name);
@@ -94,7 +99,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         }
 
         StubGenerator::from(__DIR__.'/Templates/resources/livewire/edit.blade.stub', true)
-            ->to(base_path('resources/views/livewire'), true, true)
+            ->to(base_path($viewPath), true, true)
             ->as($component_name.'.blade')
             ->withReplacers([
                 'routename' => $routename,
@@ -111,6 +116,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
 
         //rotta/e
+        $routePath = path_module("routes/web.php", $this->module);
         $strSubstitutor = (new StrReplacer([
             'class' => "\\".$classNamespace."\\".$componentName,
             'routepath' => $routeuri, //$routeuri
@@ -126,9 +132,17 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         ]));
 
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/edit.stub'));
-        File::append(base_path("routes/web.php"), $substituted);
+        if($this->module) {
+            if (!File::exists(base_path($routePath))) {
+                File::ensureDirectoryExists(dirname($routePath));
+                File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
+            }
+        }
+        File::append(base_path($routePath), $substituted);
 
-        $edit_view = base_path('resources/views/livewire/'.str_replace('edit','view',$component_name).'.blade.php');
+
+        $edit_view = $viewPath.'/'.str_replace('edit','view',$component_name).'.blade.php';
+
         $this->buildLinkToEdit($edit_view, $routename);
         $this->comment("component url: $routeuri ".$routename);
     }

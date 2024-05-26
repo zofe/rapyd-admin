@@ -70,7 +70,9 @@ if (! function_exists('path_module')) {
     function path_module($path, $module = null)
     {
         if ($module) {
-            return str_replace("app/", "app/Modules/".$module."/", $path);
+            $path = str_replace("app/", "app/Modules/".$module."/", $path);
+            $path = str_replace("resources/views/livewire", "app/Modules/".$module."/Views", $path);
+            $path = str_replace("routes/web.php", "app/Modules/".$module."/routes.php", $path);
         }
 
         return $path;

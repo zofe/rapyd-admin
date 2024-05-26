@@ -13,17 +13,20 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeViewCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:view {component} {model} {--module=}';
+    public $signature = 'rpd:make:view {component} {model} {--module=} {--table=} {--fields=}';
 
     public $description = 'rapyd command to generate DataView component';
 
     public function hasTable($component_name)
     {
-        return File::exists(base_path('resources/views/livewire/'.str_replace('view','table',$component_name).'.blade.php'));
+        $tablePath = path_module('resources/views/livewire/'.str_replace('view','table',$component_name).'.blade.php', $this->module);
+        return File::exists(base_path($tablePath));
     }
 
     public function handle()
     {
+        $this->module = $this->option('module');
+
         $this->initBreadcrumb();
         $component = $this->getComponentName();
         $model = $this->getModelName();
@@ -50,6 +53,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
 
         $classPath = path_module("app/Livewire", $this->module);
+        $viewPath = path_module("resources/views/livewire", $this->module);
         $classNamespace = namespace_module('App\\Livewire', $this->module);
         $modelNamespace = $this->getModelNamespace();
         $view = $this->getViewPath($component_name);
@@ -82,7 +86,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
 
         StubGenerator::from(__DIR__.'/Templates/resources/livewire/view.blade.stub', true)
-            ->to(base_path('resources/views/livewire'), true, true)
+            ->to(base_path($viewPath), true, true)
             ->as($component_name.'.blade')
             ->withReplacers([
                 'routename' => $routename,
@@ -96,6 +100,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
 
         //rotta/e
+        $routePath = path_module("routes/web.php", $this->module);
         $strSubstitutor = (new StrReplacer([
             'class' => "\\".$classNamespace."\\".$componentName,
             'routepath' => $routeuri, //$routeuri
@@ -107,14 +112,20 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         ]));
 
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/view.stub'));
-        File::append(base_path("routes/web.php"), $substituted);
 
-        $table_view = base_path('resources/views/livewire/'.str_replace('view','table',$component_name).'.blade.php');
+        if($this->module) {
+            if (!File::exists(base_path($routePath))) {
+                File::ensureDirectoryExists(dirname($routePath));
+                File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
+            }
+        }
+        File::append(base_path($routePath), $substituted);
+
+        $table_view = $viewPath.'/'.str_replace('view','table',$component_name).'.blade.php';
         $this->buildLinkToView($table_view, $routename);
         $this->comment("component url: $routeuri ".$routename);
 
     }
-
 
     protected function buildLinkToView($viewpath, $route)
     {

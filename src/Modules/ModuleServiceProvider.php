@@ -84,7 +84,7 @@ class ModuleServiceProvider extends ServiceProvider
                     }
                 }
                 $this->loadViewsFrom($modulePath . 'Views', $moduleName);
-                $this->loadViewsFrom($modulePath . 'Components', $moduleName);//'components');
+                $this->loadViewsFrom($modulePath . 'Livewire', $moduleName);//'components');
                 $this->loadMigrationsFrom($modulePath . 'Database/Migrations');
                 $this->loadTranslationsFrom($modulePath . 'Lang', $moduleName);
 

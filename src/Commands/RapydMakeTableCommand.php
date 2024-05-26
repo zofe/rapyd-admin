@@ -12,13 +12,15 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:table {component} {model} {--module=}';
+    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=}';
 
     public $description = 'rapyd command to generate DataTable component';
 
 
     public function handle()
     {
+        $this->module = $this->option('module');
+
         $this->initBreadcrumb();
         $component = $this->getComponentName();
         $model = $this->getModelName();
@@ -43,6 +45,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $component_name = Str::snake($componentName);
 
         $classPath = path_module("app/Livewire", $this->module);
+        $viewPath = path_module("resources/views/livewire", $this->module);
         $classNamespace = namespace_module('App\\Livewire', $this->module);
         $modelNamespace = $this->getModelNamespace();
         $view = $this->getViewPath($component_name);
@@ -76,7 +79,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
 
 
         StubGenerator::from(__DIR__.'/Templates/resources/livewire/table.blade.stub', true)
-            ->to(base_path('resources/views/livewire'), true, true)
+            ->to(base_path($viewPath), true, true)
             ->as($component_name.'.blade')
             ->withReplacers([
                 'routename' => $routename,
@@ -94,6 +97,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
 
 
         //route
+        $routePath = path_module("routes/web.php", $this->module);
         $strSubstitutor = (new StrReplacer([
             'class' => "\\".$classNamespace."\\".$componentName,
             'routepath' => $routeuri, //$routeuri
@@ -102,7 +106,14 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
             'homeroute' => $this->homeRoute,
         ]));
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/table.stub'));
-        File::append(base_path("routes/web.php"), $substituted);
+
+        if($this->module) {
+            if (!File::exists(base_path($routePath))) {
+                File::ensureDirectoryExists(dirname($routePath));
+                File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
+            }
+        }
+        File::append(base_path($routePath), $substituted);
 
         $this->comment("component url: $routeuri ".$routename);
 
@@ -111,7 +122,6 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
             'route' => $routename,
             'active' => $routeuri,
         ]]);
-
     }
 
     protected function getSearchQuery($fields)
