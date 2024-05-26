@@ -42,7 +42,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
         $table = $this->getTable();
         $item = $this->getItem();
-        $fields = $this->getFields();
+        $fields = $this->getFields(false, true);
 
         $routename = $this->getRouteName('edit');
         $routeuri = $routename->replace('.', '/');

@@ -96,11 +96,14 @@ class RapydMakeBaseCommand extends Command
         return Str::singular($this->getTable());
     }
 
-    protected function getFields($safe = true)
+    protected function getFields($safeForView = true, $safeForEdit = false)
     {
         $fields = Schema::getColumnListing($this->getTable());
-        if($safe) {
-            $fields =  array_diff($fields, ['id', 'password']);
+        if($safeForView) {
+            $fields =  array_diff($fields, ['id', 'password','email_verified_at','remember_token']);
+        }
+        if($safeForEdit) {
+            $fields =  array_diff($fields, ['email_verified_at','remember_token','created_at','updated_at']);
         }
         return $fields;
     }

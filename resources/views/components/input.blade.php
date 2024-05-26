@@ -46,7 +46,7 @@
 <div class="{{$col}}">
     <x-rpd::label :for="$id" :label="$label" :required="$required"/>
 
-    <div class="input-group">
+    <div class="input-group mb-2">
         <x-rpd::input-addon :icon="$icon" :label="$prepend"/>
 
         <input {{ $attributes }}>
