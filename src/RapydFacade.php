@@ -11,6 +11,6 @@ class RapydFacade extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'rapyd-livewire';
+        return 'rapyd';
     }
 }

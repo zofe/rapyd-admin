@@ -21,7 +21,8 @@
         "illuminate/contracts": "^11.0",
         "laravel/serializable-closure": "^1.3",
         "livewire/livewire": "^3.0",
-        "touhidurabir/laravel-stub-generator": "^1.0"
+        "touhidurabir/laravel-stub-generator": "^1.0",
+        "zofe/rapyd-module-installer": "^0.1.0"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0",
@@ -47,7 +48,10 @@
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "zofe/rapyd-module-installer": true
+        }
     },
     "extra": {
         "laravel": {

@@ -9,38 +9,39 @@
 'active' => false,
 ])
 @php
-   $label = __($label);
-   $identifier= \Illuminate\Support\Str::studly($label);
+    //$label = __($label);
 
-    if (strpos($active,'|')) {
-        $actives = explode('|', $active);
-    } else {
-        $actives[] = $active;
-    }
+    $identifier= \Illuminate\Support\Str::studly($label);
 
-    foreach ($actives as $active) {
+     if (strpos($active,'|')) {
+         $actives = explode('|', $active);
+     } else {
+         $actives[] = $active;
+     }
 
-        if(is_string($active) && strlen($active)>2 && !in_array(strtolower($active),['true','false']) ) {
-            $active = url_contains($active);
-        }
-        if ($route) {
-            $href = route($route, $params);
-            $active = $active ?: request()->routeIs($route);
-        } else if ($url){
-            $href = url($url);
-            $active = $active  ?: $href == url()->current();
-        }
+     foreach ($actives as $active) {
 
-        if ($active) {
-            break;
-        }
-    }
+         if(is_string($active) && strlen($active)>2 && !in_array(strtolower($active),['true','false']) ) {
+             $active = url_contains($active);
+         }
+         if ($route) {
+             $href = route($route, $params);
+             $active = $active ?: request()->routeIs($route);
+         } else if ($url){
+             $href = url($url);
+             $active = $active  ?: $href == url()->current();
+         }
+
+         if ($active) {
+             break;
+         }
+     }
 
 
-    $attributes = $attributes->class([
-        'nav-link',
-        'collapsed' => !$active,
-    ]);
+     $attributes = $attributes->class([
+         'nav-link',
+         'collapsed' => !$active,
+     ]);
 @endphp
 <li class="nav-item">
 
@@ -55,7 +56,7 @@
         <span class="text-capitalize pt-1">{{ $label }}</span>
     </a>
     <div id="collapse{{$identifier}}" data-parent="#accordionSidebar" class="collapse {{ $active ? 'show' : '' }}" style="">
-        <div class="bg-white py-2 collapse-inner rounded">
+        <div class="bg-white ps-4 pb-1 small collapse-inner rounded">
             {{ $slot }}
         </div>
     </div>

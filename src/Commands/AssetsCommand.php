@@ -11,7 +11,7 @@ class AssetsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'rapyd-livewire-assets';
+    protected $signature = 'rapyd-assets';
 
     /**
      * The console command description.
@@ -28,7 +28,7 @@ class AssetsCommand extends Command
     public function handle()
     {
         $this->call('vendor:publish', [
-            '--tag' => 'rapyd-livewire-assets',
+            '--tag' => 'rapyd-assets',
             '--force' => true,
         ]);
 

@@ -1,4 +1,4 @@
-# rapyd-livewire
+# rapyd
 
 <a href="https://github.com/zofe/rapyd/actions/workflows/run-tests.yml"><img src="https://github.com/zofe/rapyd/actions/workflows/run-tests.yml/badge.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/zofe/rapyd"><img src="https://img.shields.io/packagist/dt/zofe/rapyd" alt="Total Downloads"></a>
@@ -135,7 +135,7 @@ Please check for example [zofe/knowledgebase-module](https://github.com/zofe/kno
 You can install the package via composer:
 
 ```bash
-composer require zofe/rapyd-livewire
+composer require zofe/rapyd
 ```
 
 

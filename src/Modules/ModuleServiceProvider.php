@@ -55,7 +55,7 @@ class ModuleServiceProvider extends ServiceProvider
     private function enableModules(): void
     {
         $moduleBasePath = $modulePath = app_path(). '/Modules/';
-        config(['rapyd-livewire.modules' => []]);
+        config(['rapyd.modules' => []]);
         config(['auth.authorizations' => []]);
         config(['auth.limits' => []]);
 
@@ -70,7 +70,7 @@ class ModuleServiceProvider extends ServiceProvider
                 $moduleConfigPath = $modulePath . 'config.php';
                 $modules[] = $module;
 
-                config(['rapyd-livewire.modules' => $modules]);
+                config(['rapyd.modules' => $modules]);
                 $lang_prefix = $this->detectLocaleByPrefix();
                 if (File::exists($modulePath.'routes.php')) {
                     Route::prefix($lang_prefix)->middleware(['web'])->group($modulePath.'routes.php');
@@ -233,7 +233,7 @@ class ModuleServiceProvider extends ServiceProvider
     {
         $menuArray = ['admin' => [], 'frontend' => []];
         foreach (['admin','frontend'] as $area) {
-            foreach (config('rapyd-livewire.modules') as $module) {
+            foreach (config('rapyd.modules') as $module) {
                 $config = config($module);
                 if (isset($config["menu_{$area}"])) {
                     $position = isset($config["menu_{$area}_position"]) ? $config["menu_{$area}_position"] : 0;
@@ -249,6 +249,6 @@ class ModuleServiceProvider extends ServiceProvider
 
             $menuArray[$area] = array_column($menuArray[$area], "menu_{$area}");
         }
-        config(['rapyd-livewire.menus' => $menuArray]);
+        config(['rapyd.menus' => $menuArray]);
     }
 }

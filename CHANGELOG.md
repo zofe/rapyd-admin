@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `rapyd-livewire` will be documented in this file.
+All notable changes to `rapyd` will be documented in this file.
 
 ## 1.0.0 - 202X-XX-XX
 

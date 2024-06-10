@@ -8,7 +8,7 @@
 
     <link href="//fonts.googleapis.com/css?family=Bitter" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ asset('vendor/rapyd-livewire/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/rapyd/bootstrap.css') }}">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @livewireStyles
@@ -56,7 +56,7 @@
 @livewireScripts
 @rapydScripts
 
-<script src="{{ asset('vendor/rapyd-livewire/bootstrap.js') }}" defer></script>
-<script src="{{ asset('vendor/rapyd-livewire/alpine.js') }}" defer></script>
+<script src="{{ asset('vendor/rapyd/bootstrap.js') }}" defer></script>
+<script src="{{ asset('vendor/rapyd/alpine.js') }}" defer></script>
 </body>
 </html>
