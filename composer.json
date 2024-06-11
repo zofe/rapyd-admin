@@ -1,11 +1,11 @@
 {
-    "name": "zofe/rapyd",
-    "description": "rapyd",
+    "name": "zofe/rapyd-admin",
+    "description": "rapyd admin",
     "keywords": [
         "zofe",
         "rapyd"
     ],
-    "homepage": "https://github.com/zofe/rapyd",
+    "homepage": "https://github.com/zofe/rapyd-admin",
     "license": "MIT",
     "authors": [
         {
