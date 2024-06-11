@@ -22,7 +22,8 @@
         "laravel/serializable-closure": "^1.3",
         "livewire/livewire": "^3.0",
         "touhidurabir/laravel-stub-generator": "^1.0",
-        "zofe/rapyd-module-installer": "^0.1.0"
+        "zofe/rapyd-module-installer": "^0.11",
+        "zofe/layout-module": "dev-main|^0.11"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0",
