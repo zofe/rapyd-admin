@@ -62,6 +62,12 @@ example of out of the box module structure you can use after installing rapyd-ad
 - You can refer to the views in your module using intuitive shortcut i.e.: `blog::articles_edit`
 - Inside your Module folder you can reply (if needed) the laravel application folder structure (controllers, migrations, jobs, etc..)
 
+```bash
+php artisan rpd:make {ComponentsName} {Model} --module={module}
+php artisan rpd:make Articles Article --module=Blog
+```
+
+
 ```
 laravel/
 ├─ app/
