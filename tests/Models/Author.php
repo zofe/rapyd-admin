@@ -12,6 +12,8 @@ class Author extends Model
     use SSearch;
     public $table = 'rapyd_demo_users';
 
+    protected $guarded = [];
+
     public static function ssearchFallback($query)
     {
         return  static::query()

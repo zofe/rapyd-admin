@@ -16,6 +16,8 @@ class Article extends Model
         'public' => 0,
     ];
 
+    protected $guarded = [];
+
     public static function ssearchFallback($query)
     {
         return  static::query()->where(function ($q) use ($query) {
