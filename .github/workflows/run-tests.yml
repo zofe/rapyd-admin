@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -41,6 +43,15 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
+      - name: Checkout branch
+        run: git checkout -B ${{ github.head_ref }}
+
+      - name: Auto commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Fix styling
+          branch: ${{ github.head_ref }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
