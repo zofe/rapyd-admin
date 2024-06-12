@@ -29,7 +29,7 @@ class RapydServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__.'/../public' => public_path('vendor/rapyd'),
-            ], 'public');
+            ], 'laravel-assets');
 
             $this->commands([
                 RapydMakeCommand::class,
