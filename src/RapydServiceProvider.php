@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd;
 
 use Illuminate\Foundation\Http\Events\RequestHandled;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -86,49 +87,9 @@ class RapydServiceProvider extends ServiceProvider
         });
 
 
+        Artisan::call('rpd:make:home');
 
         /*
-              Blade::directive('rapydScripts', function () {
-                  return "
-                  <script src=\"{{ asset('vendor/rapyd-livewire/rapyd.js') }}\" defer></script>;
-                  <?php echo \$__env->yieldPushContent('rapyd_scripts'); ?>
-                  {!! \Livewire\Livewire::mount('rpd-app')->html(); !!}
-                  ";
-              });
-
-              Blade::directive('rapydStyles', function () {
-                  return  "
-                          <link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd-livewire/rapyd.css') }}\">
-                          <?php echo \$__env->yieldPushContent('rapyd_styles'); ?>
-                          ";
-              });
-
-              Blade::directive('rapydLivewireScripts', function ($expression) {
-                  $scripts = "";
-
-                  $scripts .= '{!! \Livewire\Livewire::scripts('.$expression.') !!}'."\n";
-                  $scripts .= "<?php echo \$__env->yieldPushContent('rapyd_scripts'); ?>\n";
-                  $scripts .= '{!! \Livewire\Livewire::mount(\'rpd-app\'); !!}'."\n";
-                  $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/rapyd.js\') }}"></script>'."\n";
-                  if (in_array('alpine', config('rapyd-livewire.include_scripts'))) {
-                      $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/alpine.js\') }}" defer></script>' . "\n";
-                  }
-                  if (in_array('bootstrap', config('rapyd-livewire.include_scripts'))) {
-                      $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/bootstrap.js\') }}" defer></script>'."\n";
-                  }
-
-                  return $scripts;
-              });
-              Blade::directive('rapydLivewireStyles', function ($expression) {
-                  $styles = '<link rel="stylesheet" href="{{ asset(\'vendor/rapyd-livewire/rapyd.css\') }}">'."\n";
-                  if (in_array('bootstrap', config('rapyd-livewire.include_styles'))) {
-                      $styles .= '<link rel="stylesheet" href="{{ asset(\'vendor/rapyd-livewire/bootstrap.css\') }}">' . "\n";
-                  }
-                  $styles .= '{!! \Livewire\Livewire::styles('.$expression.') !!}';
-                  $styles .= "<?php echo \$__env->yieldPushContent('rapyd_styles'); ?>\n";
-
-                  return $styles;
-              });
 
               Blade::directive('ifcomponent', function ($expression) {
                   return "<?php if((bool) array_key_exists($expression, app(\Livewire\LivewireComponentsFinder::class)->getManifest())): ?>\n";
@@ -139,7 +100,6 @@ class RapydServiceProvider extends ServiceProvider
               });
 
               Livewire::component('rpd-app', RapydApp::class);
-
 
               if (! Collection::hasMacro('paginate')) {
                   Collection::macro('paginate', function ($perPage, $total = null, $page = null, $pageName = 'page') {
