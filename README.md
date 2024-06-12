@@ -58,16 +58,14 @@ laravel/
 
 example of out of the box module structure you can use after installing rapyd-admin.
 
-- You can create "Modules" folder in you app/ directory of your laravel application.
-- Then you can create your Module Folder i.e.: `Blog`
-- Livewire components will be searched in the `Livewire` subfolder
-- You can refer to the views in your module using intuitive shortcut i.e.: `blog::articles_edit`
-- Inside your Module folder you can reply (if needed) the laravel application folder structure (controllers, migrations, jobs, etc..)
-
 ```bash
 php artisan rpd:make {ComponentsName} {Model} --module={module}
 php artisan rpd:make Articles Article --module=Blog
 ```
+- Will create `Blog` folder in you app/Modules directory.
+- Three livewire components in the `Livewire` subfolder (ArticlesEdit, ArticlesTable, ArticlesView)
+- Three blade components in the `Views` subfolder (articles_edit, articles_table, articles_view)
+- Inside your Module folder you can reply (if needed) the laravel application folder structure (controllers, migrations, jobs, etc..)
 
 
 ```
