@@ -1,0 +1,1 @@
+{"version":1,"defects":[],"times":{"Zofe\\Rapyd\\Tests\\Feature\\RapydTest::test_article_list":0.132,"Zofe\\Rapyd\\Tests\\Feature\\RapydTest::test_article_view":0.019,"Zofe\\Rapyd\\Tests\\Feature\\RapydTest::test_article_edit":0.083,"Zofe\\Rapyd\\Tests\\ExampleTest::test_true_is_true":0.045}}

@@ -186,7 +186,7 @@ class RapydServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/rapyd.php', 'rapyd');
-        //$this->mergeConfigFrom(__DIR__ . '/../config/livewire.php', 'livewire');
+        $this->mergeConfigFrom(__DIR__ . '/../config/livewire.php', 'livewire');
 
         $this->app->register(BreadcrumbsServiceProvider::class);
         $this->app->register(ModuleServiceProvider::class);
