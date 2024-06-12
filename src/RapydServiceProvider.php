@@ -89,7 +89,7 @@ class RapydServiceProvider extends ServiceProvider
         });
 
 
-        Artisan::call('rpd:make:home');
+        //Artisan::call('rpd:make:home');
 
         /*
 
