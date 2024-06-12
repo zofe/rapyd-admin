@@ -10,6 +10,20 @@
 requirements: laravel 11.*
 
 
+## Installation
+
+You can install the package via composer:
+
+```bash
+composer require zofe/rapyd-admin
+```
+
+You can publish static assets using:
+```bash
+php artisan vendor:publish --provider="Zofe\Rapyd\RapydServiceProvider" --tag="public"
+```
+
+
 
 ## What is it?
 
@@ -84,19 +98,6 @@ laravel/
 │  │  │  ├─ routes.php
 ```
 
-
-## Installation
-
-You can install the package via composer:
-
-```bash
-composer require zofe/rapyd-admin
-```
-
-You can publish static assets using:
-```bash
-php artisan vendor:publish --provider="Zofe\Rapyd\RapydServiceProvider" --tag="public"
-```
 
 ## Crud Components
 
