@@ -47,7 +47,10 @@
     "scripts": {
         "psalm": "vendor/bin/psalm",
         "test": "vendor/bin/phpunit --colors=always",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
+        "post-install-cmd": [
+            "@php artisan vendor:publish --provider=\"Zofe\\Rapyd\\RapydServiceProvider\" --tag=\"public\""
+        ]
     },
     "config": {
         "sort-packages": true,
