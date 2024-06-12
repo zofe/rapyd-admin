@@ -28,11 +28,15 @@ php artisan vendor:publish --provider="Zofe\Rapyd\RapydServiceProvider" --tag="p
 ## What is it?
 
 
-Rapyd Admin adds to a clean laravel installation the basic functionality of an "admin application" with a “modular” approach:
+Rapyd Admin adds to a clean laravel installation the basic functionality of an
 
-1. layout module: frontend/admin layout with classic sidebar/navbar (sbadmin 3 ported to bootstrap 5.3 with scss customizable in colors and styles)
-2. auth module: login/signin/socialite functionality (plus fortify, 2FA), roles, permissions and user impersonate
-3. your x modules: Rapyd Admin provides a defined way of working with components (livewire3) and modules (folders that group functionality into separate micro-applications): has command capable of generating of components, modules, rest-api, and allows you to start from a defined base and then finely implement functionality in the files you create.
+
+**admin application** with a **modular** approach:
+
+
+1. **layout module**: frontend/admin layout with classic sidebar/navbar (sbadmin 3 ported to bootstrap 5.3 with scss customizable in colors and styles)
+2. **auth module**: login/signin/socialite functionality (plus fortify, 2FA), roles, permissions and user impersonate
+3. **your x modules**: Rapyd Admin provides a defined way of working with components (livewire3) and modules (folders that group functionality into separate micro-applications): has command capable of generating of components, modules, rest-api, and allows you to start from a defined base and then finely implement functionality in generated files.
 
 
 It also bundles standard BALL stack environment (Bootstrap css, Alpine js, Laravel and Livewire)
