@@ -46,8 +46,10 @@ laravel/
 ├─ app/
 │  ├─ Livewire/
 │  │  ├─ UserTable.php
-│  │  Views/
-│  │  ├─ UserTable.php
+│  resources/
+│  │  ├─ views/
+│  │  │  ├─livewire/
+│  │  │  │  ├─ user_table.php
 ```
 
 
