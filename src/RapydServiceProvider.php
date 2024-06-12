@@ -49,14 +49,14 @@ class RapydServiceProvider extends ServiceProvider
 
         Blade::directive('rapydScripts', function () {
             $scripts = "<script src=\"{{ asset('vendor/rapyd/rapyd.js') }}\"></script>\n";
-           // $scripts .= "<script src=\"{{ asset('vendor/rapyd/bootstrap.js') }}\"></script>";
+            // $scripts .= "<script src=\"{{ asset('vendor/rapyd/bootstrap.js') }}\"></script>";
 
             return $scripts;
         });
 
         Blade::directive('rapydStyles', function () {
             $styles = "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/rapyd.css') }}\">\n";
-           // $styles .= "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/bootstrap.css') }}\">";
+            // $styles .= "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/bootstrap.css') }}\">";
 
             return $styles;
         });
