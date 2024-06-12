@@ -18,9 +18,17 @@ You can install the package via composer:
 composer require zofe/rapyd-admin
 ```
 
-You can publish static assets using:
+You can build home/login and permission preset with:
+
 ```bash
-php artisan vendor:publish --provider="Zofe\Rapyd\RapydServiceProvider" --tag="public"
+php artisan rpd:make:home
+php artisan rpd:auth
+```
+
+Now you can login with 
+```
+admin@laravel
+admin
 ```
 
 ---
