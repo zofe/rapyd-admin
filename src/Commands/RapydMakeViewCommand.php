@@ -2,12 +2,10 @@
 
 namespace Zofe\Rapyd\Commands;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
-use Zofe\Rapyd\Breadcrumbs\Manager;
 use Zofe\Rapyd\Mechanisms\RapydTagPrecompiler;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
@@ -19,7 +17,8 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
     public function hasTable($component_name)
     {
-        $tablePath = path_module('resources/views/livewire/'.str_replace('view','table',$component_name).'.blade.php', $this->module);
+        $tablePath = path_module('resources/views/livewire/'.str_replace('view', 'table', $component_name).'.blade.php', $this->module);
+
         return File::exists(base_path($tablePath));
     }
 
@@ -33,7 +32,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
-        if(count($this->breadcrumbs->generate('home'))<1) {
+        if(count($this->breadcrumbs->generate('home')) < 1) {
             $this->call('rpd:make:layout');
         }
 
@@ -46,7 +45,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         $routename = $this->getRouteName('view');
         $routeuri = $routename->replace('.', '/');
 
-        $routeparent = $this->hasTable($component_name)? str_replace('.view','.table', $routename) : 'home';
+        $routeparent = $this->hasTable($component_name)? str_replace('.view', '.table', $routename) : 'home';
         $title = $this->getTitle('view');
         $title_detail = $this->getTitle('view', 'detail');
 
@@ -114,14 +113,14 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/view.stub'));
 
         if($this->module) {
-            if (!File::exists(base_path($routePath))) {
+            if (! File::exists(base_path($routePath))) {
                 File::ensureDirectoryExists(dirname($routePath));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
             }
         }
         File::append(base_path($routePath), $substituted);
 
-        $table_view = $viewPath.'/'.str_replace('view','table',$component_name).'.blade.php';
+        $table_view = $viewPath.'/'.str_replace('view', 'table', $component_name).'.blade.php';
         $this->buildLinkToView($table_view, $routename);
         $this->comment("component url: $routeuri ".$routename);
 
@@ -130,7 +129,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
     protected function buildLinkToView($viewpath, $route)
     {
         $viewContent = File::get($viewpath);
-        if($viewContent && strpos($route,'.view')) {
+        if($viewContent && strpos($route, '.view')) {
 
             $precompiler = new RapydTagPrecompiler();
             $newViewContent = $precompiler($viewContent, ['route' => $route]);

@@ -148,7 +148,7 @@ class ModuleServiceProvider extends ServiceProvider
                 $directories[$component_namespace] = $dir;
             }
             $directories[rtrim($namespace, '\\')] = $directory;
-        // dd($directories);
+            // dd($directories);
         } else {
             $directories[$namespace] = $directory;
         }

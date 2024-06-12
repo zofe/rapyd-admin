@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
-use Zofe\Rapyd\Breadcrumbs\Manager;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand
@@ -25,7 +24,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $component = $this->getComponentName();
         $model = $this->getModelName();
 
-        if(count($this->breadcrumbs->generate('home'))<1) {
+        if(count($this->breadcrumbs->generate('home')) < 1) {
             $this->call('rpd:make:layout');
         }
 
@@ -84,7 +83,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
             ->withReplacers([
                 'routename' => $routename,
                 'modelname' => $item,
-                'title'     => $routetitle,
+                'title' => $routetitle,
                 'fieldNames' => Blade::render('
             @foreach($fields as $field)
             <th>{{$field}}</th>
@@ -108,7 +107,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/table.stub'));
 
         if($this->module) {
-            if (!File::exists(base_path($routePath))) {
+            if (! File::exists(base_path($routePath))) {
                 File::ensureDirectoryExists(dirname($routePath));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
             }
@@ -146,6 +145,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
                 $whereSearch .= "->orWhere('$field', 'like', '%' . \$this->search . '%')\n                ";
             }
         }
+
         return ltrim($whereSearch, '->');
     }
 

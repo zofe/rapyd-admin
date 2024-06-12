@@ -18,12 +18,13 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
     public function hasTable($component_name)
     {
-        return File::exists(base_path('resources/views/livewire/'.str_replace('edit','table',$component_name).'.blade.php'));
+        return File::exists(base_path('resources/views/livewire/'.str_replace('edit', 'table', $component_name).'.blade.php'));
     }
 
     public function hasView($component_name)
     {
-        $viewPath = path_module('resources/views/livewire/'.str_replace('edit','view',$component_name).'.blade.php', $this->module);
+        $viewPath = path_module('resources/views/livewire/'.str_replace('edit', 'view', $component_name).'.blade.php', $this->module);
+
         return File::exists(base_path($viewPath));
     }
 
@@ -38,7 +39,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
-        if(count($this->breadcrumbs->generate('home'))<1) {
+        if(count($this->breadcrumbs->generate('home')) < 1) {
             $this->call('rpd:make:layout');
         }
 
@@ -51,8 +52,8 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $routename = $this->getRouteName('edit');
         $routeuri = $routename->replace('.', '/');
 
-        $routeparent_table = $this->hasTable($component_name)? str_replace('.edit','.table', $routename) : 'home';
-        $routeparent_view =  $this->hasView($component_name)? str_replace('.edit','.view', $routename) : 'home';
+        $routeparent_table = $this->hasTable($component_name)? str_replace('.edit', '.table', $routename) : 'home';
+        $routeparent_view = $this->hasView($component_name)? str_replace('.edit', '.view', $routename) : 'home';
         $routeparent_view_parameter = $this->hasView($component_name)? '$'.$item.'->id' : '[]';
 
         $title = $this->getTitle('edit');
@@ -69,7 +70,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         //component
         $rules = "\n";
         foreach ($fields as $field) {
-            $rules .="               '$item.$field' => 'required',\n";
+            $rules .= "               '$item.$field' => 'required',\n";
         }
 
 
@@ -133,7 +134,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/edit.stub'));
         if($this->module) {
-            if (!File::exists(base_path($routePath))) {
+            if (! File::exists(base_path($routePath))) {
                 File::ensureDirectoryExists(dirname($routePath));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
             }
@@ -141,7 +142,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         File::append(base_path($routePath), $substituted);
 
 
-        $edit_view = $viewPath.'/'.str_replace('edit','view',$component_name).'.blade.php';
+        $edit_view = $viewPath.'/'.str_replace('edit', 'view', $component_name).'.blade.php';
 
         $this->buildLinkToEdit($edit_view, $routename);
         $this->comment("component url: $routeuri ".$routename);
@@ -151,7 +152,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
     protected function buildLinkToEdit($viewpath, $route)
     {
         $viewContent = File::get($viewpath);
-        if($viewContent && strpos($route,'.edit')) {
+        if($viewContent && strpos($route, '.edit')) {
 
             $precompiler = new RapydTagPrecompiler();
             $newViewContent = $precompiler($viewContent, ['route' => $route]);

@@ -123,7 +123,7 @@ if (! function_exists('route_lang')) {
  * @return string
  */
 if (! function_exists('url_lang')) {
-    function url_lang($lang, $change=false)
+    function url_lang($lang, $change = false)
     {
         $default = config('app.fallback_locale');
         $segments = request()->segments();

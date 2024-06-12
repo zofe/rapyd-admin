@@ -50,12 +50,14 @@ class RapydServiceProvider extends ServiceProvider
         Blade::directive('rapydScripts', function () {
             $scripts = "<script src=\"{{ asset('vendor/rapyd/rapyd.js') }}\"></script>\n";
             $scripts .= "<script src=\"{{ asset('vendor/rapyd/bootstrap.js') }}\"></script>";
+
             return $scripts;
         });
 
         Blade::directive('rapydStyles', function () {
             $styles = "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/rapyd.css') }}\">\n";
             $styles .= "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/bootstrap.css') }}\">";
+
             return $styles;
         });
 
@@ -65,13 +67,17 @@ class RapydServiceProvider extends ServiceProvider
 
         app('events')->listen(RequestHandled::class, function ($handled) {
             // If this is a successful HTML response...
-            if (! str($handled->response->headers->get('content-type'))->contains('text/html')) return;
-            if (! method_exists($handled->response, 'status') || $handled->response->status() !== 200) return;
+            if (! str($handled->response->headers->get('content-type'))->contains('text/html')) {
+                return;
+            }
+            if (! method_exists($handled->response, 'status') || $handled->response->status() !== 200) {
+                return;
+            }
 
             $html = $handled->response->getContent();
 
 
-            if (str($html)->contains('</html>') && !$this->assetsAreIncluded($html)) {
+            if (str($html)->contains('</html>') && ! $this->assetsAreIncluded($html)) {
                 $originalContent = $handled->response->original;
                 $html = $this->injectAssets($html);
                 $handled->response->setContent($html);
@@ -81,83 +87,83 @@ class RapydServiceProvider extends ServiceProvider
 
 
 
-  /*
-        Blade::directive('rapydScripts', function () {
-            return "
-            <script src=\"{{ asset('vendor/rapyd-livewire/rapyd.js') }}\" defer></script>;
-            <?php echo \$__env->yieldPushContent('rapyd_scripts'); ?>
-            {!! \Livewire\Livewire::mount('rpd-app')->html(); !!}
-            ";
-        });
+        /*
+              Blade::directive('rapydScripts', function () {
+                  return "
+                  <script src=\"{{ asset('vendor/rapyd-livewire/rapyd.js') }}\" defer></script>;
+                  <?php echo \$__env->yieldPushContent('rapyd_scripts'); ?>
+                  {!! \Livewire\Livewire::mount('rpd-app')->html(); !!}
+                  ";
+              });
 
-        Blade::directive('rapydStyles', function () {
-            return  "
-                    <link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd-livewire/rapyd.css') }}\">
-                    <?php echo \$__env->yieldPushContent('rapyd_styles'); ?>
-                    ";
-        });
+              Blade::directive('rapydStyles', function () {
+                  return  "
+                          <link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd-livewire/rapyd.css') }}\">
+                          <?php echo \$__env->yieldPushContent('rapyd_styles'); ?>
+                          ";
+              });
 
-        Blade::directive('rapydLivewireScripts', function ($expression) {
-            $scripts = "";
+              Blade::directive('rapydLivewireScripts', function ($expression) {
+                  $scripts = "";
 
-            $scripts .= '{!! \Livewire\Livewire::scripts('.$expression.') !!}'."\n";
-            $scripts .= "<?php echo \$__env->yieldPushContent('rapyd_scripts'); ?>\n";
-            $scripts .= '{!! \Livewire\Livewire::mount(\'rpd-app\'); !!}'."\n";
-            $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/rapyd.js\') }}"></script>'."\n";
-            if (in_array('alpine', config('rapyd-livewire.include_scripts'))) {
-                $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/alpine.js\') }}" defer></script>' . "\n";
-            }
-            if (in_array('bootstrap', config('rapyd-livewire.include_scripts'))) {
-                $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/bootstrap.js\') }}" defer></script>'."\n";
-            }
+                  $scripts .= '{!! \Livewire\Livewire::scripts('.$expression.') !!}'."\n";
+                  $scripts .= "<?php echo \$__env->yieldPushContent('rapyd_scripts'); ?>\n";
+                  $scripts .= '{!! \Livewire\Livewire::mount(\'rpd-app\'); !!}'."\n";
+                  $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/rapyd.js\') }}"></script>'."\n";
+                  if (in_array('alpine', config('rapyd-livewire.include_scripts'))) {
+                      $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/alpine.js\') }}" defer></script>' . "\n";
+                  }
+                  if (in_array('bootstrap', config('rapyd-livewire.include_scripts'))) {
+                      $scripts .= '<script src="{{ asset(\'vendor/rapyd-livewire/bootstrap.js\') }}" defer></script>'."\n";
+                  }
 
-            return $scripts;
-        });
-        Blade::directive('rapydLivewireStyles', function ($expression) {
-            $styles = '<link rel="stylesheet" href="{{ asset(\'vendor/rapyd-livewire/rapyd.css\') }}">'."\n";
-            if (in_array('bootstrap', config('rapyd-livewire.include_styles'))) {
-                $styles .= '<link rel="stylesheet" href="{{ asset(\'vendor/rapyd-livewire/bootstrap.css\') }}">' . "\n";
-            }
-            $styles .= '{!! \Livewire\Livewire::styles('.$expression.') !!}';
-            $styles .= "<?php echo \$__env->yieldPushContent('rapyd_styles'); ?>\n";
+                  return $scripts;
+              });
+              Blade::directive('rapydLivewireStyles', function ($expression) {
+                  $styles = '<link rel="stylesheet" href="{{ asset(\'vendor/rapyd-livewire/rapyd.css\') }}">'."\n";
+                  if (in_array('bootstrap', config('rapyd-livewire.include_styles'))) {
+                      $styles .= '<link rel="stylesheet" href="{{ asset(\'vendor/rapyd-livewire/bootstrap.css\') }}">' . "\n";
+                  }
+                  $styles .= '{!! \Livewire\Livewire::styles('.$expression.') !!}';
+                  $styles .= "<?php echo \$__env->yieldPushContent('rapyd_styles'); ?>\n";
 
-            return $styles;
-        });
+                  return $styles;
+              });
 
-        Blade::directive('ifcomponent', function ($expression) {
-            return "<?php if((bool) array_key_exists($expression, app(\Livewire\LivewireComponentsFinder::class)->getManifest())): ?>\n";
-        });
+              Blade::directive('ifcomponent', function ($expression) {
+                  return "<?php if((bool) array_key_exists($expression, app(\Livewire\LivewireComponentsFinder::class)->getManifest())): ?>\n";
+              });
 
-        Blade::directive('endifcomponent', function ($expression) {
-            return "<?php endif; ?>\n";
-        });
+              Blade::directive('endifcomponent', function ($expression) {
+                  return "<?php endif; ?>\n";
+              });
 
-        Livewire::component('rpd-app', RapydApp::class);
+              Livewire::component('rpd-app', RapydApp::class);
 
 
-        if (! Collection::hasMacro('paginate')) {
-            Collection::macro('paginate', function ($perPage, $total = null, $page = null, $pageName = 'page') {
-                $currentPage = LengthAwarePaginator::resolveCurrentPage($pageName);
-                $total = $total ?: $this->count();
-                $items = $this->forPage($currentPage, $perPage);
-                $options = [
-                    'path' => LengthAwarePaginator::resolveCurrentPath(),
-                    'pageName' => $pageName,
-                ];
+              if (! Collection::hasMacro('paginate')) {
+                  Collection::macro('paginate', function ($perPage, $total = null, $page = null, $pageName = 'page') {
+                      $currentPage = LengthAwarePaginator::resolveCurrentPage($pageName);
+                      $total = $total ?: $this->count();
+                      $items = $this->forPage($currentPage, $perPage);
+                      $options = [
+                          'path' => LengthAwarePaginator::resolveCurrentPath(),
+                          'pageName' => $pageName,
+                      ];
 
-                return Container::getInstance()->makeWith(
-                    LengthAwarePaginator::class,
-                    compact(
-                        'items',
-                        'total',
-                        'perPage',
-                        'currentPage',
-                        'options'
-                    )
-                )->withQueryString();
-            });
-        }
-        */
+                      return Container::getInstance()->makeWith(
+                          LengthAwarePaginator::class,
+                          compact(
+                              'items',
+                              'total',
+                              'perPage',
+                              'currentPage',
+                              'options'
+                          )
+                      )->withQueryString();
+                  });
+              }
+              */
     }
 
     protected function assetsAreIncluded($content)

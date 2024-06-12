@@ -2,8 +2,6 @@
 
 namespace Zofe\Rapyd\Commands;
 
-
-
 class RapydMakeCommand extends RapydMakeBaseCommand
 {
     public $signature = 'rpd:make {component : all|datatable|dataview|dataedit} {model} {--module=}';
@@ -55,7 +53,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 } else {
                     $this->call('rpd:make:'.strtolower($suffix), [
                         'component' => $component.$suffix,
-                        'model' => $this->argument('model')
+                        'model' => $this->argument('model'),
                     ]);
                 }
 

@@ -15,7 +15,7 @@ class RapydMakeLayoutCommand extends Command
     {
         $this->module = null;
         //layout dei componenti livewire
-        if (!file_exists(base_path("resources/views/components/layouts/app.blade.php"))) {
+        if (! file_exists(base_path("resources/views/components/layouts/app.blade.php"))) {
 
             //$this->call('livewire:layout');
             $this->comment('generate component layout');
@@ -26,7 +26,7 @@ class RapydMakeLayoutCommand extends Command
                 ->save();
         }
 
-        if (!file_exists(base_path("resources/views/livewire/home.blade.php"))) {
+        if (! file_exists(base_path("resources/views/livewire/home.blade.php"))) {
 
             $this->comment('generate home component');
 

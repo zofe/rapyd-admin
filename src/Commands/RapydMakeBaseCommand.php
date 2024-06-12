@@ -36,12 +36,12 @@ class RapydMakeBaseCommand extends Command
 
         //cerco prima il model nel modulo
         $namespace = namespace_module('App\\Models', $module);
-        if (!class_exists($namespace."\\".$model)) {
+        if (! class_exists($namespace."\\".$model)) {
 
-          //  $this->warn($namespace."\\".$model." doesn't exists as model");
+            //  $this->warn($namespace."\\".$model." doesn't exists as model");
             $namespace = namespace_module('App\\Models');
             //se non lo trovo cerco nel namespace principale
-            if(!class_exists($namespace."\\".$model)) {
+            if(! class_exists($namespace."\\".$model)) {
                 $this->warn($namespace."\\".$model." doesn't exists as model");
 
                 if($table) {
@@ -61,24 +61,27 @@ class RapydMakeBaseCommand extends Command
         if (! $model) {
             $model = str_replace(['Table','View','Edit'], ['',''], $this->argument('component'));
         }
+
         return Str::singular($model);
     }
 
     protected function getTable(): string
     {
         $namespace = $this->getModelNamespace(true);
+
         return (new $namespace)->getTable();
     }
 
     protected function getRouteName($type)
     {
         $name = Str::of($this->getComponentName())->headline();
+
         return $name->before(ucfirst(strtolower($type)))
             ->replace(' ', '.')
             ->lower()
             ->replace(strtolower($type), '')
             ->append(strtolower($type))
-            ;
+        ;
     }
 
     protected function getTitle($type, $context = 'table')
@@ -108,18 +111,20 @@ class RapydMakeBaseCommand extends Command
     {
         $fields = Schema::getColumnListing($this->getTable());
         if($safeForView) {
-            $fields =  array_diff($fields, ['id', 'password','email_verified_at','remember_token']);
+            $fields = array_diff($fields, ['id', 'password','email_verified_at','remember_token']);
         }
         if($safeForEdit) {
-            $fields =  array_diff($fields, ['email_verified_at','remember_token','created_at','updated_at']);
+            $fields = array_diff($fields, ['email_verified_at','remember_token','created_at','updated_at']);
         }
+
         return $fields;
     }
 
     protected function getViewPath($component_name)
     {
         $viewPrefix = $this->module? Str::lower($this->module).'::' : "";
-        return $viewPrefix.(!$this->module?'livewire.':'').$component_name;
+
+        return $viewPrefix.(! $this->module?'livewire.':'').$component_name;
     }
 
     protected function initBreadcrumb()
@@ -149,7 +154,7 @@ class RapydMakeBaseCommand extends Command
 
         $newNavItems = '';
         foreach ($navItems as $navItem) {
-            if (!in_array($navItem['route'], $existingRoutes)) {
+            if (! in_array($navItem['route'], $existingRoutes)) {
                 $newNavItems .= '<x-rpd::nav-item label="' . htmlspecialchars($navItem['label']) . '" route="' . htmlspecialchars($navItem['route']) . '"';
                 if (isset($navItem['active'])) {
                     $newNavItems .= ' active="' . htmlspecialchars($navItem['active']) . '"';
