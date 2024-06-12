@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
@@ -17,7 +17,11 @@ jobs:
         with:
           args: --config=.php-cs-fixer.dist.php --allow-risky=yes
 
+      - name: Checkout branch for commit
+        run: git checkout -B ${{ github.head_ref }}
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Fix styling
+          branch: ${{ github.head_ref }}
