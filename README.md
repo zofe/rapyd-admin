@@ -46,9 +46,8 @@ Rapyd Admin enhances Laravel by offering essential admin features in a modular f
 
 - **Auth Module:** Robust authentication with socialite integration, Fortify, 2FA, and role/permission management.
 
-- **Custom Modules (Your "X" Modules):** Structured handling of components (using Livewire) and modules, generating components, modules, REST API endpoints, and more, with an emphasis on reusable, encapsulated code for cleaner organization and maintainability.
+- **Custom Modules:** Structured handling of components and modules, REST API endpoints, and more, with an emphasis on reusable, encapsulated code for cleaner organization and maintainability.
 
-Rapyd Admin simplifies and accelerates the development of large-scale Laravel applications, empowering developers to build efficient, modular, and maintainable projects.
 
 
 ## Generators
