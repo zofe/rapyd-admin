@@ -48,8 +48,7 @@
         "psalm": "vendor/bin/psalm",
         "test": "vendor/bin/phpunit --colors=always",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
-        "post-install-cmd": [
-            "Illuminate\\Support\\ComposerScripts::postInstall",
+        "post-autoload-dump": [
             "php artisan rpd:make:home"
         ]
     },
