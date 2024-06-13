@@ -9,17 +9,10 @@
 
 ## Installation
 
-Create new laravel app, for example with laravel installer:
+Create new laravel app then install rapyd-admin package.
 
 ```bash
-composer global require laravel/installer
-
-laravel new myapp
-```
-
-You can install the package via composer:
-
-```bash
+composer create-project --prefer-dist laravel/laravel myapp
 cd myapp
 composer require zofe/rapyd-admin
 ```
