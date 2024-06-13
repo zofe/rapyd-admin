@@ -8,9 +8,7 @@
 |
 */
 return [
-    'seeder' => [],
-    'providers' => [],
-    'middleware' => [],
-    'name' => '{{module}}',
-    'route_middleware' => ['web'],
+    'layout' => 'layout::admin',
+    'menu_admin' => '{{view}}',
+    'menu_admin_position' => 10,
 ];

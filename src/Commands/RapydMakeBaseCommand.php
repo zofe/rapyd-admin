@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Laravel\SerializableClosure\SerializableClosure;
+use Touhidurabir\StubGenerator\Facades\StubGenerator;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsMiddleware;
 use Zofe\Rapyd\Breadcrumbs\Manager;
 
@@ -22,6 +23,43 @@ class RapydMakeBaseCommand extends Command
         parent::__construct();
         $this->breadcrumbs = $manager;
         $this->initBreadcrumb();
+    }
+
+    protected function createModuleConfig()
+    {
+        $module = $this->option('module');
+        if($module && ! file_exists(path_module("app/config.php", $module))) {
+
+            //config
+            StubGenerator::from(__DIR__.'/Templates/config.stub', true)
+                ->to(path_module("app/", $module), true, true)
+                ->as('config')
+                ->withReplacers([
+                    'view' => $this->getViewPath('menu'),
+                    'module' => ucfirst(strtolower($module)),
+                ])
+                ->save();
+
+        }
+
+        if($module && ! file_exists(path_module("app/Views/menu.blade.php", $module))) {
+
+            //menu
+            StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
+                ->to(path_module("app/Views", $module), true, true)
+                ->as('menu.blade')
+                ->save();
+
+        }
+
+        //global menu
+        if( !file_exists(base_path('resources/views/menu.blade.php'))) {
+            StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
+                ->to(base_path('resources/views'), true, true)
+                ->as('menu.blade')
+                ->save();
+
+        }
     }
 
     protected function getComponentName(): string
@@ -145,8 +183,9 @@ class RapydMakeBaseCommand extends Command
             });
     }
 
-    protected function addNavItemIfNotExists($filePath, $navItems)
+    protected function addNavItemIfNotExists($navItems)
     {
+        $filePath = $this->module ? path_module("app/Views/menu.blade.php", $this->module) :  base_path('resources/views/menu.blade.php');
         $content = file_get_contents($filePath);
 
         preg_match_all('/<x-rpd::nav-item[^>]*route="([^"]*)"/', $content, $matches);
@@ -155,7 +194,7 @@ class RapydMakeBaseCommand extends Command
         $newNavItems = '';
         foreach ($navItems as $navItem) {
             if (! in_array($navItem['route'], $existingRoutes)) {
-                $newNavItems .= '<x-rpd::nav-item label="' . htmlspecialchars($navItem['label']) . '" route="' . htmlspecialchars($navItem['route']) . '"';
+                $newNavItems .= '<x-rpd::nav-item icon="fas fa-fw fa-circle" label="' . htmlspecialchars($navItem['label']) . '" route="' . htmlspecialchars($navItem['route']) . '"';
                 if (isset($navItem['active'])) {
                     $newNavItems .= ' active="' . htmlspecialchars($navItem['active']) . '"';
                 }
@@ -163,10 +202,6 @@ class RapydMakeBaseCommand extends Command
             }
         }
 
-        if ($newNavItems) {
-            $content = preg_replace('/(<\/x-rpd::sidebar>)/', $newNavItems . '$1', $content);
-        }
-
-        file_put_contents($filePath, $content);
+        file_put_contents($filePath, $newNavItems, FILE_APPEND);
     }
 }

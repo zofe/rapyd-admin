@@ -24,9 +24,11 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $component = $this->getComponentName();
         $model = $this->getModelName();
 
-        if(count($this->breadcrumbs->generate('home')) < 1) {
-            $this->call('rpd:make:layout');
-        }
+//        if(count($this->breadcrumbs->generate('home')) < 1) {
+//            $this->call('rpd:make:layout');
+//        }
+
+        $this->createModuleConfig();
 
         $this->comment('generate '.$component.' for model '.$model);
 
@@ -116,7 +118,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
 
         $this->comment("component url: $routeuri ".$routename);
 
-        $this->addNavItemIfNotExists(base_path('resources/views/components/layouts/app.blade.php'), [[
+        $this->addNavItemIfNotExists([[
             'label' => $routetitle,
             'route' => $routename,
             'active' => $routeuri,
