@@ -49,9 +49,8 @@
         "test": "vendor/bin/phpunit --colors=always",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage",
         "post-install-cmd": [
-            "@php artisan vendor:publish --provider=\"Zofe\\Rapyd\\RapydServiceProvider\" --tag=\"public\"",
-            "@php artisan rpd:make:home",
-            "@php artisan rpd:auth"
+            "Illuminate\\Support\\ComposerScripts::postInstall",
+            "php artisan rpd:make:home"
         ]
     },
     "config": {
