@@ -24,13 +24,16 @@ class RapydServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/../config/rapyd.php' => config_path('rapyd.php'),
-            ], 'config');
+//            $this->publishes([
+//                __DIR__ . '/../config/rapyd.php' => config_path('rapyd.php'),
+//            ], 'config');
 
 
             $this->publishes([
                 __DIR__.'/../public' => public_path('vendor/rapyd'),
+                __DIR__ . '/../config/rapyd.php' => config_path('rapyd.php'),
+                __DIR__ . '/../config/livewire.php' => config_path('livewire.php'),
+
             ], 'laravel-assets');
 
             $this->commands([
