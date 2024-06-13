@@ -21,7 +21,7 @@ Then you can build home/login and permission preset with:
 
 ```bash
 php artisan rpd:make:home
-php artisan rpd:auth
+php artisan rpd:make:auth
 ```
 
 Now you can login with 
