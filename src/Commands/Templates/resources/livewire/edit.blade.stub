@@ -1,23 +1,24 @@
 @php
 $title = ${{ modelname }}->exists ? '{{ title_update }}' : '{{ title_create }}';
 @endphp
-<x-rpd::edit :title="$title">
+<x-rpd::card>
+    <x-rpd::edit :title="$title">
 
-    <x-slot name="buttons">
-        @if(${{ modelname }}->id)
-            <a href="{{ route('{{ routeparent_view }}', {{ routeparent_view_parameter }}) }}" class="btn btn-outline-dark">Back</a>
-        @else
-           <a href="{{ route('{{ routeparent_table }}') }}" class="btn btn-outline-dark">Back</a>
-        @endif
-    </x-slot>
+        <x-slot name="buttons">
+            @if(${{ modelname }}->id)
+                <a href="{{ route('{{ routeparent_view }}', {{ routeparent_view_parameter }}) }}" class="btn btn-outline-dark">Back</a>
+            @else
+               <a href="{{ route('{{ routeparent_table }}') }}" class="btn btn-outline-dark">Back</a>
+            @endif
+        </x-slot>
 
-    <div class="row">
-        {{fieldNames}}
-    </div>
+        <div class="row">
+            {{fieldNames}}
+        </div>
 
-    <x-slot name="actions">
-        <button type="submit" class="btn btn-primary">Save</button>
-    </x-slot>
+        <x-slot name="actions">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </x-slot>
 
-</x-rpd::edit>
-
+    </x-rpd::edit>
+</x-rpd::card>

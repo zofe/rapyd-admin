@@ -1,24 +1,21 @@
+<x-rpd::card>
+    <x-rpd::view title="{{ title_detail }}">
 
-<x-rpd::view title="{{ title_detail }}">
-
-    <x-slot name="buttons">
-        <a href="{{ route('{{ routeparent }}') }}" class="btn btn-outline-dark">Back</a>
-
-        <a data-ref="link-edit" href="#">{{ ${{modelname}}->id }}</a>
-    </x-slot>
-
-
-    <x-rpd::card>
         <x-slot name="buttons">
+            <a href="{{ route('{{ routeparent }}') }}" class="btn btn-outline-dark">Back</a>
 
+            <a data-ref="link-edit" href="#">{{ ${{modelname}}->id }}</a>
         </x-slot>
 
-        <dl class="row">
 
-            {{fieldNames}}
 
-        </dl>
-    </x-rpd::card>
 
-</x-rpd::view>
+            <dl class="row">
 
+                {{fieldNames}}
+
+            </dl>
+
+
+    </x-rpd::view>
+</x-rpd::card>
