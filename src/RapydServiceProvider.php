@@ -24,9 +24,9 @@ class RapydServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-//            $this->publishes([
-//                __DIR__ . '/../config/rapyd.php' => config_path('rapyd.php'),
-//            ], 'config');
+            //            $this->publishes([
+            //                __DIR__ . '/../config/rapyd.php' => config_path('rapyd.php'),
+            //            ], 'config');
 
 
             $this->publishes([

@@ -53,7 +53,7 @@ class RapydMakeBaseCommand extends Command
         }
 
         //global menu
-        if( !file_exists(base_path('resources/views/menu.blade.php'))) {
+        if(! file_exists(base_path('resources/views/menu.blade.php'))) {
             StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
                 ->to(base_path('resources/views'), true, true)
                 ->as('menu.blade')
