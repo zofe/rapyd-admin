@@ -22,9 +22,12 @@ Then you can build home/login and permission preset with:
 ```bash
 php artisan rpd:make:home
 php artisan rpd:make:auth
+
+#then you can serve the app with
+php artisan serve
 ```
 
-Now you can login with 
+Now you can login with
 ```
 admin@laravel
 admin
@@ -32,49 +35,25 @@ admin
 
 ---
 
-## What is Rapyd Admin?
+## Rapyd Admin
 
-Rapyd Admin enhances a standard Laravel installation by providing essential features of an admin application, adopting a modular approach. Here's what it offers:
 
-1. **Layout Module:**
-    - Provides frontend/admin layout with a classic sidebar/navbar design.
-    - Based on SBAdmin 3, now ported to Bootstrap 5.3 with customizable SCSS for colors and styles.
+Rapyd Admin enhances Laravel by offering essential admin features in a modular format:
 
-2. **Auth Module:**
-    - Includes robust authentication features such as login/sign-in with socialite integration.
-    - Supports Fortify and Two-Factor Authentication (2FA).
-    - Manages roles, permissions, and user impersonation functionalities.
+- **BALL Stack Environment:** Bundles Bootstrap CSS, Alpine.js, Laravel, and Livewire for a quick boilerplate.
 
-3. **Custom Modules (Your "X" Modules):**
-    - Rapyd Admin introduces a structured way to handle components (using Livewire) and modules.
-    - Generates components, modules, REST API endpoints, etc., providing a starting point for development.
-    - Emphasizes a modular architecture, enabling the isolation of functionalities into separate micro-applications.
+- **Layout Module:** Classic sidebar/navbar design based on SBAdmin 3, updated to Bootstrap 5.3 with customizable SCSS and a variety of blade anonymous components for standardized, extendable frontends.
 
-4. **Standard BALL Stack Environment:**
-    - Bundles Bootstrap CSS, Alpine.js, Laravel, and Livewire.
-    - Serves as a quick boilerplate for Laravel admin panels, ensuring rapid development.
+- **Auth Module:** Robust authentication with socialite integration, Fortify, 2FA, and role/permission management.
 
-## How Does Rapyd Admin Help?
+- **Custom Modules (Your "X" Modules):** Structured handling of components (using Livewire) and modules, generating components, modules, REST API endpoints, and more, with an emphasis on reusable, encapsulated code for cleaner organization and maintainability.
 
-Rapyd Admin is designed to streamline and accelerate the development of large-scale Laravel applications by offering:
+Rapyd Admin simplifies and accelerates the development of large-scale Laravel applications, empowering developers to build efficient, modular, and maintainable projects.
 
-- **Modular Approach:**
-    - Developers can organize backends into reusable modules, encapsulating every aspect including components, views, tests, translations, migrations, and jobs.
-    - Each module functions as an isolated Laravel application, promoting cleaner code organization.
-
-- **Livewire Component-based Development:**
-    - No need for controllers; each component is inherently reactive.
-    - Simplifies development with fewer Livewire classes and Blade views, resulting in easily maintainable and testable code.
-
-- **Blade Component-based Frontend:**
-    - Provides a variety of anonymous components for frontend standardization.
-    - Offers specialized tags based on Bootstrap, which can be extended as needed.
-
-In essence, Rapyd Admin empowers developers to build Laravel applications more efficiently, leveraging a modular and component-based architecture for enhanced productivity and maintainability.
 
 ## Generators
 
-rapyd has some commands to generate components, views, modules (bundled components & views isolated in a folder) via artisan command line:
+Rapyd has some commands to generate components, views, modules (bundled components & views isolated in a folder) via artisan command line:
 
 ```bash
 php artisan rpd:make {ComponentName} {Model}
