@@ -7,18 +7,24 @@
 [![rapyd.dev](screencast.gif)](https://rapyd.dev/demo)
 
 
-requirements: laravel 11.*
-
-
 ## Installation
+
+Create new laravel app, for example with laravel installer:
+
+```bash
+composer global require laravel/installer
+
+laravel new myapp
+```
 
 You can install the package via composer:
 
 ```bash
+cd myapp
 composer require zofe/rapyd-admin
 ```
 
-You can build home/login and permission preset with:
+Then you can build home/login and permission preset with:
 
 ```bash
 php artisan rpd:make:home
