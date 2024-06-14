@@ -10,7 +10,6 @@ use Laravel\SerializableClosure\SerializableClosure;
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsMiddleware;
 use Zofe\Rapyd\Breadcrumbs\Manager;
-use ReflectionClass;
 
 class RapydMakeBaseCommand extends Command
 {
@@ -69,7 +68,7 @@ class RapydMakeBaseCommand extends Command
         $module = $this->option('module');
         $modelClass = $this->getModelNamespace(true, false);
 
-        if (!$modelClass) {
+        if (! $modelClass) {
 
             $this->call('rpd:make:model', ['model' => $model, '--module' => $module]);
 
@@ -103,6 +102,7 @@ class RapydMakeBaseCommand extends Command
                 return $full ? $namespace . "\\" . $model : $namespace;
             }
         }
+
         return false;
     }
 

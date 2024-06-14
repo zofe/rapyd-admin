@@ -60,7 +60,7 @@ class RapydMakeModelCommand extends Command
             $migration_from = base_path("database/migrations/$migrationName");
             $migration_to = base_path(path_module("app/Database/Migrations/{$migrationName}", $this->module));
             $model_from = base_path("app/Models/{$modelName}.php");
-            $model_to =  base_path(path_module("app/Models/{$modelName}.php", $this->module));
+            $model_to = base_path(path_module("app/Models/{$modelName}.php", $this->module));
 
             File::ensureDirectoryExists(dirname($migration_to), 0755, true);
             File::ensureDirectoryExists(dirname($model_to), 0755, true);
