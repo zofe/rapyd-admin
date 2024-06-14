@@ -38,7 +38,7 @@ admin
 ## Rapyd Admin
 
 
-Rapyd Admin enhances Laravel by offering essential admin features in a modular format:
+Rapyd Admin enhances Laravel by offering essential admin features with modular approach:
 
 - **BALL Stack Environment:** Bundles Bootstrap CSS, Alpine.js, Laravel, and Livewire for a quick boilerplate.
 
@@ -73,7 +73,6 @@ laravel/
 ```
 
 
-
 ## Modules
 
 example of out of the box module structure you can use after installing rapyd-admin.
@@ -105,17 +104,33 @@ laravel/
 ```
 
 
-## Crud Components
-
 ---
+
+## Blade views and Components
+
+
 ### Table
+
 A Table is a "listing component" with these features:
 - "input filters" to search in a custom data set 
 - "buttons" (for example "add" record or "reset" filters)
 - "pagination links"
 - "sort links" 
 
+you can generate a Table component with:
+```bash
+php artisan rpd:make ArticlesTable Article
+```
 
+or and entire crud (Table/View/Edit) in a module named Blog with;
+```bash
+php artisan rpd:make Articles Article --module=Blog
+```
+
+Generated & Customized view can be something like:
+
+```bash
+# articles_view.blade.php
 ```html
 <x-rpd::table
     title="Article List"
@@ -167,7 +182,7 @@ example: [rapyd.dev/demo/articles](https://rapyd.dev/demo/articles)
 
 ---
 ### View
-a iew is a "detail page component" with :  
+a View is a "detail page component" with :  
 
 - "buttons" slot (for example back to "list" or "edit" current record)
 - "actions" any link that trigger a server-side  
