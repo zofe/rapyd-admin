@@ -25,7 +25,7 @@ class RapydMakeModelCommand extends Command
             'string', 'integer', 'boolean', 'text', 'date',
             'datetime', 'float', 'double', 'decimal', 'binary',
             'enum', 'json', 'longText', 'mediumText', 'time',
-            'timestamp'
+            'timestamp',
         ];
 
         while (true) {
@@ -67,6 +67,7 @@ class RapydMakeModelCommand extends Command
                 return $file->getPathname();
             }
         }
+
         return null;
     }
 
@@ -76,6 +77,7 @@ class RapydMakeModelCommand extends Command
         foreach ($fields as $field) {
             $fieldStrings .= "\$table->{$field['fieldType']}('{$field['fieldName']}');\n";
         }
+
         return str_replace(
             '$table->id();',
             '$table->id();' . "\n" . $fieldStrings,
