@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
@@ -22,11 +23,11 @@ class RapydMakeModelCommand extends Command
 
         $fields = [];
         $fieldTypes = [
-            'string', 'integer', 'boolean', 'text', 'date',
-            'datetime', 'float', 'double', 'decimal', 'binary',
-            'enum', 'json', 'longText', 'mediumText', 'time',
-            'timestamp',
+            'string', 'text', 'integer', 'boolean', 'date',
+            'datetime', 'float', 'decimal', 'json', 'timestamp',
         ];
+
+        $this->comment('No Model ' . $modelName.' found, start creation...');
 
         while (true) {
             $fieldName = $this->ask('Field Name? (empty to end)');
@@ -41,10 +42,11 @@ class RapydMakeModelCommand extends Command
             $fields[] = compact('fieldName', 'fieldType');
         }
 
-        $this->call('make:model', ['name' => $modelName]);
-
         $migrationName = 'create_' . Str::snake(Str::plural($modelName)) . '_table';
-        $this->call('make:migration', ['name' => $migrationName]);
+
+        Artisan::call('make:model', ['name' => $modelName, '--quiet' => true]);
+        Artisan::call('make:migration', ['name' => $migrationName, '--quiet' => true]);
+
 
         $migrationFile = $this->getMigrationFile($migrationName);
         if ($migrationFile) {
@@ -53,8 +55,27 @@ class RapydMakeModelCommand extends Command
             File::put($migrationFile, $migrationContent);
         }
 
-        $this->info('Model and Migration created successfully');
+        if($this->module) {
+            $migrationName = basename($migrationFile);
+            $migration_from = base_path("database/migrations/$migrationName");
+            $migration_to = base_path(path_module("app/Database/Migrations/{$migrationName}", $this->module));
+            $model_from = base_path("app/Models/{$modelName}.php");
+            $model_to =  base_path(path_module("app/Models/{$modelName}.php", $this->module));
 
+            File::ensureDirectoryExists(dirname($migration_to), 0755, true);
+            File::ensureDirectoryExists(dirname($model_to), 0755, true);
+
+            File::move($migration_from, $migration_to);
+            File::move($model_from, $model_to);
+
+            $content = File::get($model_to);
+            $updatedContent = str_replace('namespace App\\Models;', "namespace App\\Modules\\{$this->module}\\Models;", $content);
+            File::put($model_to, $updatedContent);
+
+        }
+
+        $this->info('Model and Migration created successfully, you can run `php artisan migrate` to create the table.');
+        exit;
     }
 
 

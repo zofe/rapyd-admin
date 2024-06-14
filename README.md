@@ -52,10 +52,24 @@ Rapyd Admin enhances Laravel by offering essential admin features with modular a
 
 ## Generators
 
-Rapyd has some commands to generate components, views, modules (bundled components & views isolated in a folder) via artisan command line:
+Rapyd has some commands to generate models, components, modules (bundled components & views isolated in a folder) via artisan command line:
 
+
+### Models
+
+generate a model (via command line)
+```bash
+php artisan rpd:make:model {ModelName} 
+
+# example
+php artisan rpd:make:model Article
+```
+
+### Livewire components 
 ```bash
 php artisan rpd:make {ComponentName} {Model}
+
+# example
 php artisan rpd:make UserTable User
 ```
 
@@ -73,12 +87,14 @@ laravel/
 ```
 
 
-## Modules
+## Modules & Generators
 
 example of out of the box module structure you can use after installing rapyd-admin.
 
 ```bash
 php artisan rpd:make {ComponentsName} {Model} --module={module}
+
+# example
 php artisan rpd:make Articles Article --module=Blog
 ```
 - Will create `Blog` folder in you app/Modules directory.

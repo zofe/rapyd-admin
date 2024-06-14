@@ -24,11 +24,8 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $component = $this->getComponentName();
         $model = $this->getModelName();
 
-        //        if(count($this->breadcrumbs->generate('home')) < 1) {
-        //            $this->call('rpd:make:layout');
-        //        }
-
         $this->createModuleConfig();
+        $this->createModel($model);
 
         $this->comment('generate '.$component.' for model '.$model);
 

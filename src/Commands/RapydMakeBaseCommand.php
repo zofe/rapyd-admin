@@ -10,6 +10,7 @@ use Laravel\SerializableClosure\SerializableClosure;
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsMiddleware;
 use Zofe\Rapyd\Breadcrumbs\Manager;
+use ReflectionClass;
 
 class RapydMakeBaseCommand extends Command
 {
@@ -62,11 +63,26 @@ class RapydMakeBaseCommand extends Command
         }
     }
 
+
+    protected function createModel($model)
+    {
+        $module = $this->option('module');
+        $modelClass = $this->getModelNamespace(true, false);
+
+        if (!$modelClass) {
+
+            $this->call('rpd:make:model', ['model' => $model, '--module' => $module]);
+
+            $this->
+            $this->call('migrate');
+        }
+    }
+
     protected function getComponentName(): string
     {
         return Str::studly($this->argument('component'));
     }
-    protected function getModelNamespace($full = false): string
+    protected function getModelNamespace($full = false, $ignore_existence = true): string
     {
         $model = $this->argument('model');
         $module = $this->option('module');
@@ -74,23 +90,20 @@ class RapydMakeBaseCommand extends Command
 
         //cerco prima il model nel modulo
         $namespace = namespace_module('App\\Models', $module);
-        if (! class_exists($namespace."\\".$model)) {
 
-            //  $this->warn($namespace."\\".$model." doesn't exists as model");
-            $namespace = namespace_module('App\\Models');
-            //se non lo trovo cerco nel namespace principale
-            if(! class_exists($namespace."\\".$model)) {
-                $this->warn($namespace."\\".$model." doesn't exists as model");
-
-                if($table) {
-                    //todo generare un model eloquent data la tabella
-                }
-
-                exit;
-            }
+        if ($ignore_existence) {
+            return $full ? $namespace . "\\" . $model : $namespace;
         }
 
-        return $full ? $namespace."\\".$model : $namespace;
+        if (class_exists($namespace."\\".$model)) {
+            return $full ? $namespace . "\\" . $model : $namespace;
+        } else {
+            $namespace = 'App\\Models';
+            if (class_exists($namespace."\\".$model)) {
+                return $full ? $namespace . "\\" . $model : $namespace;
+            }
+        }
+        return false;
     }
 
     protected function getModelName(): string

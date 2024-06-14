@@ -40,9 +40,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $component_name = Str::snake($componentName);
 
         $this->createModuleConfig();
-        //        if(count($this->breadcrumbs->generate('home')) < 1) {
-        //            $this->call('rpd:make:layout');
-        //        }
+        $this->createModel($model);
 
         $this->comment('generate '.$component.' for model '.$model);
 
