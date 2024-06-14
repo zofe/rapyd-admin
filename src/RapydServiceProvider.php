@@ -11,7 +11,7 @@ use Zofe\Rapyd\Breadcrumbs\BreadcrumbsServiceProvider;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
 use Zofe\Rapyd\Commands\RapydMakeEditCommand;
 use Zofe\Rapyd\Commands\RapydMakeHomeCommand;
-use Zofe\Rapyd\Commands\RapydMakeLayoutCommand;
+use Zofe\Rapyd\Commands\RapydMakeModelCommand;
 use Zofe\Rapyd\Commands\RapydMakeTableCommand;
 use Zofe\Rapyd\Commands\RapydMakeViewCommand;
 use Zofe\Rapyd\Http\Livewire\RapydApp;
@@ -38,11 +38,11 @@ class RapydServiceProvider extends ServiceProvider
 
             $this->commands([
                 RapydMakeCommand::class,
-                RapydMakeLayoutCommand::class,
                 RapydMakeHomeCommand::class,
                 RapydMakeTableCommand::class,
                 RapydMakeViewCommand::class,
                 RapydMakeEditCommand::class,
+                RapydMakeModelCommand::class,
 
             ]);
         }

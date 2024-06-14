@@ -21,13 +21,15 @@ Then you can build home/login and permission preset with:
 
 ```bash
 php artisan rpd:make:home
+
+# customize roles & permissions in app/Modules/Auth/permissions.php then run
 php artisan rpd:make:auth
 
 #then you can serve the app with
 php artisan serve
 ```
 
-Now you can login with
+Now you can login with a default admin user:
 ```
 admin@laravel
 admin
