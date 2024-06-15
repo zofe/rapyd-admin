@@ -8,11 +8,17 @@ class RapydTagPrecompiler extends ComponentTagCompiler
 {
     public function __invoke($value, $params = [])
     {
-        $linkpattern = '/<a\s+data-ref="link-view"\s+href="#">(.*?)<\/a>/';
-        $value = $this->replaceLinkViewTags($value, $linkpattern, $params);
-
-        $linkpattern = '/<a\s+data-ref="link-edit"\s+href="#">(.*?)<\/a>/';
-        $value = $this->replaceLinkEditTags($value, $linkpattern, $params);
+        if(count($params) && isset($params['ref'])) {
+            if($params['ref'] === 'link-view') {
+                $value = $this->replaceLinkViewTags($value,  '/<a\s+data-ref="link-view"\s+href="#">(.*?)<\/a>/', $params);
+            }
+            if ($params['ref'] === 'link-edit') {
+                $value = $this->replaceLinkEditTags($value, '/<a\s+data-ref="link-edit"\s+href="#">(.*?)<\/a>/', $params);
+            }
+            if ($params['ref'] === 'link-add') {
+                $value = $this->replaceLinkAddTags($value, '/<a\s+data-ref="link-add"\s+href="#"><\/a>/', $params);
+            }
+        }
 
         return $value;
     }
@@ -40,6 +46,16 @@ class RapydTagPrecompiler extends ComponentTagCompiler
                 return '<a href="{{ route(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">Edit</a>';
             }
 
+            return $matches[0];
+        }, $value);
+    }
+
+    protected function replaceLinkAddTags($value, $pattern, $params = [])
+    {
+        return preg_replace_callback($pattern, function (array $matches) use ($params) {
+            if(count($params) && isset($params['route'])) {
+                return '<a href="{{ route(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">Add</a>';
+            }
             return $matches[0];
         }, $value);
     }

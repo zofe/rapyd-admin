@@ -142,8 +142,10 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
 
         $edit_view = $viewPath.'/'.str_replace('edit', 'view', $component_name).'.blade.php';
+        $table_view = $viewPath.'/'.str_replace('edit', 'table', $component_name).'.blade.php';
 
         $this->buildLinkToEdit($edit_view, $routename);
+        $this->buildLinkToAdd($table_view, $routename);
         $this->comment("component url: $routeuri ".$routename);
     }
 
@@ -154,11 +156,23 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         if($viewContent && strpos($route, '.edit')) {
 
             $precompiler = new RapydTagPrecompiler();
-            $newViewContent = $precompiler($viewContent, ['route' => $route]);
+            $newViewContent = $precompiler($viewContent, ['route' => $route, 'ref'=>'link-edit']);
 
             File::put($viewpath, $newViewContent);
         }
 
     }
 
+    protected function buildLinkToAdd($viewpath, $route)
+    {
+        $viewContent = File::get($viewpath);
+        if($viewContent && strpos($route, '.edit')) {
+
+            $precompiler = new RapydTagPrecompiler();
+            $newViewContent = $precompiler($viewContent, ['route' => $route, 'ref'=>'link-add']);
+
+            File::put($viewpath, $newViewContent);
+        }
+
+    }
 }

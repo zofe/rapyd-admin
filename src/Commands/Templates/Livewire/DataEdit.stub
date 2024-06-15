@@ -23,7 +23,7 @@ class {{class}} extends {{baseClassName}}
     {
         $this->validate();
         $this->{{ item }}->save();
-        $this->emit('saved');
+       // $this->emit('saved');
     }
 
     public function render()

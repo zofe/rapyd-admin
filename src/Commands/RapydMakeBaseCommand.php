@@ -165,7 +165,7 @@ class RapydMakeBaseCommand extends Command
             $fields = array_diff($fields, ['id', 'password','email_verified_at','remember_token']);
         }
         if($safeForEdit) {
-            $fields = array_diff($fields, ['email_verified_at','remember_token','created_at','updated_at']);
+            $fields = array_diff($fields, ['id','email_verified_at','remember_token','created_at','updated_at']);
         }
 
         return $fields;
