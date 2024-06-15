@@ -24,6 +24,9 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $component = $this->getComponentName();
         $model = $this->getModelName();
 
+        $componentName = $component;
+        $component_name = Str::snake($componentName);
+
         $this->createModuleConfig();
         $this->createModel($model);
 
@@ -38,9 +41,6 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $routename = $this->getRouteName('table');
         $routeuri = $routename->replace('.', '/');
         $routetitle = $title;
-
-        $componentName = $component;
-        $component_name = Str::snake($componentName);
 
         $classPath = path_module("app/Livewire", $this->module);
         $viewPath = path_module("resources/views/livewire", $this->module);
