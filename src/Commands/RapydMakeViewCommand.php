@@ -131,7 +131,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         if($viewContent && strpos($route, '.view')) {
 
             $precompiler = new RapydTagPrecompiler();
-            $newViewContent = $precompiler($viewContent, ['route' => $route, 'ref'=>'link-view']);
+            $newViewContent = $precompiler($viewContent, ['route' => $route, 'ref' => 'link-view']);
 
             File::put($viewpath, $newViewContent);
         }

@@ -56,6 +56,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
             if(count($params) && isset($params['route'])) {
                 return '<a href="{{ route(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">Add</a>';
             }
+
             return $matches[0];
         }, $value);
     }
