@@ -18,6 +18,10 @@ class RapydTagPrecompiler extends ComponentTagCompiler
             if ($params['ref'] === 'link-add') {
                 $value = $this->replaceLinkAddTags($value, '/<a\s+data-ref="link-add"\s+href="#"><\/a>/', $params);
             }
+            if ($params['ref'] === 'redirect') {
+                $value = $this->replaceRedirect($value, '/#redirect/', $params);
+            }
+
         }
 
         return $value;
@@ -30,7 +34,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
             $viewId = str_replace(['{{', '}}'], '', $content);
             if(count($params) && isset($params['route'])) {
 
-                return '<a href="{{ route(\'' . $params['route'] . '\','.$viewId.') }}">' . $content . '</a>';
+                return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}">' . $content . '</a>';
             }
 
             return $matches[0];
@@ -43,7 +47,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
             $content = $matches[1];
             $viewId = str_replace(['{{', '}}'], '', $content);
             if(count($params) && isset($params['route'])) {
-                return '<a href="{{ route(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">Edit</a>';
+                return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">Edit</a>';
             }
 
             return $matches[0];
@@ -54,7 +58,18 @@ class RapydTagPrecompiler extends ComponentTagCompiler
     {
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
             if(count($params) && isset($params['route'])) {
-                return '<a href="{{ route(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">Add</a>';
+                return '<a href="{{ route_lang(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">Add</a>';
+            }
+            return $matches[0];
+        }, $value);
+    }
+
+    protected function replaceRedirect($value, $pattern, $params = [])
+    {
+        return preg_replace_callback($pattern, function (array $matches) use ($params) {
+            if(count($params) && isset($params['route']) && isset($params['route_parameter'])) {
+                $parameter = str_replace('$','$this->',$params['route_parameter']);
+                return 'return redirect()->to(route_lang("'.$params['route'].'",'.$parameter.' ));';
             }
 
             return $matches[0];
