@@ -60,6 +60,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
             if(count($params) && isset($params['route'])) {
                 return '<a href="{{ route_lang(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">Add</a>';
             }
+
             return $matches[0];
         }, $value);
     }
@@ -68,7 +69,8 @@ class RapydTagPrecompiler extends ComponentTagCompiler
     {
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
             if(count($params) && isset($params['route']) && isset($params['route_parameter'])) {
-                $parameter = str_replace('$','$this->',$params['route_parameter']);
+                $parameter = str_replace('$', '$this->', $params['route_parameter']);
+
                 return 'return redirect()->to(route_lang("'.$params['route'].'",'.$parameter.' ));';
             }
 
