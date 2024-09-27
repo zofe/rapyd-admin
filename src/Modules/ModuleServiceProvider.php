@@ -88,12 +88,6 @@ class ModuleServiceProvider extends ServiceProvider
                 $this->loadMigrationsFrom($modulePath . 'Database/Migrations');
                 $this->loadTranslationsFrom($modulePath . 'Lang', $moduleName);
 
-                $routePrefix = $lang_prefix . '/';
-
-                //                if (File::exists($modulePath . 'Components/routes.php')) {
-                //                    Route::prefix($routePrefix)->middleware(config($module . '.route_middleware', ['web']))
-                //                        ->group($modulePath . 'Components/routes.php');
-                //                }
 
                 if ($this->app->runningInConsole()) {
                     $moduleCommands = [];
@@ -107,14 +101,6 @@ class ModuleServiceProvider extends ServiceProvider
                     }
                 }
 
-
-                // register service provider
-                //                $moduleProviders = config($module . '.providers', []);
-                //                foreach ($moduleProviders as $provider) {
-                //                    dd($provider);
-                //                    $this->app->register($provider);
-                //                }
-
                 //register livewire components
                 $directory = (string)Str::of($modulePath . 'Livewire')
                     ->replace(['\\'], '/');
@@ -123,13 +109,6 @@ class ModuleServiceProvider extends ServiceProvider
                 $this->registerComponentDirectory($directory, $namespace, Str::lower($module) . '::');
                 $this->registerModuleClassDirectory($modulePath);
             }
-
-            //            //todo se non c'è modulo Layout mettere per default layout:: puntato a rapyd:: ?
-            //            if(!in_array('Layout',collect($dirs)->map(function ($dir){
-            //                return basename($dir);
-            //            })->toArray())){
-            //                $this->loadViewsFrom(resource_path('views'), 'layout');
-            //            }
         }
     }
 
@@ -180,7 +159,14 @@ class ModuleServiceProvider extends ServiceProvider
 
                     if (! isset($livewire_array[$alias])) {
                         $livewire_array[$alias] = $class;
-                        file_put_contents($livewire_manifest, "<?php\nreturn ".var_export($livewire_array, true).";");
+
+                        // Usa lock per evitare problemi di concorrenza durante la scrittura
+                        $lockFile = fopen($livewire_manifest, 'c');
+                        if (flock($lockFile, LOCK_EX)) {
+                            file_put_contents($livewire_manifest, "<?php\nreturn " . var_export($livewire_array, true) . ";");
+                            flock($lockFile, LOCK_UN); // Rilascia il lock
+                        }
+                        fclose($lockFile);
                     }
                 });
         }
