@@ -190,7 +190,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         if($viewContent) {
 
             $precompiler = new RapydTagPrecompiler();
-            $newViewContent = $precompiler($viewContent, ['route' => $route, 'route_parameter'=>$route_parameter, 'ref'=>'redirect']);
+            $newViewContent = $precompiler($viewContent, ['route' => $route, 'route_parameter' => $route_parameter, 'ref' => 'redirect']);
 
             File::put($viewpath, $newViewContent);
         }
