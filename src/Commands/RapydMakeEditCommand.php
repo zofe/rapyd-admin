@@ -132,7 +132,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         ]));
 
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/edit.stub'));
-        if($this->module) {
+        if ($this->module) {
             if (! File::exists(base_path($routePath))) {
                 File::ensureDirectoryExists(dirname($routePath));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
@@ -149,9 +149,9 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $this->buildLinkToAdd($table_view, $routename);
 
 
-        if($routeparent_view) {
+        if ($routeparent_view) {
             $this->buildRedirect($edit_class, $routeparent_view, $routeparent_view_parameter);
-        } elseif($routeparent_table) {
+        } elseif ($routeparent_table) {
             $this->buildRedirect($edit_class, $routeparent_table);
         }
         $this->comment("component url: $routeuri ".$routename);
@@ -161,7 +161,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
     protected function buildLinkToEdit($viewpath, $route)
     {
         $viewContent = File::get($viewpath);
-        if($viewContent && strpos($route, '.edit')) {
+        if ($viewContent && strpos($route, '.edit')) {
 
             $precompiler = new RapydTagPrecompiler();
             $newViewContent = $precompiler($viewContent, ['route' => $route, 'ref' => 'link-edit']);
@@ -174,7 +174,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
     protected function buildLinkToAdd($viewpath, $route)
     {
         $viewContent = File::get($viewpath);
-        if($viewContent && strpos($route, '.edit')) {
+        if ($viewContent && strpos($route, '.edit')) {
 
             $precompiler = new RapydTagPrecompiler();
             $newViewContent = $precompiler($viewContent, ['route' => $route, 'ref' => 'link-add']);
@@ -187,7 +187,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
     protected function buildRedirect($viewpath, $route, $route_parameter = '')
     {
         $viewContent = File::get($viewpath);
-        if($viewContent) {
+        if ($viewContent) {
 
             $precompiler = new RapydTagPrecompiler();
             $newViewContent = $precompiler($viewContent, ['route' => $route, 'route_parameter' => $route_parameter, 'ref' => 'redirect']);

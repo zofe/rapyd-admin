@@ -55,7 +55,7 @@ class RapydMakeModelCommand extends Command
             File::put($migrationFile, $migrationContent);
         }
 
-        if($this->module) {
+        if ($this->module) {
             $migrationName = basename($migrationFile);
             $migration_from = base_path("database/migrations/$migrationName");
             $migration_to = base_path(path_module("app/Database/Migrations/{$migrationName}", $this->module));

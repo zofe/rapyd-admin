@@ -44,7 +44,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
 
             foreach (['Table', 'View', 'Edit'] as $suffix) {
 
-                if($this->option('module')) {
+                if ($this->option('module')) {
                     $this->call('rpd:make:'.strtolower($suffix), [
                         'component' => $component.$suffix,
                         'model' => $this->argument('model'),

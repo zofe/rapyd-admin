@@ -8,8 +8,8 @@ class RapydTagPrecompiler extends ComponentTagCompiler
 {
     public function __invoke($value, $params = [])
     {
-        if(count($params) && isset($params['ref'])) {
-            if($params['ref'] === 'link-view') {
+        if (count($params) && isset($params['ref'])) {
+            if ($params['ref'] === 'link-view') {
                 $value = $this->replaceLinkViewTags($value,  '/<a\s+data-ref="link-view"\s+href="#">(.*?)<\/a>/', $params);
             }
             if ($params['ref'] === 'link-edit') {
@@ -32,7 +32,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
             $content = $matches[1];
             $viewId = str_replace(['{{', '}}'], '', $content);
-            if(count($params) && isset($params['route'])) {
+            if (count($params) && isset($params['route'])) {
 
                 return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}">' . $content . '</a>';
             }
@@ -46,7 +46,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
             $content = $matches[1];
             $viewId = str_replace(['{{', '}}'], '', $content);
-            if(count($params) && isset($params['route'])) {
+            if (count($params) && isset($params['route'])) {
                 return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">Edit</a>';
             }
 
@@ -57,7 +57,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
     protected function replaceLinkAddTags($value, $pattern, $params = [])
     {
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
-            if(count($params) && isset($params['route'])) {
+            if (count($params) && isset($params['route'])) {
                 return '<a href="{{ route_lang(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">Add</a>';
             }
 
@@ -68,7 +68,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
     protected function replaceRedirect($value, $pattern, $params = [])
     {
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
-            if(count($params) && isset($params['route']) && isset($params['route_parameter'])) {
+            if (count($params) && isset($params['route']) && isset($params['route_parameter'])) {
                 $parameter = str_replace('$', '$this->', $params['route_parameter']);
 
                 return 'return redirect()->to(route_lang("'.$params['route'].'",'.$parameter.' ));';

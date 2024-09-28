@@ -105,7 +105,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         ]));
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/table.stub'));
 
-        if($this->module) {
+        if ($this->module) {
             if (! File::exists(base_path($routePath))) {
                 File::ensureDirectoryExists(dirname($routePath));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
@@ -137,7 +137,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         })->all();
 
         $whereSearch = '';
-        foreach ($searchFields as  $index => $field) {
+        foreach ($searchFields as $index => $field) {
             if ($index === 0) {
                 $whereSearch .= "where('$field', 'like', '%' . \$this->search . '%')";
             } else {
