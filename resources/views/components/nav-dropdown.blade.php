@@ -56,7 +56,7 @@
         <span class="text-capitalize pt-1">{{ $label }}</span>
     </a>
     <div id="collapse{{$identifier}}" data-parent="#accordionSidebar" class="collapse {{ $active ? 'show' : '' }}" style="">
-        <div class="bg-white ps-4 pb-1 small collapse-inner rounded">
+        <div class="bg-white ps-2 pb-1 small collapse-inner rounded">
             {{ $slot }}
         </div>
     </div>
