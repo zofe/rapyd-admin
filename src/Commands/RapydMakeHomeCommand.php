@@ -35,6 +35,7 @@ class RapydMakeHomeCommand extends Command
                 ->withReplacers([
                     'class' => 'Home',
                     'view' => $viewPath,
+                    'layout' => 'layout::frontend',
                     'baseClass' => 'Livewire\\Component',
                     'baseClassName' => 'Component',
                     'classNamespace' => $classNamespace,
@@ -55,7 +56,6 @@ class RapydMakeHomeCommand extends Command
                 'class' => "\\".$classNamespace."\\Home",
                 'routepath' => $routeuri,
                 'routename' => $routename,
-                'layout' => 'layout::frontend',
             ]));
 
             $substituted = $strSubstitutor->replace(file_get_contents(__DIR__.'/Templates/routes/home.stub'));
