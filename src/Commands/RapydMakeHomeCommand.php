@@ -61,5 +61,16 @@ class RapydMakeHomeCommand extends Command
             $substituted = $strSubstitutor->replace(file_get_contents(__DIR__.'/Templates/routes/home.stub'));
             file_put_contents(base_path("routes/web.php"), $substituted, FILE_APPEND);
         }
+
+        //global menu
+        if (! file_exists(base_path('resources/views/menu.blade.php'))) {
+            StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
+                ->to(base_path('resources/views'), true, true)
+                ->as('menu.blade')
+                ->save();
+
+            file_put_contents(base_path('resources/views/menu.blade.php'), '<x-rpd::nav-link label="Home" route="home"  />', FILE_APPEND);
+        }
+
     }
 }
