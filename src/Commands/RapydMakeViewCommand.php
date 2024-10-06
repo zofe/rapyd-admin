@@ -111,7 +111,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/view.stub'));
 
-        if($this->module) {
+        if ($this->module) {
             if (! File::exists(base_path($routePath))) {
                 File::ensureDirectoryExists(dirname($routePath));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
@@ -128,7 +128,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
     protected function buildLinkToView($viewpath, $route)
     {
         $viewContent = File::get($viewpath);
-        if($viewContent && strpos($route, '.view')) {
+        if ($viewContent && strpos($route, '.view')) {
 
             $precompiler = new RapydTagPrecompiler();
             $newViewContent = $precompiler($viewContent, ['route' => $route, 'ref' => 'link-view']);

@@ -28,7 +28,7 @@ class RapydMakeBaseCommand extends Command
     protected function createModuleConfig()
     {
         $module = $this->option('module');
-        if($module && ! file_exists(path_module("app/config.php", $module))) {
+        if ($module && ! file_exists(path_module("app/config.php", $module))) {
 
             //config
             StubGenerator::from(__DIR__.'/Templates/config.stub', true)
@@ -42,7 +42,7 @@ class RapydMakeBaseCommand extends Command
 
         }
 
-        if($module && ! file_exists(path_module("app/Views/menu.blade.php", $module))) {
+        if ($module && ! file_exists(path_module("app/Views/menu.blade.php", $module))) {
 
             //menu
             StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
@@ -53,7 +53,7 @@ class RapydMakeBaseCommand extends Command
         }
 
         //global menu
-        if(! file_exists(base_path('resources/views/menu.blade.php'))) {
+        if (! file_exists(base_path('resources/views/menu.blade.php'))) {
             StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
                 ->to(base_path('resources/views'), true, true)
                 ->as('menu.blade')
@@ -140,11 +140,11 @@ class RapydMakeBaseCommand extends Command
         $name = Str::of($this->getComponentName())->headline();
         $title = $name->before(ucfirst(strtolower($type)))->trim();
 
-        if($context == 'detail') {
+        if ($context == 'detail') {
             return $title->singular()->title().' Detail';
-        } elseif($context == 'update') {
+        } elseif ($context == 'update') {
             return 'Update '.$title->singular()->title();
-        } elseif($context == 'create') {
+        } elseif ($context == 'create') {
             return 'Create '.$title->singular()->title();
         } else {
             return $title->plural()->title();
@@ -161,10 +161,10 @@ class RapydMakeBaseCommand extends Command
     protected function getFields($safeForView = true, $safeForEdit = false)
     {
         $fields = Schema::getColumnListing($this->getTable());
-        if($safeForView) {
+        if ($safeForView) {
             $fields = array_diff($fields, ['id', 'password','email_verified_at','remember_token']);
         }
-        if($safeForEdit) {
+        if ($safeForEdit) {
             $fields = array_diff($fields, ['id','email_verified_at','remember_token','created_at','updated_at']);
         }
 
