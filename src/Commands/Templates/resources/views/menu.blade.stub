@@ -1,2 +1,1 @@
-
-
+<x-rpd::nav-link label="Home" route="home"  />
