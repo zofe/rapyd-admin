@@ -3,5 +3,5 @@
 
 return [
     'legacy_model_binding' => true,
-    'layout' => 'layout::admin'
+    'layout' => 'layout::frontend'
 ];

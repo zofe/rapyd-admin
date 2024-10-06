@@ -4,6 +4,7 @@ namespace Zofe\Rapyd\Modules;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -79,9 +80,9 @@ class ModuleServiceProvider extends ServiceProvider
                 if (File::exists($moduleConfigPath)) {
                     $this->mergeConfigFrom($moduleConfigPath, $moduleName);
                     //overrire default layout
-                    if (config($moduleName.'.layout')) {
-                        config(['livewire.layout' => config($moduleName.'.layout')]);
-                    }
+//                    if (config($moduleName.'.layout')) {
+//                        config(['livewire.layout' => config($moduleName.'.layout')]);
+//                    }
                 }
                 $this->loadViewsFrom($modulePath . 'Views', $moduleName);
                 $this->loadViewsFrom($modulePath . 'Livewire', $moduleName);//'components');

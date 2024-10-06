@@ -1,6 +1,6 @@
 
 
 Route::get('{{routepath}}', {{class}}::class)
-    ->middleware(['web','auth'])
+    ->middleware(['web'])
     ->name('{{routename}}')
     ->crumbs(fn ($crumbs) => $crumbs->push('Home', route('{{routename}}')));

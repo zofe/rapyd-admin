@@ -8,6 +8,6 @@ class {{class}} extends {{baseClassName}}
 {
     public function render()
     {
-        return view('{{view}}');
+        return view('{{view}}')->layout('{{layout}}');
     }
 }
