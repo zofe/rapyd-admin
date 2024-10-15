@@ -1,0 +1,6 @@
+
+
+Route::get('{{routepath}}', {{class}}::class)
+    ->middleware(['web'])
+    ->name('{{routename}}')
+    ->crumbs(fn ($crumbs) => $crumbs->push('Admin', route('{{routename}}')));

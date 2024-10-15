@@ -1,6 +1,10 @@
+@php
+    $breadcrumbs = $generate();
+@endphp
+@if($breadcrumbs->count() > 1)
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb pr-3">
-        @foreach ($generate() as $crumbs)
+        @foreach ($breadcrumbs as $crumbs)
             @if ($crumbs->url() && !$loop->last)
                 <li class="{{$class}}">
                     <a href="{{ $crumbs->url() }}">{{ $crumbs->title() }}</a>
@@ -11,4 +15,4 @@
         @endforeach
     </ol>
 </nav>
-
+@endif
