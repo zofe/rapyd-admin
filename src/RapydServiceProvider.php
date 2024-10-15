@@ -2,7 +2,6 @@
 
 namespace Zofe\Rapyd;
 
-
 use App\Modules\Layout\LayoutServiceProvider;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Support\Facades\Artisan;
