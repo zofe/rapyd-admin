@@ -20,7 +20,6 @@ composer require zofe/rapyd-admin
 Then you can customize roles & permissions in app/Modules/Auth/permissions.php then run
 
 ```bash
-php artisan rpd:make:home
 php artisan rpd:make:auth
 
 #then you can serve the app with
