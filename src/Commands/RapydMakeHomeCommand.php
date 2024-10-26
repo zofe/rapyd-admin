@@ -30,11 +30,6 @@ class RapydMakeHomeCommand extends Command
             $viewPath = $viewPrefix.'livewire.home';
 
             //component
-            $destinationPath = base_path('app/Livewire/Home.php');
-            if (File::exists($destinationPath)) {
-                File::delete($destinationPath);
-            }
-
             StubGenerator::from(__DIR__.'/Templates/Livewire/Home.stub', true)
                 ->to(base_path($classPath), true, true)
                 ->as('Home')
@@ -50,12 +45,6 @@ class RapydMakeHomeCommand extends Command
 
 
             //view
-
-            $destinationPath = base_path('resources/views/livewire/home.blade.php');
-            if (File::exists($destinationPath)) {
-                File::delete($destinationPath);
-            }
-
             StubGenerator::from(__DIR__.'/Templates/resources/livewire/home.blade.stub', true)
                 ->to(base_path('resources/views/livewire'), true, true)
                 ->as('home.blade')
@@ -91,7 +80,7 @@ class RapydMakeHomeCommand extends Command
             //component
             StubGenerator::from(__DIR__.'/Templates/Livewire/Home.stub', true)
                 ->to(base_path($classPath), true, true)
-                ->as('Home')
+                ->as('AdminHome')
                 ->withReplacers([
                     'class' => 'AdminHome',
                     'view' => $viewPath,
@@ -105,7 +94,7 @@ class RapydMakeHomeCommand extends Command
             //view
             StubGenerator::from(__DIR__.'/Templates/resources/livewire/home.blade.stub', true)
                 ->to(base_path('resources/views/livewire'), true, true)
-                ->as('home.blade')
+                ->as('admin_home.blade')
                 ->withReplacers([
                     'routename' => $routename,
                 ])
