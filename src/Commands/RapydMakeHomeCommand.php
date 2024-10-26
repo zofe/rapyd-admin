@@ -30,6 +30,11 @@ class RapydMakeHomeCommand extends Command
             $viewPath = $viewPrefix.'livewire.home';
 
             //component
+            $destinationPath = base_path('resources/views/livewire/home.blade.php');
+            if (File::exists($destinationPath)) {
+                File::delete($destinationPath);
+            }
+
             StubGenerator::from(__DIR__.'/Templates/Livewire/Home.stub', true)
                 ->to(base_path($classPath), true, true)
                 ->as('Home')
