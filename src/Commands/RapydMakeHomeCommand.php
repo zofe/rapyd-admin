@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Touhidurabir\StubGenerator\Facades\StubGenerator;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
@@ -42,7 +43,14 @@ class RapydMakeHomeCommand extends Command
                 ])
                 ->save();
 
+
             //view
+
+            $destinationPath = base_path('resources/views/livewire/home.blade.php');
+            if (File::exists($destinationPath)) {
+                File::delete($destinationPath);
+            }
+
             StubGenerator::from(__DIR__.'/Templates/resources/livewire/home.blade.stub', true)
                 ->to(base_path('resources/views/livewire'), true, true)
                 ->as('home.blade')
