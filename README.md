@@ -11,6 +11,8 @@
 
 Create new laravel app then install rapyd-admin package.
 
+(answer “y” to the question about writes "allow-plugins" to composer.json)
+
 ```bash
 composer create-project --prefer-dist laravel/laravel myapp
 cd myapp
@@ -20,6 +22,7 @@ composer require zofe/rapyd-admin
 Then you can customize roles & permissions in app/Modules/Auth/permissions.php then run
 
 ```bash
+php artisan rpd:make:home
 php artisan rpd:make:auth
 
 #then you can serve the app with
