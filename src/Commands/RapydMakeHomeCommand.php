@@ -30,7 +30,7 @@ class RapydMakeHomeCommand extends Command
             $viewPath = $viewPrefix.'livewire.home';
 
             //component
-            $destinationPath = base_path('resources/views/livewire/home.blade.php');
+            $destinationPath = base_path('app/Livewire/Home.php');
             if (File::exists($destinationPath)) {
                 File::delete($destinationPath);
             }
