@@ -2,8 +2,6 @@
 
 namespace Zofe\Rapyd;
 
-
-
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
