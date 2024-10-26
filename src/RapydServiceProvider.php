@@ -3,7 +3,7 @@
 namespace Zofe\Rapyd;
 
 
-use App\Modules\Layout\LayoutServiceProvider;
+
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
@@ -163,7 +163,6 @@ class RapydServiceProvider extends ServiceProvider
 
         $this->app->register(BreadcrumbsServiceProvider::class);
         $this->app->register(ModuleServiceProvider::class);
-        $this->app->register(LayoutServiceProvider::class);
         //$this->app->register(StubGeneratorServiceProvider::class);
     }
 }
