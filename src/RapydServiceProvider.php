@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd;
 
 use Illuminate\Foundation\Http\Events\RequestHandled;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -49,9 +50,7 @@ class RapydServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(resource_path('views/vendor/rapyd'), 'rpd');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'rpd');
-
-
-
+        $this->loadViewsFrom(__DIR__ . '/../resources/views/livewire', 'livewire');
 
         Blade::directive('rapydScripts', function () {
             $scripts = "<script src=\"{{ asset('vendor/rapyd/rapyd.js') }}\"></script>\n";
@@ -91,6 +90,8 @@ class RapydServiceProvider extends ServiceProvider
             }
         });
 
+
+        //Paginator::defaultView('pagination');
 
         //Artisan::call('rpd:make:home');
 
