@@ -56,6 +56,7 @@ class RapydServiceProvider extends ServiceProvider
             $scripts = "<script src=\"{{ asset('vendor/rapyd/rapyd.js') }}\"></script>\n";
             // $scripts .= "<script src=\"{{ asset('vendor/rapyd/bootstrap.js') }}\"></script>";
             $scripts .= '<?php echo $__env->yieldPushContent(\'rapyd_scripts\'); ?>';
+
             return $scripts;
         });
 
@@ -63,6 +64,7 @@ class RapydServiceProvider extends ServiceProvider
             $styles = "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/rapyd.css') }}\">\n";
             // $styles .= "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/bootstrap.css') }}\">";
             $styles .= '<?php echo $__env->yieldPushContent(\'rapyd_styles\'); ?>';
+
             return $styles;
         });
 
