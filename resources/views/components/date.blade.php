@@ -3,9 +3,15 @@
 'help' => null,
 'model' => null,
 'size' => null,
+'lazy' => true,
 ])
 
 @php
+    if($lazy) {
+        $bind = 'lazy';
+    } else {
+        $bind = 'live.debounce.150ms';
+    }
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);
     $id = $attributes->get('id', $model ?? $wireModel);
@@ -18,7 +24,7 @@
     ])->merge([
         //'id' => $id,
         'type' => "date",
-        'model' => $model ? $prefix . $model : null,
+        'wire:model.' . $bind => $model ? $prefix . $model : null,
         'class' => 'form-control rounded-end'
     ]);
 @endphp
