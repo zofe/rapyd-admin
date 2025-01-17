@@ -4,6 +4,7 @@
 'model' => null,
 'size' => null,
 'lazy' => true,
+'col'  => null,
 ])
 
 @php
@@ -30,7 +31,7 @@
 @endphp
 
 
-<div>
+<div class="{{$col}}">
     <x-rpd::label :for="$id" :label="$label"/>
 
     <div class="input-group">
