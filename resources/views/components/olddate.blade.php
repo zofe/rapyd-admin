@@ -2,7 +2,8 @@
 'label' => null,
 'help' => null,
 'model' => null,
-'size' => null,
+'format' => "dd/MM/yyyy",
+'value-format' => "yyyy-MM-dd",
 ])
 
 @php
@@ -11,29 +12,24 @@
     $id = $attributes->get('id', $model ?? $wireModel);
     $prefix = null;
     $attributes = $attributes->class([
-        'form-control',
-        'form-control-' . $size => $size,
-        'rounded-end',
-        'is-invalid' => $errors->has($key),
     ])->merge([
         //'id' => $id,
-        'type' => "date",
+        'format' => $format,
+        'value-format' =>  ${'value-format'},
         'model' => $model ? $prefix . $model : null,
-        'class' => 'form-control rounded-end'
     ]);
 @endphp
 
-
-<div>
+<div wire:ignore>
     <x-rpd::label :for="$id" :label="$label"/>
 
     <div class="input-group">
-        <input
+
+        <rpd-date
             {{ $attributes }}
-        >
+        ></rpd-date>
+
     </div>
-    <x-rpd::force-error :key="$key" />
 
     <x-rpd::help :label="$help"/>
-
 </div>

@@ -17,7 +17,7 @@
         'is-invalid' => $errors->has($key),
     ])->merge([
         //'id' => $id,
-        'type' => "date",
+        'type' => "datetime-local",
         'model' => $model ? $prefix . $model : null,
         'class' => 'form-control rounded-end'
     ]);
