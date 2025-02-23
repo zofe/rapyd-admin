@@ -12,11 +12,11 @@ trait Sortable
     public static function reorderItem($itemId, $newOrder, $newParentId = null)
     {
         $item = static::find($itemId);
-        if (!$item) {
+        if (! $item) {
             return false;
         }
 
-        if(static::$parentIdField) {
+        if (static::$parentIdField) {
             $item->{static::$parentIdField} = $newParentId;
             $item->save();
         }
@@ -31,7 +31,7 @@ trait Sortable
         $inserted = false;
 
         foreach ($siblings as $index => $sibling) {
-            if (!$inserted && $index == $newOrder) {
+            if (! $inserted && $index == $newOrder) {
                 $ordered->push($item);
                 $inserted = true;
             }
@@ -39,7 +39,7 @@ trait Sortable
         }
 
 
-        if (!$inserted) {
+        if (! $inserted) {
             $ordered->push($item);
         }
 

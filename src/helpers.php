@@ -153,7 +153,7 @@ if (! function_exists('url_lang')) {
 if (! function_exists('item_active')) {
     function item_active($active, $route = null, $params = [], $url = null)
     {
-        if (strpos($active,'|')) {
+        if (strpos($active, '|')) {
             $actives = explode('|', $active);
         } else {
             $actives[] = $active;
@@ -161,13 +161,13 @@ if (! function_exists('item_active')) {
 
         foreach ($actives as $active) {
 
-            if(is_string($active) && strlen($active)>2 && !in_array(strtolower($active),['true','false']) ) {
+            if (is_string($active) && strlen($active) > 2 && ! in_array(strtolower($active), ['true','false'])) {
                 $active = url_contains($active);
             }
             if ($route) {
                 //$href = route($route, $params);
                 $active = $active ?: request()->routeIs($route);
-            } else if ($url){
+            } elseif ($url) {
                 $href = url($url);
                 $active = $active  ?: $href == url()->current();
             }
@@ -181,16 +181,17 @@ if (! function_exists('item_active')) {
     }
 }
 
-if(!function_exists('item_href')) {
-    function item_href($route = null, $params = [], $url = null) {
+if (! function_exists('item_href')) {
+    function item_href($route = null, $params = [], $url = null)
+    {
 
         $href = '#';
         if ($route) {
             $href = route_lang($route, $params);
-        } else if ($url){
+        } elseif ($url) {
             $href = url($url);
         }
 
-       return $href;
+        return $href;
     }
 }
