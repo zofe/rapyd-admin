@@ -1,26 +1,30 @@
 @props([
 'items' => null,
-//'perPage' => $__data['_instance']->editRoute,
+'limits' => [5,10,20],
+'count' => 'tot.',
 ])
 @if($items)
 
     @if(method_exists($items,'links'))
-        <div class="d-flex justify-content-between mt-3">
+        <div class="d-flex justify-content-between mt-2">
             <div class="form-inline">
                 {{ $items->links() }}
             </div>
-            @if($items->total()>5)
-            <div class="form-inline">
-                <select wire:model="perPage" class="form-control">
-                    <option>5</option>
-                    <option>10</option>
-                    <option>20</option>
-                </select>
-            </div>
+            @if(is_array($limits) && count($limits) && $items->total()>$limits[0])
+                <div class="form-inline">
+                    <select wire:model="perPage" class="form-control">
+                        <option>5</option>
+                        <option>10</option>
+                        <option>20</option>
+                    </select>
+                </div>
             @endif
-            <div class="form-inline d-flex justify-content-end text-right text-muted">
-                tot.{{ $items->total() }}
-            </div>
+
+            @if($count)
+                <div class="form-inline d-flex justify-content-end text-right text-muted">
+                    {{ $count }} {{ $items->total() }}
+                </div>
+            @endif
         </div>
     @endif
 @endif

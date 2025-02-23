@@ -12,12 +12,9 @@
 ])
 
 @php
-    if ($route) {
-        $href = route_lang($route, $params);
-        $active = $active ?: request()->routeIs($route);
-    } else if ($url){
-        $href = url($url);
-    }
+
+    $active = item_active($active, $route, $params, $url);
+    $href = item_href($route, $params, $url);
 
     if($fromItem) {
         $active = false;

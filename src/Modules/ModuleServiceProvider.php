@@ -83,6 +83,15 @@ class ModuleServiceProvider extends ServiceProvider
                     //                        config(['livewire.layout' => config($moduleName.'.layout')]);
                     //                    }
                 }
+
+                if(File::exists($modulePath.'workflow.php')) {
+                    $workflows = require $modulePath.'workflow.php';
+                    foreach ($workflows as $workflowName => $workflowDefinition) {
+                        $registry = app()->make('workflow');
+                        $registry->addFromArray($workflowName, $workflowDefinition);
+                    }
+                }
+
                 $this->loadViewsFrom($modulePath . 'Views', $moduleName);
                 $this->loadViewsFrom($modulePath . 'Livewire', $moduleName);//'components');
                 $this->loadMigrationsFrom($modulePath . 'Database/Migrations');

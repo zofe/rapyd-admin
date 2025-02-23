@@ -18,7 +18,7 @@
 @endphp
 
 <div {{ $attributes->only('class') }}>
-    <div class="card-body">
+    <div class="card-body shadow">
         <x-rpd::card-header :title="$title" :buttons="$buttons" />
        {{ $slot }}
     </div>

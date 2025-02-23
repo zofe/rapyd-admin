@@ -10,7 +10,7 @@
 <div class="rpd-table">
     @if($title || $buttons || $filters)
     <form autocomplete="off">
-        <div class="d-flex @if($marginbottom)mb-4 @endif">
+        <div class="d-flex @if($marginbottom)mb-2 @endif">
             <div class="flex-grow-1">
                 <div class="row g-2">
                     <x-rpd::heading :title="$title" />
@@ -23,7 +23,7 @@
         </div>
     </form>
     @endif
-    <div class="table row mb-1">
+    <div class="table mb-0">
         <div class="table-responsive">
             {{ $slot }}
         </div>

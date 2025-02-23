@@ -11,13 +11,15 @@
 @php
 @endphp
 <div class="rpd-view" {{$attributes->only('x-data')}}>
-    <form autocomplete="off">
+
         <div class="d-flex mb-4">
             <x-rpd::heading :title="$title" :classTitle="$classTitle" />
+            <form autocomplete="off">
             {{ $filters }}
+            </form>
             <x-rpd::button-group :buttons="$buttons" :id="$btnId" />
         </div>
-    </form>
+
     <div>
         {{ $slot }}
     </div>
