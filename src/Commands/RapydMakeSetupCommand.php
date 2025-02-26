@@ -5,7 +5,6 @@ namespace Zofe\Rapyd\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
-
 class RapydMakeSetupCommand extends Command
 {
     public $signature = 'rpd:make:setup';
@@ -13,7 +12,7 @@ class RapydMakeSetupCommand extends Command
 
     public function handle()
     {
-        if (!file_exists(base_path('.env'))) {
+        if (! file_exists(base_path('.env'))) {
             if (file_exists(base_path('.env.example'))) {
                 if (copy(base_path('.env.example'), base_path('.env'))) {
                     $this->info('.env created');
@@ -25,7 +24,7 @@ class RapydMakeSetupCommand extends Command
 
         if (config('database.default') === 'sqlite') {
             $sqlitePath = database_path('database.sqlite');
-            if (!file_exists($sqlitePath)) {
+            if (! file_exists($sqlitePath)) {
                 if (touch($sqlitePath)) {
                     $this->info('database.sqlite created');
                 }

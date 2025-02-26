@@ -84,7 +84,7 @@ class ModuleServiceProvider extends ServiceProvider
                     //                    }
                 }
 
-                if(File::exists($modulePath.'workflow.php')) {
+                if (File::exists($modulePath.'workflow.php')) {
                     $workflows = require $modulePath.'workflow.php';
                     foreach ($workflows as $workflowName => $workflowDefinition) {
                         $registry = app()->make('workflow');
