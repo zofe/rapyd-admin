@@ -15,13 +15,19 @@
             "role": "Developer"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/zofe/laravel-stub-generator"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "illuminate/config": "^11.0|^12.0",
         "illuminate/contracts": "^11.0|^12.0",
         "laravel/serializable-closure": "^2.0",
         "livewire/livewire": "^3.0",
-        "touhidurabir/laravel-stub-generator": "^1.0",
+        "touhidurabir/laravel-stub-generator": "dev-master",
         "zofe/rapyd-module-installer": "^0.11|^0.12",
         "zofe/layout-module": "dev-main|^0.11|^0.12",
         "zofe/addresses-module": "dev-main|^0.11|^0.12",
