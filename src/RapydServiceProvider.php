@@ -19,6 +19,7 @@ use Zofe\Rapyd\Commands\RapydMakeViewCommand;
 use Zofe\Rapyd\Http\Livewire\RapydApp;
 use Zofe\Rapyd\Mechanisms\RapydTagPrecompiler;
 use Zofe\Rapyd\Modules\ModuleServiceProvider;
+use Zofe\Rapyd\Stubs\StubGenerator;
 
 class RapydServiceProvider extends ServiceProvider
 {
@@ -166,6 +167,9 @@ class RapydServiceProvider extends ServiceProvider
 
         $this->app->register(BreadcrumbsServiceProvider::class);
         $this->app->register(ModuleServiceProvider::class);
-        //$this->app->register(StubGeneratorServiceProvider::class);
+        $this->app->bind('stub-generator', function () {
+            return new StubGenerator;
+        });
+
     }
 }
