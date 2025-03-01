@@ -2,7 +2,8 @@
 
 namespace Zofe\Rapyd\Stubs\Concerns;
 
-trait NamespaceResolver {
+trait NamespaceResolver
+{
 
     /**
      * Resolve the class name and class store path from give class namespace
@@ -11,11 +12,12 @@ trait NamespaceResolver {
      * @param  string $name
      * @return string
      */
-    public function resolveClassName(string $name) {
+    public function resolveClassName(string $name)
+    {
 
         $classNameExplode = explode('\\', $name);
 
-        if ( count($classNameExplode) <= 1 ) {
+        if (count($classNameExplode) <= 1) {
 
             return $name;
         }
@@ -30,11 +32,12 @@ trait NamespaceResolver {
      * @param  string $name
      * @return mixed<string|null>
      */
-    public function resolveClassNamespace(string $name) {
+    public function resolveClassNamespace(string $name)
+    {
 
         $classFullNameExplode = explode('\\', $name);
 
-        if ( count($classFullNameExplode) <= 1 ) {
+        if (count($classFullNameExplode) <= 1) {
 
             return null;
         }
@@ -51,9 +54,10 @@ trait NamespaceResolver {
      * @param  mixed<string|null> $namespace
      * @return mixed<string|null>
      */
-    public function generateFilePathFromNamespace(string $namespace = null) {
+    public function generateFilePathFromNamespace(string $namespace = null)
+    {
 
-        if ( ! $namespace ) {
+        if (! $namespace) {
 
             return null;
         }

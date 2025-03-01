@@ -3,11 +3,11 @@
 namespace Zofe\Rapyd\Stubs;
 
 use Illuminate\Support\Facades\Response;
-use Zofe\Rapyd\Stubs\StubFactory;
-use Zofe\Rapyd\Stubs\Exceptions\StubGenerationException;
 use Zofe\Rapyd\Stubs\Concerns\FileHelpers as StubFileHelpers;
+use Zofe\Rapyd\Stubs\Exceptions\StubGenerationException;
 
-class StubGenerator {
+class StubGenerator
+{
 
     use StubFileHelpers;
 
@@ -72,7 +72,8 @@ class StubGenerator {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->stubFactory = new StubFactory;
     }
@@ -86,11 +87,12 @@ class StubGenerator {
      *
      * @return self
      */
-    public function from(string $stubPath, bool $asFullPath = false) {
+    public function from(string $stubPath, bool $asFullPath = false)
+    {
 
         $this->stub = $asFullPath ? $stubPath : $this->getFileFullPath($stubPath);
 
-        if ( ! $this->fileExists($this->stub) ) {
+        if (! $this->fileExists($this->stub)) {
 
             throw StubGenerationException::stubFileNotFound($this->stub);
         }
@@ -108,18 +110,19 @@ class StubGenerator {
      *
      * @return self
      */
-    public function to(string $storePath, bool $createIfNotExist = false, bool $asFullPath = false) {
+    public function to(string $storePath, bool $createIfNotExist = false, bool $asFullPath = false)
+    {
 
         $fullStorePath = $asFullPath ? $storePath : $this->getStoreDirectoryPath($storePath);
 
-        if ( $fullStorePath && $this->isDirectory($fullStorePath) ) {
+        if ($fullStorePath && $this->isDirectory($fullStorePath)) {
 
             $this->storePath = $fullStorePath;
 
             return $this;
         }
 
-        if ( !$createIfNotExist ) {
+        if (! $createIfNotExist) {
 
             throw StubGenerationException::generatingFileStoreDirectoryNotFound($fullStorePath);
         }
@@ -136,7 +139,8 @@ class StubGenerator {
      * @param  string   $generatingFileName
      * @return self
      */
-    public function as(string $generatingFileName) {
+    public function as(string $generatingFileName)
+    {
 
         $this->generatingFileName = $generatingFileName;
 
@@ -149,7 +153,8 @@ class StubGenerator {
      * @param  string   $generatingFileExtension
      * @return self
      */
-    public function ext(string $generatingFileExtension) {
+    public function ext(string $generatingFileExtension)
+    {
 
         $this->generatingFileExtension = $generatingFileExtension;
 
@@ -161,7 +166,8 @@ class StubGenerator {
      *
      * @return self
      */
-    public function noExt() {
+    public function noExt()
+    {
 
         $this->generatingFileExtension = null;
 
@@ -175,7 +181,8 @@ class StubGenerator {
      * @param  array stubReplacers
      * @return self
      */
-    public function withReplacers(array $stubReplacers = []) {
+    public function withReplacers(array $stubReplacers = [])
+    {
 
         $this->stubReplacers = $stubReplacers;
 
@@ -189,7 +196,8 @@ class StubGenerator {
      * @param  bool replace
      * @return self
      */
-    public function replace(bool $replace) {
+    public function replace(bool $replace)
+    {
 
         $this->replace = $replace;
 
@@ -202,28 +210,29 @@ class StubGenerator {
      *
      * @return bool
      */
-    public function save() {
+    public function save()
+    {
 
-        if ( ! $this->storePath ) {
+        if (! $this->storePath) {
 
             throw StubGenerationException::generatingFileStoreDirectoryNotProvided();
         }
 
-        if ( ! $this->generatingFileName ) {
+        if (! $this->generatingFileName) {
 
             throw StubGenerationException::generatingFileNameNotProvided();
         }
 
         $fileFullPath = $this->getPath($this->storePath, $this->generatingFileName, $this->generatingFileExtension);
 
-        if ( $this->fileExists($fileFullPath) ) {
+        if ($this->fileExists($fileFullPath)) {
 
-            if ( ! $this->replace ) {
+            if (! $this->replace) {
 
                 throw StubGenerationException::generatingFileAlreadyExists($fileFullPath);
             }
 
-            if ( ! $this->removeFile($fileFullPath) ) {
+            if (! $this->removeFile($fileFullPath)) {
 
                 throw StubGenerationException::unableToRemoveExistingFile($fileFullPath);
             }
@@ -240,9 +249,10 @@ class StubGenerator {
      *
      * @return \Illuminate\Support\Facades\Response
      */
-    public function download() {
+    public function download()
+    {
 
-        if ( ! $this->generatingFileName ) {
+        if (! $this->generatingFileName) {
 
             throw StubGenerationException::generatingFileNameNotProvided();
         }
@@ -260,9 +270,10 @@ class StubGenerator {
      *
      * @return string
      */
-    public function toString() {
+    public function toString()
+    {
 
-        if ( ! $this->stub ) {
+        if (! $this->stub) {
 
             throw StubGenerationException::stubFileNotProvided();
         }
