@@ -14,7 +14,7 @@ Create new laravel app then install rapyd-admin package.
 (answer “y” to the question about writes "allow-plugins" to composer.json)
 
 ```bash
-composer create-project --prefer-dist laravel/laravel myapp "11.*" 
+composer create-project --prefer-dist laravel/laravel myapp 
 
 cd myapp
 composer require zofe/rapyd-admin
