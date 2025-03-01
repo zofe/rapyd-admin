@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-use Touhidurabir\StubGenerator\Facades\StubGenerator;
+use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand

@@ -1,0 +1,11 @@
+//RGBA to HEX
+@function rgba-to-hex($color, $background: #fff) {
+    @if $color and alpha($color) != 1 {
+        $percent: alpha($color) * 100%;
+        $opaque: opacify($color, 1);
+
+        @return mix($opaque, $background, $percent);
+    } @else {
+        @return $color;
+    }
+}

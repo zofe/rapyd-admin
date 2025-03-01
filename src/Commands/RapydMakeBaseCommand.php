@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Laravel\SerializableClosure\SerializableClosure;
-use Touhidurabir\StubGenerator\Facades\StubGenerator;
+use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsMiddleware;
 use Zofe\Rapyd\Breadcrumbs\Manager;
 

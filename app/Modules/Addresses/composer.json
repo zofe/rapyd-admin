@@ -1,0 +1,51 @@
+{
+    "name": "zofe/addresses-module",
+    "description": "address module for rapyd-admin application",
+    "license": "mit",
+    "type": "rapyd-module",
+    "authors": [
+        {
+            "name": "Felice",
+            "email": "felice.ostuni@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/config": "^11.0",
+        "illuminate/contracts": "^11.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "11.0.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Modules\\Addresses\\": "./",
+            "App\\Modules\\Addresses\\Database\\Factories\\": "database/factories"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Modules\\Addresses\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "psalm": "vendor/bin/psalm",
+        "test": "vendor/bin/phpunit --colors=always",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "allow-plugins": {
+            "zofe/rapyd-module-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Modules\\Addresses\\AddressesServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

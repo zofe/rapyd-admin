@@ -4,7 +4,7 @@ namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Touhidurabir\StubGenerator\Facades\StubGenerator;
+use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeHomeCommand extends Command

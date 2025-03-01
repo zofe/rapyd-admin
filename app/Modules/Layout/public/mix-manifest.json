@@ -1,0 +1,13 @@
+{
+    "/layout.js": "/layout.js",
+    "/styles.css": "/styles.css",
+    "/public/vendor/layout/layout.js": "/public/vendor/layout/layout.js",
+    "/public/vendor/layout/layout.js.LICENSE.txt": "/public/vendor/layout/layout.js.LICENSE.txt",
+    "/public/vendor/layout/layout.js.map": "/public/vendor/layout/layout.js.map",
+    "/public/vendor/layout/mix-manifest.json": "/public/vendor/layout/mix-manifest.json",
+    "/public/vendor/layout/styles.css": "/public/vendor/layout/styles.css",
+    "/public/vendor/layout/styles.css.map": "/public/vendor/layout/styles.css.map",
+    "/public/vendor/layout/img/en.svg": "/public/vendor/layout/img/en.svg",
+    "/public/vendor/layout/img/it.svg": "/public/vendor/layout/img/it.svg",
+    "/public/vendor/layout/img/user-account-icon.png": "/public/vendor/layout/img/user-account-icon.png"
+}

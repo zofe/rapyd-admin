@@ -27,7 +27,6 @@
         "illuminate/contracts": "^11.0|^12.0",
         "laravel/serializable-closure": "^2.0",
         "livewire/livewire": "^3.0",
-        "touhidurabir/laravel-stub-generator": "dev-master@dev",
         "zofe/rapyd-module-installer": "^0.11|^0.12",
         "zofe/layout-module": "dev-main|^0.11|^0.12",
         "zofe/addresses-module": "dev-main|^0.11|^0.12",
