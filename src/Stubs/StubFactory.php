@@ -1,6 +1,6 @@
 <?php
 
-namespace Zofe\Rapyd\Stubs\StubGenerator;
+namespace Zofe\Rapyd\Stubs;
 
 use Zofe\Rapyd\Stubs\Concerns\FileHelpers as StubFileHelpers;
 
