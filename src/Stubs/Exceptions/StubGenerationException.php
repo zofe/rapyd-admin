@@ -4,14 +4,16 @@ namespace Zofe\Rapyd\Stubs\Exceptions;
 
 use Exception;
 
-class StubGenerationException extends Exception {
+class StubGenerationException extends Exception
+{
 
     /**
      * The stub file not provided exception
      *
      * @return object<\Exception>
      */
-    public static function stubFileNotProvided() {
+    public static function stubFileNotProvided()
+    {
 
         return new static("Stub file not provided");
     }
@@ -23,7 +25,8 @@ class StubGenerationException extends Exception {
      * @param  string  $stubFilePath
      * @return object<\Exception>
      */
-    public static function stubFileNotFound(string $stubFilePath) {
+    public static function stubFileNotFound(string $stubFilePath)
+    {
 
         return new static("Stub file not found at given path `{$stubFilePath}`");
     }
@@ -34,7 +37,8 @@ class StubGenerationException extends Exception {
      *
      * @return object<\Exception>
      */
-    public static function generatingFileStoreDirectoryNotProvided() {
+    public static function generatingFileStoreDirectoryNotProvided()
+    {
 
         return new static("The generating file store location or directory not provided");
     }
@@ -45,7 +49,8 @@ class StubGenerationException extends Exception {
      *
      * @return object<\Exception>
      */
-    public static function generatingFileNameNotProvided() {
+    public static function generatingFileNameNotProvided()
+    {
 
         return new static("The generating file name not provided");
     }
@@ -57,7 +62,8 @@ class StubGenerationException extends Exception {
      * @param  string  $stubFilePath
      * @return object<\Exception>
      */
-    public static function generatingFileStoreDirectoryNotFound(string $directoryPath) {
+    public static function generatingFileStoreDirectoryNotFound(string $directoryPath)
+    {
 
         return new static("Invalid location `{$directoryPath}` to store generated file from stub");
     }
@@ -69,7 +75,8 @@ class StubGenerationException extends Exception {
      * @param  string  $stubFilePath
      * @return object<\Exception>
      */
-    public static function generatingFileAlreadyExists(string $filePath) {
+    public static function generatingFileAlreadyExists(string $filePath)
+    {
 
         return new static("The file already exists at `{$filePath}`");
     }
@@ -81,7 +88,8 @@ class StubGenerationException extends Exception {
      * @param  string  $stubFilePath
      * @return object<\Exception>
      */
-    public static function unableToRemoveExistingFile(string $filePath) {
+    public static function unableToRemoveExistingFile(string $filePath)
+    {
 
         return new static("Can not remove already existing file at `{$filePath}`");
     }

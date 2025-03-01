@@ -5,9 +5,9 @@ namespace Zofe\Rapyd\Commands;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
-use Zofe\Rapyd\Stubs\Facades\StubGenerator;
-
 use Zofe\Rapyd\Mechanisms\RapydTagPrecompiler;
+
+use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeEditCommand extends RapydMakeBaseCommand

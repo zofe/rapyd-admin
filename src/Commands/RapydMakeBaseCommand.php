@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Laravel\SerializableClosure\SerializableClosure;
-use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsMiddleware;
 use Zofe\Rapyd\Breadcrumbs\Manager;
+use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 
 class RapydMakeBaseCommand extends Command
 {
