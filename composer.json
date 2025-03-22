@@ -30,7 +30,8 @@
         "zofe/rapyd-module-installer": "^0.11|^0.12",
         "zofe/layout-module": "dev-main|^0.11|^0.12",
         "zofe/addresses-module": "dev-main|^0.11|^0.12",
-        "zofe/auth-module": "dev-main|^0.11|^0.12"
+        "zofe/auth-module": "dev-main|^0.11|^0.12",
+        "zofe/search-module": "dev-main|^0.11|^0.12"
     },
     "require-dev": {
         "orchestra/testbench": "^9.3|^10.0",
@@ -58,6 +59,7 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
+            "php-http/discovery": true,
             "zofe/rapyd-module-installer": true
         }
     },

@@ -45,7 +45,7 @@
 @endphp
 
 
-<div class="{{$col}}" wire:ignore >
+<div class="{{$col}} h-100" wire:ignore >
     <x-rpd::label :for="$id" :label="$label" :required="$required" />
     <div x-data
          x-init="

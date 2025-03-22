@@ -20,13 +20,14 @@
     </form>
 
     <form wire:submit.prevent="{{ $action }}" autocomplete="off">
-        <div>
+        <div class="mb-2">
             {{ $slot }}
         </div>
 
+
         <div class="d-flex">
             <div class="flex-grow-1">
-                <div class="row g-2">
+                <div class="g-2">
                     <x-rpd::button-group :buttons="$actions" position="center" />
                 </div>
             </div>

@@ -14,6 +14,12 @@
 ])
 
 @php
+    $required = false;
+    if($model && property_exists($this,'rules') && isset($this->rules[$model]) && stristr($this->rules[$model],'required')) {
+       $required = true;
+    }
+
+
     if ($lazy) $bind = 'lazy';
     else $bind = 'defer';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
@@ -36,7 +42,7 @@
 
 
 <div class="{{$col}}" wire:ignore wire:key="ignore-{{$id}}">
-    <x-rpd::label :for="$id" :label="$label"/>
+    <x-rpd::label :for="$id" :label="$label" :required="$required" />
 
     <div class="input-group">
         <select x-data="{

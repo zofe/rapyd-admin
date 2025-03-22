@@ -10,6 +10,7 @@
 'debounce' => false,
 'lazy' => false,
 'col'  => null,
+'class' => null,
 ])
 
 @php
@@ -30,12 +31,20 @@
     $id = $attributes->get('id', $model ?? $wireModel);
     $prefix =  null;
 
-    $attributes = $attributes->class([
-        'form-control',
-        'form-control-' . $size => $size,
-        'rounded-end' => !$append,
-        'is-invalid' => $errors->has($key),
-    ])->merge([
+    if(!$class) {
+        $classArr= [
+            'form-control',
+            'form-control-' . $size => $size,
+            'rounded-end' => !$append,
+            'is-invalid' => $errors->has($key),
+        ];
+        $unstyled = true;
+    } else {
+        $classArr = explode(' ', $class);
+        $unstyled = false;
+    }
+
+    $attributes = $attributes->class($classArr)->merge([
         'type' => $type,
         'inputmode' => $inputmode,
         'id' => $id,
@@ -46,7 +55,7 @@
 <div class="{{$col}}">
     <x-rpd::label :for="$id" :label="$label" :required="$required"/>
 
-    <div class="input-group mb-2">
+    <div class="{{ $unstyled ? 'input-group mb-2' : '' }}">
         <x-rpd::input-addon :icon="$icon" :label="$prepend"/>
 
         <input {{ $attributes }}>
