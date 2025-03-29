@@ -31,6 +31,20 @@ class RapydMakeSetupCommand extends Command
             }
         }
 
+        $envPath = base_path('.env');
+        $key = 'SCOUT_DRIVER';
+        $value = 'collection';
+
+        $env = file_get_contents($envPath);
+        if (str_contains($env, "$key=")) {
+            $env = preg_replace("/^$key=.*/m", "$key=$value", $env);
+        } else {
+            $env .= "\n$key=$value\n";
+        }
+
+        file_put_contents($envPath, $env);
+        config()->set('scout.driver', $value);
+
         $this->call('rpd:make:home');
         $this->call('rpd:make:auth');
 
