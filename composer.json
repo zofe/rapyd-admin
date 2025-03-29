@@ -1,6 +1,6 @@
 {
     "name": "zofe/rapyd-admin",
-    "description": "rapyd admin",
+    "description": "rapyd admin for laravel",
     "keywords": [
         "zofe",
         "rapyd"
@@ -30,8 +30,8 @@
         "zofe/rapyd-module-installer": "^0.11|^0.12",
         "zofe/layout-module": "dev-main|^0.11|^0.12",
         "zofe/addresses-module": "dev-main|^0.11|^0.12",
-        "zofe/auth-module": "dev-main|^0.11|^0.12",
-        "zofe/search-module": "dev-main|^0.11|^0.12"
+        "zofe/search-module": "dev-main|^0.11|^0.12",
+        "zofe/auth-module": "dev-main|^0.11|^0.12"
     },
     "require-dev": {
         "orchestra/testbench": "^9.3|^10.0",
