@@ -76,16 +76,29 @@
                 .then((data) => {
                   callback(data);
                 });
+            },
+            render: {
+                option: function(item, escape) {
+                    return item.title;
+                },
+                item: function(item, escape) {
+                    return item.title;
+                }
             }
+
         @endif
 	    ,onChange : function(values) {
 	        $wire.set('{{$key}}', values);
 	    }
+	    ,onItemAdd: function(value, item) {
+            this.setTextboxValue('');
+            //this.refreshOptions();
+        }
 
         });" x-ref="tomSelect" x-cloak {{ $attributes }}>
             <option value="">{{ $placeholder }}</option>
         @foreach($options as $optionValue => $optionLabel)
-            <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
+            <option value="{{ $optionValue }}">{!! $optionLabel !!}</option>
         @endforeach
         </select>
         <x-rpd::error :key="$key"/>

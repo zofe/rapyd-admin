@@ -3,7 +3,8 @@
 'buttons' => null,
 'border' => null,
 'bg' => null,
-'mb' => '4',
+'mb' => '3',
+'body' => 'card-body shadow',
 ])
 
 @php
@@ -18,7 +19,7 @@
 @endphp
 
 <div {{ $attributes->only('class') }}>
-    <div class="card-body shadow">
+    <div class="{{ $body }}">
         <x-rpd::card-header :title="$title" :buttons="$buttons" />
        {{ $slot }}
     </div>

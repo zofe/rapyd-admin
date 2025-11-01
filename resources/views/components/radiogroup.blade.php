@@ -7,6 +7,7 @@
 'lazy' => false,
 'col'  => null,
 'chunk'=> 5,
+'horizontal' => false,
 ])
 
 @php
@@ -30,7 +31,7 @@
 
 
 @foreach (collect($options)->chunk($chunk) as $options)
-<div class="{{$col}}">
+<div class="{{$col}} {{ $horizontal ? 'd-flex gap-3 flex-wrap' : '' }}">
 
         @foreach($options as $optionValue => $optionLabel)
             @php

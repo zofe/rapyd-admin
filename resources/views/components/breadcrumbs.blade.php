@@ -2,7 +2,7 @@
     $breadcrumbs = $generate();
 @endphp
 @if($breadcrumbs->count() > 1)
-<nav aria-label="breadcrumb">
+<nav aria-label="breadcrumb" wire:ignore>
     <ol class="breadcrumb pr-3">
         @foreach ($breadcrumbs as $crumbs)
             @if ($crumbs->url() && !$loop->last)

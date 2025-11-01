@@ -11,7 +11,7 @@
 @php
     //$label = __($label);
 
-    $identifier= \Illuminate\Support\Str::studly($label);
+    $identifier= \Illuminate\Support\Str::slug($label,'_');
 
     $active = item_active($active, $route, $params, $url);
 
@@ -33,7 +33,7 @@
         <span class="text-capitalize pt-1">{{ $label }}</span>
     </a>
     <div id="collapse{{$identifier}}" data-parent="#accordionSidebar" class="collapse {{ $active ? 'show' : '' }}" style="">
-        <div class="ps-2 pb-1 small collapse-inner rounded">
+        <div class="pb-1 small collapse-inner rounded">
             {{ $slot }}
         </div>
     </div>

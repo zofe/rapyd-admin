@@ -9,14 +9,22 @@
 'toggle' => null,
 'target' => null,
 'click' => null,
+'route' => null,
+'url' => null,
+'href' => null,
+'params' => [],
 'confirm' => false,
 'message' => null,
+'label' => null,
 ])
 
 @php
     $message = $confirm ? __($confirm) : __('Are you sure?');
     if($click) {
         $click = strpos($click,'(') ? $click : $click.'()';
+    }
+    if($route) {
+        $href = item_href($route, $params, $url);
     }
 
     $attributes = $attributes->class([
@@ -32,11 +40,16 @@
         'wire:click' => $confirm ? null : $click,
         'x-data' => $confirm && $click ? "{}" : null,
         'x-on:click' => $confirm && $click ? "modbox.confirm({body: '".htmlspecialchars($message,ENT_QUOTES)."',okButton: {label: 'Confirm'}}).then(() => {  \$wire.$click; })" : null,
-        'role' => $click || $target ? "button" : 'null',
+        'role' => $click || $target || $href ? "button" : 'null',
     ]);
 @endphp
 
 @if($name)
-
-    <i {{ $attributes }}></i>
+    @if($href)
+        <a href="{{ $href }}" class="text-decoration-none text-reset">
+            <i {{ $attributes }}></i>  {{ $label ?? $slot }}
+        </a>
+    @else
+        <i {{ $attributes }}></i>  {{ $label ?? $slot }}
+    @endif
 @endif

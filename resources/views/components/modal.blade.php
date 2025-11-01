@@ -9,6 +9,7 @@
 'color'  => 'link',
 'size'   => 'sm',
 'onclick' => null,
+'nobuttons' => false,
 ])
 @php
     $attributes = $attributes->class([
@@ -39,9 +40,11 @@
 
             <div class="modal-footer">
                 {{ $buttons }}
+                @if(!$nobuttons)
                 <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">{{ $action ? 'Cancel' : 'Close' }}</button>
                 @if($action)<input type="submit" class="btn btn-primary" role="button" value="Confirm">@endif
                 @if($onclick)<input onclick="{{$onclick}}" type="button" class="btn btn-primary" role="button" value="Confirm">@endif
+                @endif
             </div>
 
         </div>

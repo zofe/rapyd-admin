@@ -3,6 +3,7 @@
 'limits' => [5,10,20],
 'count' => 'tot.',
 ])
+@aware(['items'])
 @if($items)
 
     @if(method_exists($items,'links'))

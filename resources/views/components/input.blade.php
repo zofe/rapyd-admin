@@ -11,6 +11,11 @@
 'lazy' => false,
 'col'  => null,
 'class' => null,
+
+'inline'        => false,               // false = stacked, true = horizontal
+'labelCol'      => 'col-md-3',          // larghezza label in orizzontale
+'inputCol'      => 'col-md-9',         // larghezza campo in orizzontale
+
 ])
 
 @php
@@ -52,14 +57,32 @@
     ]);
 @endphp
 
+@if($inline)
+<div class="row mb-2 align-items-center">
+    <label
+        for="{{ $id }}" class="{{ $labelCol }} col-form-label {{ $required ? 'fw-bold' : '' }} text-md-end"
+    >
+        {{ $label }}
+{{--        @if($required)<span class="text-danger">*</span>@endif--}}
+    </label>
+
+    <div class="{{ $inputCol }}">
+        <div class="{{ $unstyled ? 'input-group mb-2' : '' }}">
+            <x-rpd::input-addon :icon="$icon" :label="$prepend"/>
+            <input {{ $attributes }}>
+            <x-rpd::input-addon :label="$append" class="rounded-end"/>
+        </div>
+        <x-rpd::error :key="$key"/>
+        <x-rpd::help :label="$help"/>
+    </div>
+</div>
+@else
 <div class="{{$col}}">
     <x-rpd::label :for="$id" :label="$label" :required="$required"/>
 
     <div class="{{ $unstyled ? 'input-group mb-2' : '' }}">
         <x-rpd::input-addon :icon="$icon" :label="$prepend"/>
-
         <input {{ $attributes }}>
-
         <x-rpd::input-addon :label="$append" class="rounded-end"/>
 
         <x-rpd::error :key="$key"/>
@@ -67,7 +90,7 @@
 
     <x-rpd::help :label="$help"/>
 </div>
-
+@endif
 
 
 

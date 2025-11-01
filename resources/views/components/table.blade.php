@@ -35,7 +35,7 @@
                 @php
                 /** @var $items \Illuminate\Pagination\LengthAwarePaginator */
                 @endphp
-                <x-rpd::pagination :items="$items" />
+                <x-rpd::pagination />
 
                 <x-rpd::button-group :buttons="$actions" position="center" />
             </div>
