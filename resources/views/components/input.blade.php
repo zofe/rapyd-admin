@@ -29,7 +29,7 @@
     else if (in_array($type, ['tel', 'search', 'email', 'url'])) $inputmode = $type;
     else $inputmode = 'text';
     if ($debounce) $bind = 'live.debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
-    else if ($lazy) $bind = 'lazy';
+    else if ($lazy) $bind = 'blur';
     else $bind = 'live.debounce.150ms';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);

@@ -9,7 +9,7 @@
 ])
 
 @php
-    if ($lazy) $bind = 'lazy';
+    if ($lazy) $bind = 'blur';
     else $bind = 'defer';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);

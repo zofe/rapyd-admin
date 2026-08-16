@@ -9,7 +9,7 @@
 
 @php
     if($lazy) {
-        $bind = 'lazy';
+        $bind = 'blur';
     } else {
         $bind = 'live.debounce.150ms';
     }
