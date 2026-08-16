@@ -4,39 +4,31 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        php: [8.2]
-        laravel: [11.*, 12.*]
+        php: [8.2, 8.3]
+        laravel: [12.*, 13.*]
         stability: [prefer-stable]
         include:
-          - laravel: 11.*
-            testbench: 9.*
           - laravel: 12.*
+            testbench: 10.*
+          - laravel: 13.*
             testbench: 10.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, xdebug
-          coverage: xdebug
-
-      - name: Setup problem matchers
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
+          coverage: none
 
       - name: Install dependencies
         run: |
@@ -44,12 +36,4 @@ jobs:
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          files: coverage.xml
-          flags: unittests
-          name: code-coverage-report
-
+        run: vendor/bin/phpunit
