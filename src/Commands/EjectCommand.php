@@ -13,18 +13,20 @@ class EjectCommand extends Command
 
     public function handle(Filesystem $files): int
     {
-        $module  = Str::studly($this->argument('module'));
-        $srcDir  = __DIR__ . "/../../src/Modules/{$module}";
+        $module = Str::studly($this->argument('module'));
+        $srcDir = __DIR__ . "/../../src/Modules/{$module}";
         $destDir = app_path("Modules/{$module}");
 
         if (! $files->isDirectory($srcDir)) {
             $this->error("Bundled module [{$module}] not found at: {$srcDir}");
+
             return self::FAILURE;
         }
 
         if ($files->isDirectory($destDir) && ! $this->option('force')) {
             $this->error("Module [{$module}] already exists at: {$destDir}");
             $this->line('Use --force to overwrite.');
+
             return self::FAILURE;
         }
 
@@ -47,7 +49,7 @@ class EjectCommand extends Command
     protected function rewriteNamespaces(Filesystem $files, string $dir, string $module): void
     {
         $packageNamespace = "Zofe\\Rapyd\\Modules\\{$module}";
-        $appNamespace     = "App\\Modules\\{$module}";
+        $appNamespace = "App\\Modules\\{$module}";
 
         foreach ($files->allFiles($dir) as $file) {
             if ($file->getExtension() !== 'php') {

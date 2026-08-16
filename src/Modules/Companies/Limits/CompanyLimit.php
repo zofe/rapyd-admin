@@ -11,6 +11,7 @@ class CompanyLimit
     {
         if (! $user) {
             Company::addGlobalScope('noAccess', fn (Builder $q) => $q->whereRaw('1 = 0'));
+
             return;
         }
 

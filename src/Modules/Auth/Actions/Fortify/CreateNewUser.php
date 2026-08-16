@@ -16,14 +16,14 @@ class CreateNewUser implements CreatesNewUsers
         $userModel = config('auth.providers.users.model');
 
         Validator::make($input, [
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'email', 'max:255', Rule::unique($userModel)],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique($userModel)],
             'password' => $this->passwordRules(),
         ])->validate();
 
         return $userModel::create([
-            'name'     => $input['name'],
-            'email'    => $input['email'],
+            'name' => $input['name'],
+            'email' => $input['email'],
             'password' => Hash::make($input['password']),
         ]);
     }

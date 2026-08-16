@@ -77,7 +77,7 @@ class ModuleServiceProvider extends ServiceProvider
                     Route::prefix($lang_prefix)->middleware(['web'])->group($modulePath.'routes.php');
                 }
 
-                if (File::exists($moduleConfigPath) &&  basename($moduleP) !== 'Workflow') {
+                if (File::exists($moduleConfigPath) && basename($moduleP) !== 'Workflow') {
                     $this->mergeConfigFrom($moduleConfigPath, $moduleName);
                     //overrire default layout
                     //                    if (config($moduleName.'.layout')) {
@@ -85,13 +85,13 @@ class ModuleServiceProvider extends ServiceProvider
                     //                    }
                 }
 
-//                if (File::exists($modulePath.'workflow.php')) {
-//                    $workflows = require $modulePath.'workflow.php';
-//                    foreach ($workflows as $workflowName => $workflowDefinition) {
-//                        $registry = app()->make('workflow');
-//                        $registry->addFromArray($workflowName, $workflowDefinition);
-//                    }
-//                }
+                //                if (File::exists($modulePath.'workflow.php')) {
+                //                    $workflows = require $modulePath.'workflow.php';
+                //                    foreach ($workflows as $workflowName => $workflowDefinition) {
+                //                        $registry = app()->make('workflow');
+                //                        $registry->addFromArray($workflowName, $workflowDefinition);
+                //                    }
+                //                }
 
                 $this->loadViewsFrom($modulePath . 'Views', $moduleName);
                 $this->loadViewsFrom($modulePath . 'Livewire', $moduleName);
@@ -180,7 +180,7 @@ class ModuleServiceProvider extends ServiceProvider
                     continue;
                 }
                 $menus[] = [
-                    'view'     => $cfg["menu_{$area}"],
+                    'view' => $cfg["menu_{$area}"],
                     'position' => $cfg["menu_{$area}_position"] ?? 0,
                 ];
             }

@@ -7,11 +7,13 @@ use Illuminate\Routing\Router;
 
 class LayoutByConfig
 {
-    public function __construct(protected Router $router) {}
+    public function __construct(protected Router $router)
+    {
+    }
 
     public function handle($request, Closure $next)
     {
-        $action     = $this->router->getCurrentRoute()->action;
+        $action = $this->router->getCurrentRoute()->action;
         $controller = $action['controller'] ?? null;
 
         if ($controller && str_contains($controller, 'App\\Modules\\')) {

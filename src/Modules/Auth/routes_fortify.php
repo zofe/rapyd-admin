@@ -29,8 +29,8 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
             ->name('login');
     }
 
-    $limiter           = config('fortify.limiters.login');
-    $twoFactorLimiter  = config('fortify.limiters.two-factor');
+    $limiter = config('fortify.limiters.login');
+    $twoFactorLimiter = config('fortify.limiters.two-factor');
     $verificationLimiter = config('fortify.limiters.verification', '6,1');
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])

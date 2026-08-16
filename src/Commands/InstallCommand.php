@@ -43,7 +43,7 @@ class InstallCommand extends Command
     {
         $this->callSilently('vendor:publish', [
             '--provider' => 'Spatie\Permission\PermissionServiceProvider',
-            '--tag'      => 'permission-migrations',
+            '--tag' => 'permission-migrations',
         ]);
         $this->line("  <fg=green>DONE</> Published spatie/laravel-permission migrations");
         $this->newLine();
@@ -53,14 +53,15 @@ class InstallCommand extends Command
     {
         $configs = [
             __DIR__ . '/../../config/permission.php' => config_path('permission.php'),
-            __DIR__ . '/../../config/fortify.php'    => config_path('fortify.php'),
-            __DIR__ . '/../../config/rapyd.php'      => config_path('rapyd.php'),
+            __DIR__ . '/../../config/fortify.php' => config_path('fortify.php'),
+            __DIR__ . '/../../config/rapyd.php' => config_path('rapyd.php'),
         ];
 
         foreach ($configs as $src => $dest) {
             $name = basename($dest);
             if ($files->exists($dest) && ! $this->option('force')) {
                 $this->line("  <fg=yellow>SKIP</> config/{$name} (already exists — use --force to overwrite)");
+
                 continue;
             }
             $files->copy($src, $dest);
@@ -78,6 +79,7 @@ class InstallCommand extends Command
             $this->warn("  app/Models/User.php not found — skipping trait injection.");
             $this->line("  Add the following traits manually to your User model:");
             $this->printTraitInstructions();
+
             return;
         }
 
@@ -118,6 +120,7 @@ class InstallCommand extends Command
 
         if ($files->exists($dest) && ! $this->option('force')) {
             $this->line("  <fg=yellow>SKIP</> UUID migration already exists.");
+
             return;
         }
 
@@ -138,8 +141,8 @@ class InstallCommand extends Command
 
             // Insert after the last top-level "use X;" line
             if (preg_match_all('/^use [A-Za-z\\\\{][^;]+;/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
-                $last  = end($matches[0]);
-                $pos   = $last[1] + strlen($last[0]);
+                $last = end($matches[0]);
+                $pos = $last[1] + strlen($last[0]);
                 $content = substr_replace($content, "\n" . $import, $pos, 0);
             }
         }
@@ -160,7 +163,7 @@ class InstallCommand extends Command
 
         if (preg_match('/(\n\s*use\s+)((?:[A-Za-z_\\\\]+,?\s*)+);/', $classBody, $match, PREG_OFFSET_CAPTURE)) {
             // There's an existing "use X, Y;" block — append missing traits
-            $existingLine  = $match[0][0];
+            $existingLine = $match[0][0];
             $existingTraits = preg_split('/[\s,]+/', trim($match[2][0]));
             $existingTraits = array_filter($existingTraits);
 
@@ -171,14 +174,14 @@ class InstallCommand extends Command
             }
 
             $newLine = rtrim($existingLine, ';') . ', ' . implode(', ', $toAdd) . ';';
-            $pos     = $classBodyStart + $match[0][1];
+            $pos = $classBodyStart + $match[0][1];
             $content = substr_replace($content, $newLine, $pos, strlen($existingLine));
         } else {
             // No existing trait use — insert one right after the class opening brace
             $insertPos = $classBodyStart + 1;
-            $indent    = '    ';
-            $newUse    = "\n{$indent}use " . implode(', ', $traits) . ";\n";
-            $content   = substr_replace($content, $newUse, $insertPos, 0);
+            $indent = '    ';
+            $newUse = "\n{$indent}use " . implode(', ', $traits) . ";\n";
+            $content = substr_replace($content, $newUse, $insertPos, 0);
         }
 
         return $content;

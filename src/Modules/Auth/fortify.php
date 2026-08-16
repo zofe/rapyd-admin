@@ -4,17 +4,17 @@ use Laravel\Fortify\Features;
 
 return [
 
-    'guard'     => 'web',
+    'guard' => 'web',
     'passwords' => 'users',
-    'username'  => 'email',
-    'email'     => 'email',
-    'home'      => '/',
-    'prefix'    => '',
-    'domain'    => null,
+    'username' => 'email',
+    'email' => 'email',
+    'home' => '/',
+    'prefix' => '',
+    'domain' => null,
     'middleware' => ['web'],
 
     'limiters' => [
-        'login'      => 'login',
+        'login' => 'login',
         'two-factor' => 'two-factor',
     ],
 

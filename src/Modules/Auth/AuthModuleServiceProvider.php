@@ -105,6 +105,7 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
         if (config('app.locales') && in_array($locale, config('app.locales', []))) {
             return ($locale !== config('app.fallback_locale')) ? $locale : '';
         }
+
         return '';
     }
 }

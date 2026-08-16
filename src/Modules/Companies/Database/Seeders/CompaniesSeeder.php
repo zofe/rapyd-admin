@@ -16,16 +16,16 @@ class CompaniesSeeder extends Seeder
                 ['tier' => 'tier1', 'parent_id' => null],
                 [
                     'business_name' => config('app.name', 'Platform'),
-                    'name'          => config('app.name', 'Platform'),
-                    'status'        => 'active',
-                    'email'         => config('mail.from.address', 'admin@example.com'),
+                    'name' => config('app.name', 'Platform'),
+                    'status' => 'active',
+                    'email' => config('mail.from.address', 'admin@example.com'),
                 ]
             );
 
             Company::firstOrCreate(
                 ['tier' => 'tier2', 'parent_id' => $root->id, 'business_name' => 'Demo Tenant'],
                 [
-                    'name'   => 'Demo Tenant',
+                    'name' => 'Demo Tenant',
                     'status' => 'active',
                 ]
             );
@@ -33,7 +33,7 @@ class CompaniesSeeder extends Seeder
             Company::firstOrCreate(
                 ['tier' => 'tier1', 'parent_id' => null, 'business_name' => 'Demo Company'],
                 [
-                    'name'   => 'Demo Company',
+                    'name' => 'Demo Company',
                     'status' => 'active',
                 ]
             );

@@ -10,7 +10,9 @@ class LayoutModuleServiceProvider extends RapydModuleServiceProvider
 {
     protected string $moduleName = 'Layout';
 
-    public function register(): void {}
+    public function register(): void
+    {
+    }
 
     public function boot(): void
     {

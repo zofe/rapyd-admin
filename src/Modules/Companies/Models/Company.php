@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Company extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasUuids;
+    use SoftDeletes;
 
     protected $table = 'companies';
 
@@ -31,7 +32,7 @@ class Company extends Model
 
     protected $casts = [
         'registration_date' => 'datetime',
-        'activation_date'   => 'datetime',
+        'activation_date' => 'datetime',
     ];
 
     public function users()
