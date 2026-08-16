@@ -20,7 +20,7 @@ class AuthSeeder extends Seeder
         $admin = $userModel::firstOrCreate(
             ['email' => 'admin@laravel'],
             [
-                'name'     => 'Admin',
+                'name' => 'Admin',
                 'password' => Hash::make('admin'),
             ]
         );
