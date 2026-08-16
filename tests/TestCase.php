@@ -39,6 +39,7 @@ class TestCase extends Orchestra
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 
+
     protected function defineRoutes($router)
     {
         $router->group(['prefix' => 'test-demo'], function () use ($router) {
@@ -82,5 +83,9 @@ class TestCase extends Orchestra
         ]);
 
         $app['config']->set('session.driver', 'file');
+
+        // Disable bundled modules that have migrations depending on framework tables
+        // (Companies adds company_id to users which doesn't exist in testbench in-memory DB)
+        $app['config']->set('rapyd.companies.enabled', false);
     }
 }
