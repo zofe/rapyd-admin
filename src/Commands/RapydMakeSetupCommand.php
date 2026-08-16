@@ -48,6 +48,8 @@ class RapydMakeSetupCommand extends Command
         $this->call('rpd:make:home');
         $this->call('rpd:make:auth');
 
-
+        if (config('rapyd.companies.enabled', true)) {
+            $this->call('db:seed', ['--class' => \Zofe\Rapyd\Modules\Companies\Database\Seeders\CompaniesSeeder::class]);
+        }
     }
 }

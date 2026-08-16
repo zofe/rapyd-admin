@@ -1,185 +1,118 @@
-# Rapyd Admin: Simplifying Laravel Development
+# Rapyd Admin
 
 <a href="https://github.com/zofe/rapyd-admin/actions/workflows/run-tests.yml"><img src="https://github.com/zofe/rapyd-admin/actions/workflows/run-tests.yml/badge.svg" alt="Build Status"></a>
 <a href="https://packagist.org/packages/zofe/rapyd-admin"><img src="https://img.shields.io/packagist/dt/zofe/rapyd-admin" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/zofe/rapyd-admin"><img src="https://img.shields.io/packagist/v/zofe/rapyd-admin" alt="Latest Stable Version"></a>
 
-[![rapyd.dev](screencast.gif)](https://rapyd.dev/demo)
+[![rapyd.dev](screencast.gif)](https://rapyd.dev)
 
+**Rapyd Admin** is an open-source admin panel for Laravel, powered by Livewire 4 and Bootstrap 5.
+
+> **Status**: v0.4.0 is a development release. APIs may change.
+
+---
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 11 / 12 / 13
+- Livewire 4
+
+---
 
 ## Installation
 
-Create new laravel app then install rapyd-admin package.
-
-(answer “y” to the question about writes "allow-plugins" to composer.json)
-
 ```bash
-composer create-project --prefer-dist laravel/laravel myapp 
-
+composer create-project --prefer-dist laravel/laravel myapp
 cd myapp
 composer require zofe/rapyd-admin
 ```
 
-Then you can customize roles & permissions in app/Modules/Auth/permissions.php then run
+Run the setup command to configure the database, publish configs, and seed the default admin user:
 
 ```bash
 php artisan rpd:make:setup
-
-#then you can serve the app with
 php artisan serve
 ```
 
-Now you can login with a default admin user:
+Login with the default admin account:
+
 ```
-admin@laravel
-admin
+email:    admin@laravel
+password: admin
 ```
 
 ---
 
-## Rapyd Admin
+## What's included
 
+Rapyd Admin ships three bundled modules — no extra packages needed:
 
-Rapyd Admin enhances Laravel by offering essential admin features with modular approach:
+- **Layout** — navbar/sidebar based on SBAdmin 3, updated to Bootstrap 5.3, SCSS customizable, anonymous Blade components.
+- **Auth** — authentication via Laravel Fortify, Socialite, 2FA, and role/permission management via `spatie/laravel-permission`.
+- **Companies** — multi-tenant company hierarchy (1–3 tiers), with optional UUID primary keys.
 
-- **BALL Stack Environment:** Bundles Bootstrap CSS, Alpine.js, Laravel, and Livewire for a quick boilerplate.
+> In v0.3.x and earlier, Layout and Auth were separate packages installed via `rapyd-module-installer`. They are now bundled directly in `zofe/rapyd-admin`.
 
-- **Layout Module:** Classic sidebar/navbar design based on SBAdmin 3, updated to Bootstrap 5.3 with customizable SCSS and a variety of blade anonymous components for standardized, extendable frontends.
-
-- **Auth Module:** Robust authentication with socialite integration, Fortify, 2FA, and role/permission management.
-
-- **Custom Modules:** Structured handling of components and modules, REST API endpoints, and more, with an emphasis on reusable, encapsulated code for cleaner organization and maintainability.
-
-
+---
 
 ## Generators
 
-Rapyd has some commands to generate models, components, modules (bundled components & views isolated in a folder) via artisan command line:
+### Livewire component
 
-
-### Models
-
-generate a model (via command line)
 ```bash
-php artisan rpd:make:model {ModelName} 
-
-# example
-php artisan rpd:make:model Article
-```
-
-### Livewire components 
-```bash
-php artisan rpd:make {ComponentName} {Model}
-
-# example
 php artisan rpd:make UserTable User
 ```
 
-will generate 
+Generates `app/Livewire/UserTable.php` and its blade view.
 
-```
-laravel/
-├─ app/
-│  ├─ Livewire/
-│  │  ├─ UserTable.php
-│  resources/
-│  │  ├─ views/
-│  │  │  ├─livewire/
-│  │  │  │  ├─ user_table.php
-```
-
-
-## Modules & Generators
-
-example of out of the box module structure you can use after installing rapyd-admin.
+### Module (Table + View + Edit)
 
 ```bash
-php artisan rpd:make {ComponentsName} {Model} --module={module}
-
-# example
 php artisan rpd:make Articles Article --module=Blog
 ```
-- Will create `Blog` folder in you app/Modules directory.
-- Three livewire components in the `Livewire` subfolder (ArticlesEdit, ArticlesTable, ArticlesView)
-- Three blade components in the `Views` subfolder (articles_edit, articles_table, articles_view)
-- Inside your Module folder you can reply (if needed) the laravel application folder structure (controllers, migrations, jobs, etc..)
 
+Creates `app/Modules/Blog/` with:
 
 ```
-laravel/
-├─ app/
-│  ├─ Modules/
-│  │  ├─ Blog/
-│  │  │  ├─ Livewire/
-│  │  │  │  ├─ ArticlesEdit.php
-│  │  │  │  ├─ ArticlesTable.php
-│  │  │  │  ├─ ArticlesView.php
-│  │  │  ├─ Views/
-│  │  │  │  ├─ articles_edit.blade.php
-│  │  │  │  ├─ articles_table.blade.php
-│  │  │  │  ├─ articles_view.blade.php
-│  │  │  ├─ routes.php
+app/Modules/Blog/
+├── Livewire/
+│   ├── ArticlesEdit.php
+│   ├── ArticlesTable.php
+│   └── ArticlesView.php
+├── Views/
+│   ├── articles_edit.blade.php
+│   ├── articles_table.blade.php
+│   └── articles_view.blade.php
+└── routes.php
 ```
-
 
 ---
 
-## Blade views and Components
-
+## Blade Components
 
 ### Table
 
-A Table is a "listing component" with these features:
-- "input filters" to search in a custom data set 
-- "buttons" (for example "add" record or "reset" filters)
-- "pagination links"
-- "sort links" 
+Datatable with filters, sorting, and pagination:
 
-you can generate a Table component with:
-```bash
-php artisan rpd:make ArticlesTable Article
-```
-
-or and entire crud (Table/View/Edit) in a module named Blog with;
-```bash
-php artisan rpd:make Articles Article --module=Blog
-```
-
-Generated & Customized view can be something like:
-
-```bash
-# articles_view.blade.php
 ```html
-<x-rpd::table
-    title="Article List"
-    :items="$items"
->
+<x-rpd::table title="Articles" :items="$items">
 
     <x-slot name="filters">
-      <x-rpd::input col="col-8" debounce="350" model="search"  placeholder="search..." />
-      <x-rpd::select col="col-4" model="author_id" :options="$authors" placeholder="author..." addempty />
+        <x-rpd::input col="col-8" debounce="350" model="search" placeholder="search..." />
+        <x-rpd::select col="col-4" model="author_id" :options="$authors" placeholder="author..." addempty />
     </x-slot>
 
     <table class="table">
-        <thead>
-        <tr>
-            <th>
-                <x-rpd::sort model="id" label="id" />
-            </th>
+        <thead><tr>
+            <th><x-rpd::sort model="id" label="id" /></th>
             <th>title</th>
-            <th>author</th>
-            <th>body</th>
-        </tr>
-        </thead>
+        </tr></thead>
         <tbody>
         @foreach ($items as $article)
         <tr>
-            <td>
-                <a href="{{ route('articles.view',$article->id) }}">{{ $article->id }}</a>
-            </td>
+            <td><a href="{{ route('articles.view', $article->id) }}">{{ $article->id }}</a></td>
             <td>{{ $article->title }}</td>
-            <td>{{ $article->author->firstname }}</td>
-            <td>{{ Str::limit($article->body,50) }}</td>
         </tr>
         @endforeach
         </tbody>
@@ -188,209 +121,129 @@ Generated & Customized view can be something like:
 </x-rpd::table>
 ```
 
-props
-- `title`: the heading title for this crud
-
-content/slots
-- should be a html table that loops model $items
-- `buttons`: buttons panel
-
-example: [rapyd.dev/demo/articles](https://rapyd.dev/demo/articles)
-
-
----
 ### View
-a View is a "detail page component" with :  
 
-- "buttons" slot (for example back to "list" or "edit" current record)
-- "actions" any link that trigger a server-side  
+Detail page with buttons and actions:
 
 ```html
-    <x-rpd::view title="Article Detail">
-
-        <x-slot name="buttons">
-            <a href="{{ route('articles') }}" class="btn btn-outline-primary">list</a>
-            <a href="{{ route('articles.edit',$model->getKey()) }}" class="btn btn-outline-primary">edit</a>
-        </x-slot>
-
-        <div>Title: {{ $article->title }}</div>
-        <div>Author: {{ $article->author->firstname }} {{ $model->author->lastname }}</div>
-        <div><a wire:click.prevent="someAction">Download TXT version</a></div>
-          
-    </x-rpd::view>
+<x-rpd::view title="Article Detail">
+    <x-slot name="buttons">
+        <a href="{{ route('articles') }}" class="btn btn-outline-primary">list</a>
+        <a href="{{ route('articles.edit', $model->getKey()) }}" class="btn btn-outline-primary">edit</a>
+    </x-slot>
+    <div>Title: {{ $article->title }}</div>
+</x-rpd::view>
 ```
 
-props
-- `title`: the heading title for this crud
-
-content/slots
-- should be a detail of $model
-- `buttons`: buttons panel
-- `actions`: buttons panel
-
-example: [rapyd.dev/demo/article/view/1](https://rapyd.dev/demo/article/view/1)
-
-
----
 ### Edit
-Edit is a "form component" usually binded to a model with:  
 
-- "buttons" and "actions" (undo, save, etc..)
-- form "fields"
-- automatic errors massages / rules management
-
+Form bound to a Livewire model:
 
 ```html
-    <x-rpd::edit title="Article Edit">
-
-       <x-rpd::input model="article.title" label="Title" />
-       <x-rpd::rich-text model="article.body" label="Body" />
-
-    </x-rpd::edit>
+<x-rpd::edit title="Article Edit">
+    <x-rpd::input model="article.title" label="Title" />
+    <x-rpd::rich-text model="article.body" label="Body" />
+</x-rpd::edit>
 ```
-
-props
-- `title`: the heading title for this crud
-
-content/slots
-- form fields binded with public/model properties
-
-example: [rapyd.dev/demo/article/edit/1](https://rapyd.dev/demo/article/edit/1)
-
 
 ---
 
+## Form Fields
 
-### Fields 
-
-inside some widget views you can drastically semplify the syntax using 
-predefined blade components that interacts with livewire
+All field components use `wire:model.blur` binding by default (LW4 — `lazy` was removed in Livewire 4).
 
 ```html
 <x-rpd::input model="search" debounce="350" placeholder="search..." />
-```
 
-```html
-<x-rpd::select model="author_id" lazy :options="$authors" />
-```
+<x-rpd::select model="author_id" :options="$authors" />
 
-```html
-<!-- tom select dropdown -->
+<!-- TomSelect dropdown, supports remote endpoint -->
 <x-rpd::select-list model="roles" multiple :options="$available_roles" label="Roles" />
-or
 <x-rpd::select-list model="roles" multiple endpoint="/ajax/roles" label="Roles" />
-```
-
-```html
-<!-- date, datetime and date-range components -->
-<x-rpd::date-time model="date_time" format="dd/MM/yyyy HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" label="DateTime" />
 
 <x-rpd::date model="date" format="dd/MM/yyyy" value-format="yyyy-MM-dd" label="Date" />
+<x-rpd::datetime model="date_time" format="dd/MM/yyyy HH:mm" value-format="yyyy-MM-dd HH:mm:ss" label="DateTime" />
 
-<x-rpd::date-range
-    model_from="date_from"
-    model_to="date_to"
-    range-separator="-"
-    start-placeholder="from"
-    end-placeholder="to"
-    type="daterange"
-    format="dd/MM/yyyy"
-    value-format="yyyy-MM-dd"
-/>
-```
+<x-rpd::textarea model="body" label="Body" rows="5" />
 
-```html
-<x-rpd::textarea model="body" label="Body" rows="5" :help="__('the article summary')"/>
-```
-
-```html
-<!-- quill wysiwyg editor -->
+<!-- Quill WYSIWYG -->
 <x-rpd::rich-text model="body" label="Body" />
+
+<x-rpd::upload model="file" label="Upload" />
+
+<x-rpd::checkbox model="active" label="Active" />
+
+<x-rpd::radiogroup model="status" :options="['active','inactive']" label="Status" />
 ```
 
+**Common props:** `label`, `placeholder`, `model`, `options`, `debounce`, `prepend`, `append`, `help`, `icon`, `size`, `multiple`, `endpoint`, `format`, `value-format`, `rows`.
 
-props
+---
 
-- `label`: label to display above the input
-- `placeholder`: placeholder to use for the empty first option
-- `model`: Livewire model property key
-- `options`: array of options e.g. (used in selects)
-- `debounce`: Livewire time in ms to bind data on keyup
-- `lazy`: Livewire bind data only on change
-- `prepend`: addon to display before input, can be used via named slot
-- `append`: addon to display after input, can be used via named slot
-- `help`: helper label to display under the input
-- `icon`: Font Awesome icon to show before input e.g. `cog`, `envelope`
-- `size`: Bootstrap input size e.g. `sm`, `lg`
-- `rows`: rows nums
-- `multiple`: allow multiple option selection (used in select-list)
-- `endpoint`: a remote url for fetch optioms (used in select-list)
-- `format`: the client-side field format (used in date and date-time)
-- `value-format`: the server-side field value format (used in date and date-time)
-
-
-## special tags
+## Navigation Components
 
 ```html
-<!-- sort ascending/descending link actions (in a datatable view context)-->
+<!-- Sort link inside a datatable -->
 <x-rpd::sort model="id" label="id" />
-```
-## navigation
 
-Nav Tabs: bootstrap nav-link menu with self-determined active link
-
-```html
+<!-- Nav tabs -->
 <ul class="nav nav-tabs">
     <x-rpd::nav-link label="Home" route="home" />
     <x-rpd::nav-link label="Articles" route="articles" />
-    <x-rpd::nav-link label="Article Detail" route="articles.view" :params="1"/>
-    <x-rpd::nav-link label="Article edit" route="articles.edit" />
 </ul>
-```
 
-Nav Items: boostrap vertical menu items / single or grouped (collapsed)
+<!-- Sidebar with grouped items -->
+<x-rpd::sidebar title="Rapyd.dev" class="p-3 text-white border-end">
+    <x-rpd::nav-item label="Demo" route="demo" active="/rapyd-demo" />
+</x-rpd::sidebar>
 
-```html
+<!-- Collapsible dropdown in sidebar -->
 <x-rpd::nav-dropdown icon="fas fa-fw fa-book" label="KnowledgeBase" active="/kb">
-    <x-rpd::nav-link label="Edit Categories" route="kb.admin.categories.table" type="collapse-item" />
     <x-rpd::nav-link label="Edit Articles" route="kb.admin.articles.table" type="collapse-item" />
 </x-rpd::nav-dropdown>
 ```
 
+---
 
-Nav Sidebar: bootstrap sidebar with self-determined or segment-based active link
-```html
-<x-rpd::sidebar title="Rapyd.dev" class="p-3 text-white border-end">
-   <x-rpd::nav-item label="Demo" route="demo" active="/rapyd-demo" />
-   <x-rpd::nav-item label="Page" route="page"  />
-</x-rpd::sidebar>
+## Companies / Multi-tenancy
+
+Enable Companies in your `.env`:
+
+```env
+RPD_TIERS=2
+RPD_TIER1_LABEL=partner
+RPD_TIER2_LABEL=customer
 ```
 
+Run `php artisan rpd:make:setup` — it will seed a root company and a demo tenant automatically.
 
+To enable company scoping on your User model, run:
 
+```bash
+php artisan rpd:install --companies
+```
 
+---
+
+## Livewire 4 notes
+
+- `wire:model.lazy` has been removed in LW4. Use `wire:model.blur` instead. All x-rpd:: field components default to `.blur`.
+- Module components referenced in Blade views use `.` as directory separator in the namespace: `livewire:mymodule::subdir.component-name`.
+- LW4 ships Alpine.js 3.14 internally — do not include a separate Alpine bundle.
+
+---
 
 ## Credits
 
 - [Felice Ostuni](https://github.com/zofe)
 - [All Contributors](../../contributors)
 
+Inspired by:
+- [rapyd-laravel](https://github.com/zofe/rapyd-laravel) — the original library (150k+ downloads)
+- [livewire](https://livewire.laravel.com/)
+- [laravel-bootstrap-components](https://github.com/bastinald/laravel-bootstrap-components)
 
-Inspirations:
+## License
 
-- [rapyd-laravel](https://github.com/zofe/rapyd-laravel) my old laravel library (150k downloads)
-- [livewire](https://livewire.laravel.com/)  widely used "full-stack framework" to compose laravel application by widgets
-- [laravel-bootstrap-components](https://github.com/bastinald/laravel-bootstrap-components) smart library which reduced the complexity of this one
-
-
-
-## License & Contacts
-
-Rapyd is licensed under the [MIT license](http://opensource.org/licenses/MIT)
-
-Please join me and review my work on [Linkedin](https://www.linkedin.com/in/feliceostuni/)
-
-thanks
-
-
+MIT — [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT)
 

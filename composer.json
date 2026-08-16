@@ -23,15 +23,12 @@
     ],
     "require": {
         "php": "^8.2",
-        "illuminate/config": "^11.0|^12.0",
-        "illuminate/contracts": "^11.0|^12.0",
+        "illuminate/config": "^11.0|^12.0|^13.0",
+        "illuminate/contracts": "^11.0|^12.0|^13.0",
+        "laravel/fortify": "^1.0",
         "laravel/serializable-closure": "^2.0",
-        "livewire/livewire": "^3.0",
-        "zofe/rapyd-module-installer": "^0.11|^0.12",
-        "zofe/layout-module": "dev-main|^0.11|^0.12",
-        "zofe/addresses-module": "dev-main|^0.11|^0.12",
-        "zofe/search-module": "dev-main|^0.11|^0.12",
-        "zofe/auth-module": "dev-main|^0.11|^0.12"
+        "livewire/livewire": "^4.0",
+        "spatie/laravel-permission": "^6.0"
     },
     "require-dev": {
         "orchestra/testbench": "^9.3|^10.0",
@@ -59,8 +56,7 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "php-http/discovery": true,
-            "zofe/rapyd-module-installer": true
+            "php-http/discovery": true
         }
     },
     "extra": {

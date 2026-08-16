@@ -31,7 +31,7 @@
     }
 
     if ($debounce) $bind = 'debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
-    else if ($lazy) $bind = 'lazy';
+    else if ($lazy) $bind = 'blur';
     else $bind = 'defer';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);

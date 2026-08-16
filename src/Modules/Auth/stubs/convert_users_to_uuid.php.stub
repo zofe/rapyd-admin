@@ -1,0 +1,80 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+/**
+ * Converts the users table primary key from bigInt to UUID.
+ *
+ * IMPORTANT: Run this on a fresh install BEFORE any data is inserted.
+ * On existing databases with data this migration requires manual handling
+ * of related foreign keys (password_reset_tokens, sessions, etc.).
+ */
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if ($this->isAlreadyUuid()) {
+            return;
+        }
+
+        // Fresh install only — recreate with uuid primary key (cross-DB compatible)
+        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('users');
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->uuid('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('users');
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+    }
+
+    private function isAlreadyUuid(): bool
+    {
+        try {
+            $type = Schema::getColumnType('users', 'id');
+            return str_contains(strtolower($type), 'char') || str_contains(strtolower($type), 'uuid');
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+};
