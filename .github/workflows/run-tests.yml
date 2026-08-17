@@ -15,7 +15,7 @@ jobs:
           - laravel: 12.*
             testbench: 10.*
           - laravel: 13.*
-            testbench: 10.*
+            testbench: 11.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }}
 
