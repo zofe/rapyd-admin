@@ -37,11 +37,9 @@ class EjectCommand extends Command
         $this->rewriteNamespaces($files, $destDir, $module);
 
         $this->info("Done. The module is now in app/Modules/{$module}/");
-        $this->line("The package will automatically defer to your local copy.");
+        $this->line("Views, routes and migrations are loaded automatically by Rapyd.");
         $this->newLine();
-        $this->line("Next steps:");
-        $this->line("  1. Run: composer dump-autoload");
-        $this->line("  2. Add the ejected module's namespace to composer.json autoload if not using psr-4 wildcard.");
+        $this->line("You can now edit the files in app/Modules/{$module}/ freely.");
 
         return self::SUCCESS;
     }
@@ -57,7 +55,15 @@ class EjectCommand extends Command
             }
 
             $content = file_get_contents($file->getRealPath());
+
             $updated = str_replace($packageNamespace, $appNamespace, $content);
+
+            // Remove the isEjected() guard so the provider works if registered directly.
+            $updated = preg_replace(
+                '/\s*if\s*\(\s*\$this->isEjected\(\)\s*\)\s*\{\s*return;\s*\}/s',
+                '',
+                $updated
+            );
 
             if ($updated !== $content) {
                 file_put_contents($file->getRealPath(), $updated);
