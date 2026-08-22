@@ -2,12 +2,12 @@
 
 namespace Zofe\Rapyd\Http\Livewire;
 
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class RapydApp extends Component
 {
-    protected $listeners = ['sidebar-toggle' => 'sidebarToggle'];
-
+    #[On('sidebar-toggle')]
     public function sidebarToggle()
     {
         dd('qui');
