@@ -11,3 +11,8 @@ psalm.xml
 /vendor
 .DS_Store
 /node_modules
+.claude-code-router
+.phpunit.cache/
+CONTEXT.md
+PROJECT_CONTEXT.md
+app/Modules/Search/

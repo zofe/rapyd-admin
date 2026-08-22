@@ -1,0 +1,482 @@
+
+.sidebar-flash-prevent .sidebar {
+    visibility: hidden;
+}
+.sidebar .collapse-inner a {
+    color: var(--bs-nav-link-color);
+    text-decoration: none;
+}
+.sidebar .collapse-inner a.active {
+    background-color: #ddd;
+}
+//.sidebar .nav-item .nav-link {
+//    padding-top: 0.5rem;
+//    padding-bottom: 0.5rem;
+//}
+
+// ────────────────────────────────────────────────────────────────
+// STILE BASE (mobile‐first, già “collapsed”)
+// ────────────────────────────────────────────────────────────────
+.sidebar {
+    width: $sidebar-collapsed-width;  // di default la trattiamo collapsed
+    min-height: 100vh;
+    border-right: 1px solid var(--bs-border-color);
+    background-color: $sidebar-bg;
+
+    .nav-item {
+        position: relative;
+
+        &:last-child {
+            margin-bottom: 1rem;
+        }
+
+        .nav-link {
+            //text-align: center;
+            padding: 0.3rem 0.3rem;
+            width: $sidebar-collapsed-width;
+
+            span {
+                display: block;
+            }
+        }
+
+        &.active {
+            .nav-link {
+                font-weight: 700;
+            }
+        }
+
+        // Il collapse (sotto‐menu) in collapsed sta “interna” alla colonna
+        .collapse {
+            position: relative;
+            //width: $sidebar-collapsed-width;
+            left: 0;
+            top: 0;
+            z-index: 1;
+            animation: none;
+
+            .collapse-inner {
+                box-shadow: none;
+                border-radius: 0;
+
+                a.collapse-item,
+                a.collapse-item span {
+                    //max-width: calc(#{$sidebar-collapsed-width} - 0.8rem);
+                    display: block;
+                    padding: 0.2rem 0.1rem;
+                    margin: 0 0.2rem;
+                    white-space: normal;
+                    word-wrap: break-word;
+                    font-size: 0.8rem;
+
+                    &:hover,
+                    &:focus {
+                        background-color: rgba(0, 0, 0, 0.05);
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+
+        .collapsing {
+            display: none;
+            transition: none;
+        }
+        .collapse,
+        .collapsing {
+            margin: 0;
+        }
+    }
+
+    // Toggler (sotto md non fa nulla di diverso, ma mostro icona collapsed)
+    #sidebarToggle {
+        width: 2.5rem;
+        height: 2.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        cursor: pointer;
+
+        &::after {
+            font-weight: 900;
+            content: '\f104';
+            font-family: 'Font Awesome 5 Free';
+            margin-left: 0.25rem;
+        }
+        &:hover {
+            text-decoration: none;
+        }
+        &:focus {
+            outline: none;
+        }
+    }
+
+    // Brand e heading in collapsed
+    .sidebar-brand {
+        height: $topbar-base-height;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 800;
+        padding: 1.5rem 1rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+        z-index: 1;
+
+        .sidebar-brand-icon i {
+            font-size: 2rem;
+        }
+        .sidebar-brand-text {
+            display: none;
+        }
+    }
+
+    hr.sidebar-divider {
+        margin: 0.5rem 0.5rem;
+    }
+    .sidebar-heading {
+        text-align: center;
+        padding: 0 1rem;
+        font-weight: 800;
+        font-size: 0.75rem;
+        @extend .text-uppercase;
+    }
+}
+
+.bg-sidebar {
+    background-color: $sidebar-bg;
+}
+.bg-sidebar .collapse.show {
+    background-color: $body-bg;
+    border-radius: 0.35rem;
+}
+
+
+// ────────────────────────────────────────────────────────────────
+// SCHERMI ≥ 768px: “aperta” by default, ma &.toggled = collapsed
+// ────────────────────────────────────────────────────────────────
+@include media-breakpoint-up(md) {
+    .sidebar {
+        // in desktop la base è “aperta”
+        width: $sidebar-base-width !important;
+
+        .nav-item {
+            // Qui ripristino i collapse verticali della versione aperta
+            .collapse {
+                position: relative;
+                left: 0;
+                top: 0;
+                z-index: 1;
+                animation: none;
+
+                .collapse-inner {
+                    border-radius: 0;
+                    box-shadow: none;
+                }
+            }
+            .collapsing {
+                display: block;
+                transition: $transition-collapse;
+            }
+            .collapse,
+            .collapsing {
+                margin: 0 1rem;
+            }
+
+            .nav-link {
+                display: block;
+                width: 100%;
+                text-align: left;
+                padding: 0.5rem;
+                width: $sidebar-base-width; // full width in desktop
+
+                i {
+                    font-size: $sidebar-link-font-size;
+                    margin-right: 0.25rem;
+                }
+                span {
+                    font-size: $sidebar-link-font-size;
+                    display: inline;
+                }
+
+                &[data-bs-toggle="collapse"] {
+                    &::after {
+                        width: 1rem;
+                        text-align: center;
+                        float: right;
+                        vertical-align: 0;
+                        border: 0;
+                        font-weight: 900;
+                        content: '\f107'; /* freccia giù */
+                        font-family: 'Font Awesome 5 Free';
+                    }
+                    &.collapsed::after {
+                        content: '\f105'; /* freccia destra */
+                    }
+                }
+            }
+        }
+
+        .sidebar-brand {
+            .sidebar-brand-icon i {
+                font-size: 2rem;
+            }
+            .sidebar-brand-text {
+                display: inline; // compare solo su desktop
+            }
+        }
+
+        .sidebar-heading {
+            text-align: left;
+        }
+
+        // SOLO IN DESKTOP: quando clicco #sidebarToggle con .toggled
+        &.toggled {
+            // === stili identici a quelli di section “base” (mobile) ===
+            width: $sidebar-collapsed-width !important;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            .nav-item {
+                .collapse {
+                    position: relative;
+                    width: $sidebar-collapsed-width;
+                    left: 0;
+                    top: 0;
+                    z-index: 1;
+                    animation: none;
+
+                    .collapse-inner {
+                        box-shadow: none;
+                        border-radius: 0;
+
+                        a.collapse-item,
+                        a.collapse-item span {
+                            display: block;
+                            padding: 0.2rem 0.1rem;
+                            margin: 0 0.2rem;
+                            white-space: normal;
+                            word-wrap: break-word;
+                            font-size: 0.8rem;
+
+                            &:hover,
+                            &:focus {
+                                background-color: rgba(0, 0, 0, 0.05);
+                                text-decoration: none;
+                            }
+                        }
+                    }
+                }
+
+                .collapsing {
+                    display: none;
+                    transition: none;
+                }
+                .collapse,
+                .collapsing {
+                    margin: 0;
+                }
+
+                &:last-child {
+                    margin-bottom: 1rem;
+                }
+
+                .nav-link {
+                    //text-align: center;
+                    padding: 0.3rem 0.3rem;
+                    //font-size: 0.88rem;
+                    width: $sidebar-collapsed-width;
+
+                    i {
+                        display: block;
+                        margin: 0 auto;
+                    }
+                    span {
+                        display: block;
+                        overflow: hidden;
+                    }
+                    &[data-bs-toggle="collapse"]::after {
+                        display: none;
+                    }
+                }
+            }
+
+            .sidebar-brand {
+                .sidebar-brand-icon i {
+                    font-size: 2rem;
+                }
+                .sidebar-brand-text {
+                    display: none;
+                }
+            }
+
+            .sidebar-heading {
+                text-align: center;
+            }
+        }
+    }
+}
+
+
+// ────────────────────────────────────────────────────────────────
+// VARIANTI COLORE (Light / Dark), inalterate
+// ────────────────────────────────────────────────────────────────
+
+// Sidebar Light
+.sidebar-light {
+    .sidebar-brand {
+        color: $gray-700;
+    }
+    hr.sidebar-divider {
+        border-top: 1px solid $gray-200;
+    }
+    .sidebar-heading {
+        color: $gray-500;
+    }
+    .nav-item {
+        .nav-link {
+            color: $gray-700;
+            i {
+                color: $gray-400;
+            }
+            &:active,
+            &:focus,
+            &:hover {
+                color: $gray-700;
+                i {
+                    color: $gray-700;
+                }
+            }
+            &[data-bs-toggle="collapse"]::after {
+                color: $gray-500;
+            }
+        }
+        &.active {
+            .nav-link {
+                color: $gray-700;
+                i {
+                    color: $gray-700;
+                }
+            }
+        }
+    }
+    #sidebarToggle {
+        background-color: $gray-200;
+        &::after {
+            color: $gray-500;
+        }
+        &:hover {
+            background-color: $gray-300;
+        }
+    }
+}
+
+//fixes
+.sidebar.toggled {
+    .nav-item {
+        .nav-link {
+            // Fisso pad e larghezza in ogni viewport
+        //    padding: 0.65rem 0.4rem !important;
+            width: 6.5rem !important;
+        }
+    }
+}
+
+// Sidebar Dark
+.sidebar-dark {
+    .sidebar-brand {
+        color: $white;
+    }
+    hr.sidebar-divider {
+        border-top: 1px solid fade-out($white, 0.85);
+    }
+    .sidebar-heading {
+        color: fade-out($white, 0.6);
+    }
+    .nav-item {
+        .nav-link {
+            color: fade-out($white, 0.2);
+            i {
+                color: fade-out($white, 0.7);
+            }
+            &:active,
+            &:focus,
+            &:hover {
+                color: $white;
+                i {
+                    color: $white;
+                }
+            }
+            &[data-bs-toggle="collapse"]::after {
+                color: fade-out($white, 0.5);
+            }
+        }
+        &.active {
+            .nav-link {
+                color: $white;
+                i {
+                    color: $white;
+                }
+            }
+        }
+    }
+    #sidebarToggle {
+        background-color: fade-out($white, 0.8);
+        &::after {
+            color: fade-out($white, 0.5);
+        }
+        &:hover {
+            background-color: fade-out($white, 0.75);
+        }
+    }
+    &.toggled {
+        #sidebarToggle::after {
+            color: fade-out($white, 0.5);
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    #sidebarToggle {
+        display: none;
+    }
+    .sidebar .nav-link i,
+    .sidebar .sidebar-brand-icon i {
+        display: none !important;
+    }
+}
+
+
+@include media-breakpoint-up(md) {
+    .sidebar.toggled {
+
+        // Fissa in modo definitivo la larghezza “collapsed”
+        flex: 0 0 $sidebar-collapsed-width;
+        max-width: $sidebar-collapsed-width;
+        width: $sidebar-collapsed-width !important;
+
+        // (il resto delle tue regole già esistenti rimane uguale)
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        #sidebarToggle::after {
+            content: '\f105';
+        }
+
+        // nascondo tutte le icone nei link
+        .nav-link i {
+            display: none !important;
+        }
+        // nascondo anche l'icona del brand, se vuoi
+        .sidebar-brand-icon i {
+            display: none !important;
+        }
+    }
+}
+
+
+.sidebar {
+    .collapse,
+    .collapsing {
+        transition: none !important;
+    }
+}

@@ -24,6 +24,8 @@
         "sass-loader": "^11.0.1"
     },
     "dependencies": {
+        "bootstrap-modbox": "^1.6.2",
+        "livewire-sortable": "^1.0.0",
         "quill": "^2.0.1",
         "tom-select": "^2.1.0"
     }

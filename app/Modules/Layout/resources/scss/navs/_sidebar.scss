@@ -2,6 +2,12 @@
 .sidebar {
   width: $sidebar-collapsed-width;
   min-height: 100vh;
+
+    #sidebarToggle::after {
+        content: '\f104' !important;
+    }
+
+
   .nav-item {
     position: relative;
     &:last-child {

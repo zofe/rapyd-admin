@@ -36,10 +36,10 @@
 
 
     <!-- Divider -->
-    <hr class="sidebar-divider d-none d-md-block">
+    <hr class="sidebar-divider">
 
     <!-- Sidebar Toggler (Sidebar) -->
-    <div class="text-center d-none d-md-inline">
+    <div class="text-center">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
 

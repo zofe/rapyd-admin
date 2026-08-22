@@ -1,8 +1,32 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
-@import "data-view.scss";
-@import "utils.scss";
+// ─── 1. Bootstrap variable overrides ─────────────────────────────────────────
+@import "layout/variables";
 
+// ─── 2. Bootstrap completo ───────────────────────────────────────────────────
+@import "~bootstrap/scss/bootstrap";
+
+// ─── 3. Layout base ──────────────────────────────────────────────────────────
+@import "layout/functions";
+@import "layout/global";
+@import "layout/sections/dashboard";
+@import "layout/sections/dashboard-fixed";
+@import "layout/sections/authentication";
+@import "layout/sections/error";
+
+// ─── 4. Navigazione ──────────────────────────────────────────────────────────
+@import "layout/sidebar";
+@import "layout/topbar";
+@import "layout/dropdowns";
+@import "layout/navs";
+@import "layout/utilities";
+
+// ─── 5. Override e dark mode ─────────────────────────────────────────────────
+@import "layout/app_overrides";
+@import "layout/fallback";
+@import "layout/dark";
+
+// ─── 6. Componenti Rapyd ─────────────────────────────────────────────────────
+@import "data-view";
+@import "utils";
+
+// ─── 7. Terze parti ──────────────────────────────────────────────────────────
 @import "~tom-select/dist/scss/tom-select.bootstrap5";
-
