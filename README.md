@@ -245,7 +245,7 @@ php artisan rpd:install --companies
 - [All Contributors](../../contributors)
 
 Inspired by:
-- [rapyd-laravel](https://github.com/zofe/rapyd-laravel) — the original library (150k+ downloads)
+- [rapyd-laravel](https://github.com/zofe/rapyd-laravel) — the original library, 900+ GitHub stars and 150k+ downloads. Rapyd Admin is its modern successor.
 - [livewire](https://livewire.laravel.com/)
 - [laravel-bootstrap-components](https://github.com/bastinald/laravel-bootstrap-components)
 
