@@ -6,9 +6,17 @@
 
 [![rapyd.dev](screencast.gif)](https://rapyd.dev)
 
-**Rapyd Admin** is an open-source admin panel for Laravel, powered by Livewire 4 and Bootstrap 5.
+**Rapyd Admin** is an open-source admin panel for Laravel — a light alternative to Nova, Filament and Backpack, designed for teams building SaaS products and for development with AI agents.
 
 **[Live demo →](https://rapyd.dev/demo)**
+
+## Why Rapyd Admin
+
+**No framework inside the framework.** Unlike most Laravel admin panels, Rapyd Admin generates plain Livewire components and Blade views that live in `app/Modules/`. No DSL, no proprietary resource classes — just standard Laravel code you can read, edit, and own.
+
+**Built for SaaS.** Auth (Fortify, Socialite, 2FA), roles & permissions, and a multi-tenant Companies module (1–3 tiers, optional UUID keys) are bundled. One command sets up a production-ready starting point.
+
+**Agent-friendly.** Each module is a self-contained folder with flat, readable files. LLMs can scaffold, modify and extend modules without reverse-engineering a custom abstraction layer. `rpd:make` generates the boilerplate; your agent — or you — handles the rest.
 
 ---
 
