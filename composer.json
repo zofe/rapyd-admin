@@ -40,5 +40,6 @@
         "phpunit/phpunit": "^9.3"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "abandoned": "zofe/rapyd-admin"
 }
