@@ -8,7 +8,7 @@
 
 **Rapyd Admin** is an open-source admin panel for Laravel, powered by Livewire 4 and Bootstrap 5.
 
-> **Status**: v0.4.0 is a development release. APIs may change.
+**[Live demo →](https://rapyd.dev/demo)**
 
 ---
 
@@ -51,8 +51,6 @@ Rapyd Admin ships three bundled modules — no extra packages needed:
 - **Layout** — navbar/sidebar based on SBAdmin 3, updated to Bootstrap 5.3, SCSS customizable, anonymous Blade components.
 - **Auth** — authentication via Laravel Fortify, Socialite, 2FA, and role/permission management via `spatie/laravel-permission`.
 - **Companies** — multi-tenant company hierarchy (1–3 tiers), with optional UUID primary keys.
-
-> In v0.3.x and earlier, Layout and Auth were separate packages installed via `rapyd-module-installer`. They are now bundled directly in `zofe/rapyd-admin`.
 
 ---
 
@@ -150,7 +148,7 @@ Form bound to a Livewire model:
 
 ## Form Fields
 
-All field components use `wire:model.blur` binding by default (LW4 — `lazy` was removed in Livewire 4).
+All field components use `wire:model.live.debounce.150ms` by default. Pass `:lazy="true"` to switch to `wire:model.blur`.
 
 ```html
 <x-rpd::input model="search" debounce="350" placeholder="search..." />
@@ -227,7 +225,7 @@ php artisan rpd:install --companies
 
 ## Livewire 4 notes
 
-- `wire:model.lazy` has been removed in LW4. Use `wire:model.blur` instead. All x-rpd:: field components default to `.blur`.
+- `wire:model.lazy` has been removed in LW4. All `x-rpd::` field components default to `wire:model.live.debounce.150ms`. Pass `:lazy="true"` to use `wire:model.blur`.
 - Module components referenced in Blade views use `.` as directory separator in the namespace: `livewire:mymodule::subdir.component-name`.
 - LW4 ships Alpine.js 3.14 internally — do not include a separate Alpine bundle.
 
