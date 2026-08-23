@@ -31,7 +31,9 @@
 
 
 @foreach (collect($options)->chunk($chunk) as $options)
-<div class="{{$col}} {{ $horizontal ? 'd-flex gap-3 flex-wrap' : '' }}">
+<div class="{{$col}}">
+    <x-rpd::label :label="$label"/>
+<div class="{{ $horizontal ? 'd-flex gap-3 flex-wrap' : '' }}">
 
         @foreach($options as $optionValue => $optionLabel)
             @php
@@ -48,8 +50,7 @@
         @endforeach
 
         <x-rpd::error :key="$key"/>
-
-
-    <x-rpd::help :label="$help"/>
+        <x-rpd::help :label="$help"/>
+</div>
 </div>
 @endforeach
