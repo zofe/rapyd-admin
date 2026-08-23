@@ -17,7 +17,7 @@
 ])
 
 @php
-    if ($route) $href = route_lang($route);
+    if ($route) $href = is_array($route) ? route_lang($route[0], array_slice($route, 1)) : route_lang($route);
     else if ($url) $href = url($url);
     $message = $confirm ? __($confirm) : __('Are you sure?');
     if($click) {
