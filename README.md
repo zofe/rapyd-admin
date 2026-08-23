@@ -126,8 +126,8 @@ Detail page with buttons and actions:
 ```html
 <x-rpd::view title="Article Detail">
     <x-slot name="buttons">
-        <a href="{{ route('articles') }}" class="btn btn-outline-primary">list</a>
-        <a href="{{ route('articles.edit', $model->getKey()) }}" class="btn btn-outline-primary">edit</a>
+        <x-rpd::button route="articles" color="outline-primary" label="list" />
+        <x-rpd::button :href="route('articles.edit', $model->getKey())" color="outline-primary" label="edit" />
     </x-slot>
     <div>Title: {{ $article->title }}</div>
 </x-rpd::view>
