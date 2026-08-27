@@ -12,11 +12,11 @@
 
 ## Why Rapyd Admin
 
-**No framework inside the framework.** Unlike most Laravel admin panels, Rapyd Admin generates plain Livewire components and Blade views that live in `app/Modules/`. No DSL, no proprietary resource classes — just standard Laravel code you can read, edit, and own.
+**Consistent patterns, plain code.** No DSL, no proprietary resource classes. Unlike Nova or Filament, Rapyd Admin generates plain Livewire + Blade files that live in your codebase and are yours to edit. It gives you the structure you'd write anyway — consistent module layout, a unified `x-rpd::` field component API, auth and multi-tenancy included — then stays out of the way.
 
-**Built for SaaS.** Auth (Fortify, Socialite, 2FA), roles & permissions, and a multi-tenant Companies module (1–3 tiers, optional UUID keys) are bundled. One command sets up a production-ready starting point.
+**Built for SaaS.** Auth (Fortify, Socialite, 2FA), roles & permissions, and multi-tenant Companies (1–3 tiers, optional UUID keys) are bundled. One command sets up a production-ready starting point.
 
-**Agent-friendly.** Each module is a self-contained folder with flat, readable files. LLMs can scaffold, modify and extend modules without reverse-engineering a custom abstraction layer. `rpd:make` generates the boilerplate; your agent — or you — handles the rest.
+**Agent-friendly.** Flat, self-contained module folders with consistent naming. LLMs can scaffold and extend without reverse-engineering proprietary abstractions.
 
 ---
 

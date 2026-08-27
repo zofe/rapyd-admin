@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsServiceProvider;
 use Zofe\Rapyd\Commands\EjectCommand;
 use Zofe\Rapyd\Commands\InstallCommand;
+use Zofe\Rapyd\Commands\RapydContextCommand;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
 use Zofe\Rapyd\Commands\RapydMakeEditCommand;
 use Zofe\Rapyd\Commands\RapydMakeHomeCommand;
@@ -55,6 +56,7 @@ class RapydServiceProvider extends ServiceProvider
             $this->commands([
                 InstallCommand::class,
                 EjectCommand::class,
+                RapydContextCommand::class,
                 RapydMakeCommand::class,
                 RapydMakeSetupCommand::class,
                 RapydMakeHomeCommand::class,

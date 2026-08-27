@@ -32,7 +32,8 @@
     },
     "require-dev": {
         "orchestra/testbench": "^10.0|^11.0",
-        "phpunit/phpunit": "^11.0|^12.0"
+        "phpunit/phpunit": "^11.0|^12.0",
+        "spatie/laravel-activitylog": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -60,6 +61,9 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-main": "1.1.x-dev"
+        },
         "laravel": {
             "providers": [
                 "Zofe\\Rapyd\\RapydServiceProvider"
