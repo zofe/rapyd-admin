@@ -15,7 +15,8 @@ final class AiTool
         public readonly string $description,
         public readonly array $inputSchema,
         private readonly \Closure $handler,
-    ) {}
+    ) {
+    }
 
     /**
      * Returns the tool definition in Anthropic Messages API format.
@@ -24,8 +25,8 @@ final class AiTool
     public function toDefinition(): array
     {
         return [
-            'name'         => $this->name,
-            'description'  => $this->description,
+            'name' => $this->name,
+            'description' => $this->description,
             'input_schema' => $this->inputSchema,
         ];
     }
