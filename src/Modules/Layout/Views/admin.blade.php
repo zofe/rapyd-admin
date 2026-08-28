@@ -49,7 +49,4 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    @if(class_exists(\Zofe\Ai\AiServiceProvider::class))
-        @aiWidget
-    @endif
 @endsection
