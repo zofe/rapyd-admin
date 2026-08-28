@@ -20,6 +20,12 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
             return;
         }
 
+        // Merge module config (menu_admin, permissions, roles, etc.) so configMenus() finds it.
+        $moduleConfig = dirname(__DIR__, 3) . '/app/Modules/Auth/config.php';
+        if (file_exists($moduleConfig)) {
+            $this->mergeConfigFrom($moduleConfig, 'auth');
+        }
+
         // Load Fortify config from package defaults if not already published by the app.
         if (! (new Filesystem)->exists(config_path('fortify.php'))) {
             Config::set('fortify', include __DIR__ . '/fortify.php');
@@ -54,6 +60,11 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
 
         $this->loadMigrationsFrom($this->srcPath('Database/Migrations'));
         $this->loadViewsFrom($this->srcPath('Views'), 'auth');
+        // Admin views (admin_menu, users_table, etc.) are only in app/Modules/Auth/Views.
+        $appViews = dirname(__DIR__, 3) . '/app/Modules/Auth/Views';
+        if (is_dir($appViews)) {
+            $this->loadViewsFrom($appViews, 'auth');
+        }
 
         $this->bootFortify();
 
