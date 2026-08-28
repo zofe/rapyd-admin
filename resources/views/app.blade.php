@@ -53,6 +53,8 @@
 
 </main>
 
+@aiWidget
+
 @livewireScripts
 @rapydScripts
 
