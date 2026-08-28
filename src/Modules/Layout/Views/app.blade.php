@@ -34,6 +34,7 @@
     @show
 </div>
 
+@aiWidget
 @livewireScripts
 @rapydScripts
 @stack('footer_scripts')

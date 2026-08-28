@@ -54,7 +54,8 @@
     @show
 </div>
 
-{{--@rapydScripts--}}
+@aiWidget
+@rapydScripts
 @stack('footer_scripts')
 <script src="{{ asset('vendor/layout/layout.js') }}" defer></script>
 </body>
