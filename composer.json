@@ -41,7 +41,8 @@
     "autoload": {
         "psr-4": {
             "Zofe\\Rapyd\\": "src",
-            "Zofe\\Rapyd\\Database\\Factories\\": "database/factories"
+            "Zofe\\Rapyd\\Database\\Factories\\": "database/factories",
+            "App\\Modules\\": "app/Modules"
         },
         "files": [
             "src/helpers.php"
