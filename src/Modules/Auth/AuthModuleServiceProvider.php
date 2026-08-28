@@ -56,6 +56,13 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
         $this->loadViewsFrom($this->srcPath('Views'), 'auth');
 
         $this->bootFortify();
+
+        // Admin routes (UsersTable, PermissionsTable, etc.) live in app/Modules/Auth/routes.php.
+        // When not ejected they're loaded directly from the package via App\Modules\ autoload.
+        $adminRoutes = dirname(__DIR__, 3) . '/app/Modules/Auth/routes.php';
+        if (file_exists($adminRoutes)) {
+            $this->loadRoutesFrom($adminRoutes);
+        }
     }
 
     protected function bootFortify(): void
