@@ -50,7 +50,9 @@ Route::get('auth/permissions/edit/{role:id}', PermissionsEdit::class)
 
 
 
-Route::impersonate();
+if (Route::hasMacro('impersonate')) {
+    Route::impersonate();
+}
 
 Route::get('/google/auth/redirect', function () {
     return Socialite::driver('google')->redirect();
