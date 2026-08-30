@@ -4,7 +4,7 @@
 <a href="https://packagist.org/packages/zofe/rapyd-admin"><img src="https://img.shields.io/packagist/dt/zofe/rapyd-admin" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/zofe/rapyd-admin"><img src="https://img.shields.io/packagist/v/zofe/rapyd-admin" alt="Latest Stable Version"></a>
 
-[![rapyd.dev](screencast.gif)](https://rapyd.dev)
+[![rapyd.dev](screenshot.jpg)](https://rapyd.dev)
 
 **Rapyd Admin** is an open-source admin panel for Laravel — a light alternative to Nova, Filament and Backpack, designed for teams building SaaS products and for development with AI agents.
 
@@ -59,6 +59,8 @@ Rapyd Admin ships three bundled modules — no extra packages needed:
 - **Layout** — navbar/sidebar based on SBAdmin 3, updated to Bootstrap 5.3, SCSS customizable, anonymous Blade components.
 - **Auth** — authentication via Laravel Fortify, Socialite, 2FA, and role/permission management via `spatie/laravel-permission`.
 - **Companies** — multi-tenant company hierarchy (1–3 tiers), with optional UUID primary keys.
+
+[![rapyd.dev](screencast.gif)](https://rapyd.dev)
 
 ---
 
