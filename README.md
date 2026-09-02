@@ -8,7 +8,7 @@
 
 **Rapyd Admin** is an open-source admin panel for Laravel — a light alternative to Nova, Filament and Backpack, designed for teams building SaaS products and for development with AI agents.
 
-**[Live demo →](https://rapyd.dev/demo)**
+**[Live demo →](https://rapyd.dev)**
 
 ## Why Rapyd Admin
 
