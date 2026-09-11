@@ -32,7 +32,7 @@ class Company extends Model
 
     protected $casts = [
         'registration_date' => 'datetime',
-        'activation_date'   => 'datetime',
+        'activation_date' => 'datetime',
     ];
 
     public function users()
