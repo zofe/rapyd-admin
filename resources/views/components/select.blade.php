@@ -14,7 +14,7 @@
 
 @php
     $required = false;
-    if($model && property_exists($this,'rules') && isset($this->rules[$model]) && stristr($this->rules[$model],'required')) {
+    if($model && property_exists($this,'rules') && isset($this->rules[$model]) && stristr(is_array($this->rules[$model]) ? implode('|', array_filter($this->rules[$model], 'is_string')) : $this->rules[$model], 'required')) {
        $required = true;
     }
 

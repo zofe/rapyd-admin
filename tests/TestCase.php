@@ -71,6 +71,8 @@ class TestCase extends Orchestra
         return [
             RapydServiceProvider::class,
             LivewireServiceProvider::class,
+            \Lab404\Impersonate\ImpersonateServiceProvider::class,
+            \Propaganistas\LaravelDisposableEmail\DisposableEmailServiceProvider::class,
         ];
     }
 
