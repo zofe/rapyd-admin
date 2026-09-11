@@ -17,7 +17,7 @@ class UsersTableEmbed extends Component
 
     public function booted(): void
     {
-        $this->authorize('admin|edit company users');
+        $this->authorize('admin|edit users|edit own users');
     }
 
     public function mount(string $companyId, bool $editable = false): void

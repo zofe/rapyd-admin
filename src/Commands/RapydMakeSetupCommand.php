@@ -31,19 +31,9 @@ class RapydMakeSetupCommand extends Command
             }
         }
 
-        $envPath = base_path('.env');
-        $key = 'SCOUT_DRIVER';
-        $value = 'collection';
-
-        $env = file_get_contents($envPath);
-        if (str_contains($env, "$key=")) {
-            $env = preg_replace("/^$key=.*/m", "$key=$value", $env);
-        } else {
-            $env .= "\n$key=$value\n";
-        }
-
-        file_put_contents($envPath, $env);
-        config()->set('scout.driver', $value);
+        $this->setEnv('SCOUT_DRIVER', 'collection');
+        $this->setEnv('APP_NAME', '"Rapyd Admin"', onlyIfCurrent: 'Laravel');
+        config()->set('scout.driver', 'collection');
 
         $this->call('rpd:make:home');
         $this->call('rpd:install', [
@@ -56,5 +46,28 @@ class RapydMakeSetupCommand extends Command
         if (config('rapyd.companies.enabled', true)) {
             $this->call('db:seed', ['--class' => \Zofe\Rapyd\Modules\Companies\Database\Seeders\CompaniesSeeder::class, '--force' => true]);
         }
+    }
+
+    /**
+     * Write KEY=value into .env. With $onlyIfCurrent the key is changed only when
+     * it is missing or still holds that default value (never clobber user choices).
+     */
+    protected function setEnv(string $key, string $value, ?string $onlyIfCurrent = null): void
+    {
+        $envPath = base_path('.env');
+        $env = file_get_contents($envPath);
+
+        if (preg_match("/^{$key}=(.*)$/m", $env, $m)) {
+            $current = trim($m[1], " \"'");
+            if ($onlyIfCurrent !== null && $current !== $onlyIfCurrent) {
+                return;
+            }
+            $env = preg_replace("/^{$key}=.*$/m", "{$key}={$value}", $env);
+        } else {
+            $env .= "\n{$key}={$value}\n";
+        }
+
+        file_put_contents($envPath, $env);
+        $this->info("{$key} set to {$value}");
     }
 }

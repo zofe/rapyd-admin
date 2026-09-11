@@ -35,6 +35,37 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
     }
 
     /**
+     * Absolute path inside the package's app/Modules/{name} directory
+     * (admin UI, views, translations, routes — the part that can be ejected).
+     */
+    protected function appModulePath(string $relative = ''): string
+    {
+        $base = dirname(__DIR__, 2) . "/app/Modules/{$this->moduleName}";
+
+        return $relative ? $base . DIRECTORY_SEPARATOR . ltrim($relative, '/\\') : $base;
+    }
+
+    /**
+     * Load everything a non-ejected module ships in app/Modules/{name}:
+     * views, translations, routes and the "{namespace}::" Livewire components.
+     */
+    protected function bootAppModule(string $namespace): void
+    {
+        if (is_dir($this->appModulePath('Views'))) {
+            $this->loadViewsFrom($this->appModulePath('Views'), $namespace);
+        }
+        if (is_dir($this->appModulePath('Lang'))) {
+            $this->loadTranslationsFrom($this->appModulePath('Lang'), $namespace);
+        }
+        if (file_exists($this->appModulePath('routes.php'))) {
+            $this->loadRoutesFrom($this->appModulePath('routes.php'));
+        }
+        if (is_dir($this->appModulePath('Livewire'))) {
+            $this->registerLivewireNamespace($this->appModulePath('Livewire'));
+        }
+    }
+
+    /**
      * Register the module's Livewire components under "{module}::" and add the
      * module to config('rapyd.modules'), mirroring what ModuleServiceProvider
      * does for modules discovered in app/Modules.

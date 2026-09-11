@@ -1,4 +1,63 @@
-
 <div>
-  Home
+    {{-- Hero --}}
+    <section class="py-5 text-center">
+        <div class="py-lg-4">
+            <h1 class="fw-bold display-5 mb-2">
+                {{ config('app.name') }}
+            </h1>
+            <p class="lead text-muted mb-4">
+                A modular admin panel built for SaaS developers
+            </p>
+
+            @guest
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ route_lang('login') }}" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                    @if(Route::has('register'))
+                        <a href="{{ route_lang('register') }}" class="btn btn-outline-secondary btn-lg px-5">
+                            Register
+                        </a>
+                    @endif
+                </div>
+            @else
+                <a href="{{ Route::has('admin.home') ? route_lang('admin.home') : '#' }}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                </a>
+            @endguest
+        </div>
+    </section>
+
+    {{-- Feature cards --}}
+    <section class="py-4">
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-puzzle-piece fa-2x text-primary mb-3"></i>
+                        <h5 class="card-title">Modular</h5>
+                        <p class="card-text text-muted small">Auth, Companies, Shop and other modules installable via Composer.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-bolt fa-2x text-warning mb-3"></i>
+                        <h5 class="card-title">Laravel & Livewire</h5>
+                        <p class="card-text text-muted small">Reactive components without writing JavaScript.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-users-cog fa-2x text-success mb-3"></i>
+                        <h5 class="card-title">Role-based UI</h5>
+                        <p class="card-text text-muted small">Admin, operator and customer views on the same routes, driven by role.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>

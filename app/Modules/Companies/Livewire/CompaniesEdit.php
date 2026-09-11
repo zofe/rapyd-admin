@@ -24,7 +24,7 @@ class CompaniesEdit extends Component
 
     public function booted(): void
     {
-        $this->authorize('admin|edit companies');
+        $this->authorize('admin|edit companies|edit own business', $this->company->exists ? $this->company : null);
     }
 
     public function mount(?Company $company = null): void

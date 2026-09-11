@@ -2,7 +2,6 @@
 
 namespace App\Modules\Companies\Livewire;
 
-use App\Models\User;
 use App\Modules\Auth\Traits\Authorize;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\On;
@@ -26,13 +25,14 @@ class UsersModalEditEmbed extends Component
 
     public function booted(): void
     {
-        $this->authorize('admin|edit company users');
+        $this->authorize('admin|edit users|edit own users');
     }
 
     #[On('editUser')]
     public function editUser(?string $userId = null, ?string $companyId = null): void
     {
-        $this->user       = $userId ? (User::find($userId) ?? new User()) : new User();
+        $userModel        = config('auth.providers.users.model');
+        $this->user       = $userId ? ($userModel::find($userId) ?? new $userModel()) : new $userModel();
         $this->company_id = $companyId;
         $this->passwd     = '';
 
@@ -85,7 +85,7 @@ class UsersModalEditEmbed extends Component
     #[On('deleteUser')]
     public function deleteUser(string $userId): void
     {
-        User::findOrFail($userId)->delete();
+        config('auth.providers.users.model')::findOrFail($userId)->delete();
         $this->dispatch('savedUser');
     }
 

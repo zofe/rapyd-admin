@@ -36,7 +36,13 @@ class TestCase extends Orchestra
         Livewire::component('test-articles-view', \Zofe\Rapyd\Tests\Http\Livewire\ArticlesView::class);
 
 
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+    }
+
+    protected function defineDatabaseMigrations(): void
+    {
+        // Register with the migrator (not testbench's loadMigrationsFrom) so migrate:fresh
+        // runs these together with the package migrations, ordered by file name.
+        $this->app['migrator']->path(__DIR__ . '/database/migrations');
     }
 
 
@@ -84,8 +90,6 @@ class TestCase extends Orchestra
 
         $app['config']->set('session.driver', 'file');
 
-        // Disable bundled modules that have migrations depending on framework tables
-        // (Companies adds company_id to users which doesn't exist in testbench in-memory DB)
-        $app['config']->set('rapyd.companies.enabled', false);
+        $app['config']->set('auth.providers.users.model', \Zofe\Rapyd\Tests\Models\User::class);
     }
 }

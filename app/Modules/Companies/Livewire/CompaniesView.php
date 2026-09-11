@@ -14,7 +14,7 @@ class CompaniesView extends Component
 
     public function booted(): void
     {
-        $this->authorize('admin|edit companies', $this->company);
+        $this->authorize('admin|view companies|edit companies|view own business|edit own business', $this->company);
     }
 
     public function mount(Company $company): void

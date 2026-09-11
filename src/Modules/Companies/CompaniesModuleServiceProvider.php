@@ -3,7 +3,6 @@
 namespace Zofe\Rapyd\Modules\Companies;
 
 use Zofe\Rapyd\Modules\Companies\Authorizations\CompanyAuth;
-use Zofe\Rapyd\Modules\Companies\Authorizations\CompanyOwnerAuth;
 use Zofe\Rapyd\Modules\Companies\Limits\CompanyLimit;
 use Zofe\Rapyd\Modules\RapydModuleServiceProvider;
 
@@ -37,23 +36,10 @@ class CompaniesModuleServiceProvider extends RapydModuleServiceProvider
 
         $this->loadMigrationsFrom($this->srcPath('Database/Migrations'));
 
-        // Views: src/ for auth layouts, app/ for CRUD views
         $this->loadViewsFrom($this->srcPath('Views'), 'companies');
-        $appViews = dirname(__DIR__, 3) . '/app/Modules/Companies/Views';
-        if (is_dir($appViews)) {
-            $this->loadViewsFrom($appViews, 'companies');
-        }
-
-        // Routes
-        $routesFile = dirname(__DIR__, 3) . '/app/Modules/Companies/routes.php';
-        if (file_exists($routesFile)) {
-            $this->loadRoutesFrom($routesFile);
-        }
-
-        $this->registerLivewireNamespace(dirname(__DIR__, 3) . '/app/Modules/Companies/Livewire');
+        $this->bootAppModule('companies');
 
         $this->registerLimit(CompanyLimit::class);
         $this->registerAuthorization(CompanyAuth::class);
-        $this->registerAuthorization(CompanyOwnerAuth::class);
     }
 }

@@ -24,10 +24,12 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            foreach (['google_id', 'avatar'] as $column) {
-                if (Schema::hasColumn('users', $column)) {
-                    $table->dropColumn($column);
-                }
+            if (Schema::hasColumn('users', 'google_id')) {
+                $table->dropIndex(['google_id']);
+                $table->dropColumn('google_id');
+            }
+            if (Schema::hasColumn('users', 'avatar')) {
+                $table->dropColumn('avatar');
             }
         });
     }

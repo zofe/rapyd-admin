@@ -19,7 +19,10 @@ return new class extends Migration {
     public function down(): void
     {
         if (Schema::hasColumn('companies', 'tier')) {
-            Schema::table('companies', fn (Blueprint $table) => $table->dropColumn('tier'));
+            Schema::table('companies', function (Blueprint $table) {
+                $table->dropIndex(['tier']);
+                $table->dropColumn('tier');
+            });
         }
     }
 };

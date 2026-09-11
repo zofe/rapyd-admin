@@ -16,7 +16,7 @@ class RapydMakeHomeCommand extends Command
         $this->module = null;
 
 
-        if (! file_exists(base_path("resources/views/livewire/home.blade.php"))) {
+        if (! file_exists(base_path(path_module('app/Livewire', $this->module) . '/Home.php'))) {
 
             $this->comment('generate home component');
 
@@ -64,7 +64,7 @@ class RapydMakeHomeCommand extends Command
         }
 
 
-        if (! file_exists(base_path("resources/views/livewire/admin.blade.php"))) {
+        if (! file_exists(base_path(path_module('app/Livewire', $this->module) . '/AdminHome.php'))) {
 
             $this->comment('generate admin component');
 
