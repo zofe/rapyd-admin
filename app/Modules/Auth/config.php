@@ -21,6 +21,8 @@ return [
 
         'view users', 'edit users', 'add users', 'mod users', 'del users',
         'view own users', 'edit own users', 'add own users', 'mod own users', 'del own users',
+
+        'view workflow', 'edit workflow',
     ],
     'roles' => [
         'admin',
@@ -34,6 +36,7 @@ return [
         'operator' => [
             'view companies', 'edit companies', 'add companies', 'mod companies', 'del companies',
             'view users', 'edit users', 'add users', 'mod users', 'del users',
+            'view workflow', 'edit workflow',
         ],
         'customer' => [
             'view own business', 'edit own business',

@@ -27,6 +27,8 @@ class TestCase extends Orchestra
         Facade::setFacadeApplication(app());
         parent::setUp();
 
+        \Illuminate\Database\Eloquent\Relations\Relation::morphMap(['ticket' => \Zofe\Rapyd\Tests\Models\Ticket::class], true);
+
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Zofe\\Rapyd\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
@@ -91,5 +93,13 @@ class TestCase extends Orchestra
         $app['config']->set('session.driver', 'file');
 
         $app['config']->set('auth.providers.users.model', \Zofe\Rapyd\Tests\Models\User::class);
+        $app['config']->set('workflow.ticket', [
+            'type' => 'state_machine',
+            'marking_store' => ['type' => 'single_state', 'property' => 'status'],
+            'initial_marking' => 'open',
+            'supports' => [\Zofe\Rapyd\Tests\Models\Ticket::class],
+            'places' => ['open' => ['metadata' => ['label' => 'Open']], 'closed' => ['metadata' => ['label' => 'Closed', 'final' => true]]],
+            'transitions' => ['close' => ['from' => 'open', 'to' => 'closed', 'metadata' => ['label' => 'Close ticket']]],
+        ]);
     }
 }
