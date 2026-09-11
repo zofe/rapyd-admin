@@ -14,6 +14,14 @@ class WorkflowModuleServiceProvider extends RapydModuleServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../../../config/workflow.php', 'rapyd.workflow');
         $this->mergeConfigFrom(__DIR__ . '/workflow_registry.php', 'workflow_registry');
 
+        // Legacy names from the separate packages, still used by other modules (e.g. shop-module).
+        if (! class_exists('App\Modules\Workflow\Models\WorkflowStep', false)) {
+            class_alias(\Zofe\Rapyd\Modules\Workflow\Models\WorkflowStep::class, 'App\Modules\Workflow\Models\WorkflowStep');
+        }
+        if (! class_exists('App\Modules\Workflow\Models\WorkflowStepInvolved', false)) {
+            class_alias(\Zofe\Rapyd\Modules\Workflow\Models\WorkflowStepInvolved::class, 'App\Modules\Workflow\Models\WorkflowStepInvolved');
+        }
+
         if (! config('rapyd.workflow.enabled', true)) {
             return;
         }

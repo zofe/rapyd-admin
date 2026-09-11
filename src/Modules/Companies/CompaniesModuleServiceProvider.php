@@ -14,6 +14,11 @@ class CompaniesModuleServiceProvider extends RapydModuleServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../../../config/companies.php', 'rapyd.companies');
 
+        // Legacy names from the separate packages, still used by other modules (e.g. shop-module).
+        if (! class_exists('App\Modules\Companies\Models\Company', false)) {
+            class_alias(\Zofe\Rapyd\Modules\Companies\Models\Company::class, 'App\Modules\Companies\Models\Company');
+        }
+
     }
 
     public function boot(): void
