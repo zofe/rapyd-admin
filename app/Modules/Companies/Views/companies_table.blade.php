@@ -6,7 +6,8 @@
         </x-slot>
 
         <x-slot name="buttons">
-            <a href="{{ route_lang('companies.edit') }}" class="btn btn-outline-primary btn-sm">Add</a>
+            <a href="{{ route_lang('companies.table') }}" class="btn btn-outline-dark">Reset</a>
+            <a href="{{ route_lang('companies.edit') }}" class="btn btn-outline-primary">Add</a>
         </x-slot>
 
         <table class="table">
