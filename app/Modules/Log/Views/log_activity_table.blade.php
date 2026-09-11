@@ -4,9 +4,9 @@
             <x-slot name="filters">
                 <x-rpd::date col="col-auto" model="date_from" label="From" />
                 <x-rpd::date col="col-auto" model="date_to" label="To" />
-                <x-rpd::select-list col="col" model="user" multiple :options="$users" placeholder="Author..." />
-                <x-rpd::select-list col="col" model="log_name" multiple :options="$log_names" placeholder="Event..." />
-                <x-rpd::input col="col" debounce="300" model="search" placeholder="search..." />
+                <x-rpd::select-list col="col" model="user" label="Author" multiple :options="$users" placeholder="any" />
+                <x-rpd::select-list col="col" model="log_name" label="Event" multiple :options="$log_names" placeholder="any" />
+                <x-rpd::input col="col" debounce="300" model="search" label="Search" placeholder="text..." />
             </x-slot>
             <x-slot name="buttons">
                 <a href="{{ route_lang('log.activity') }}" class="btn btn-outline-dark">Reset</a>
