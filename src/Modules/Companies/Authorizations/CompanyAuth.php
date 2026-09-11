@@ -14,13 +14,13 @@ class CompanyAuth
             return false;
         }
 
-        // User is a direct member of this company
-        if ($company->users->contains($user->id)) {
+        // Direct member via pivot
+        if ($company->users()->where('user_id', $user->id)->exists()) {
             return true;
         }
 
-        // User is a member of the parent company (tier-based access)
-        if ($company->parentCompany && $company->parentCompany->users->contains($user->id)) {
+        // Member of the parent company inherits access to children
+        if ($company->parentCompany && $company->parentCompany->users()->where('user_id', $user->id)->exists()) {
             return true;
         }
 

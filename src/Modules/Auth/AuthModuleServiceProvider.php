@@ -26,6 +26,14 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
             $this->mergeConfigFrom($moduleConfig, 'auth');
         }
 
+        if (config('services.google') === null) {
+            config(['services.google' => [
+                'client_id' => env('GOOGLE_CLIENT_ID'),
+                'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+                'redirect' => env('GOOGLE_REDIRECT', '/google/auth/callback'),
+            ]]);
+        }
+
         // Load Fortify config from package defaults if not already published by the app.
         if (! (new Filesystem)->exists(config_path('fortify.php'))) {
             Config::set('fortify', include __DIR__ . '/fortify.php');
@@ -58,6 +66,10 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
             return;
         }
 
+        \Illuminate\Database\Eloquent\Relations\Relation::morphMap([
+            'user' => config('auth.providers.users.model', \App\Models\User::class),
+        ], true);
+
         $this->loadMigrationsFrom($this->srcPath('Database/Migrations'));
         $this->loadViewsFrom($this->srcPath('Views'), 'auth');
         // Admin views (admin_menu, users_table, etc.) are only in app/Modules/Auth/Views.
@@ -74,6 +86,8 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
         if (file_exists($adminRoutes)) {
             $this->loadRoutesFrom($adminRoutes);
         }
+
+        $this->registerLivewireNamespace(dirname(__DIR__, 3) . '/app/Modules/Auth/Livewire');
     }
 
     protected function bootFortify(): void

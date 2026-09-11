@@ -78,6 +78,11 @@
                                 <button type="submit" class="btn btn-primary w-100">
                                     {{ __('Login') }}
                                 </button>
+                                @if(Route::has('google.redirect'))
+                                    <a href="{{ route_lang('google.redirect') }}" class="btn btn-outline-secondary w-100 mt-2">
+                                        {{ __('Sign in with Google') }}
+                                    </a>
+                                @endif
 
                                 @if(Route::has('register'))
                                     <div class="text-center mt-4">

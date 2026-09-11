@@ -4,6 +4,8 @@ namespace Zofe\Rapyd\Modules;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 abstract class RapydModuleServiceProvider extends ServiceProvider
 {
@@ -30,6 +32,24 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
         $base = dirname(__DIR__, 1) . "/Modules/{$this->moduleName}";
 
         return $relative ? $base . DIRECTORY_SEPARATOR . ltrim($relative, '/\\') : $base;
+    }
+
+    /**
+     * Register the module's Livewire components under "{module}::" and add the
+     * module to config('rapyd.modules'), mirroring what ModuleServiceProvider
+     * does for modules discovered in app/Modules.
+     */
+    protected function registerLivewireNamespace(string $componentsDir): void
+    {
+        $module = Str::lower($this->moduleName);
+
+        Livewire::addNamespace($module, null, "App\\Modules\\{$this->moduleName}\\Livewire", $componentsDir);
+
+        $modules = config('rapyd.modules', []);
+        if (! in_array($module, $modules)) {
+            $modules[] = $module;
+            config(['rapyd.modules' => $modules]);
+        }
     }
 
     /**

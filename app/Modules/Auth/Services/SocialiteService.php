@@ -36,7 +36,7 @@ class SocialiteService {
 
         auth()->login($user, true);
 
-        return redirect()->to('/');
+        return redirect()->intended(config('fortify.home', '/'));
     }
 
     public static function updateAvatarFromSocial($user, $payload)

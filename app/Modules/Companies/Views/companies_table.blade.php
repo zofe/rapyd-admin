@@ -1,0 +1,46 @@
+<x-rpd::card>
+    <x-rpd::table title="Companies" :items="$items">
+
+        <x-slot name="filters">
+            <x-rpd::input col="col" debounce="350" model="search" placeholder="search..." />
+        </x-slot>
+
+        <x-slot name="buttons">
+            <a href="{{ route_lang('companies.edit') }}" class="btn btn-outline-primary btn-sm">Add</a>
+        </x-slot>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><x-rpd::sort model="business_name" label="Business Name" /></th>
+                    <th>Email</th>
+                    <th>Tier</th>
+                    <th>Status</th>
+                    <th><x-rpd::sort model="created_at" label="Created" /></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($items as $company)
+                    <tr>
+                        <td>
+                            <x-rpd::nav-link :label="$company->business_name" route="companies.view" :params="$company->id" />
+                        </td>
+                        <td>{{ $company->email }}</td>
+                        <td>{{ $company->tier }}</td>
+                        <td>
+                            <span class="badge bg-{{ $company->status === 'active' ? 'success' : 'secondary' }}">
+                                {{ $company->status }}
+                            </span>
+                        </td>
+                        <td><x-rpd::date-formatted :date="$company->created_at" /></td>
+                        <td class="text-end">
+                            <x-rpd::icon name="edit" route="companies.view" :params="$company->id" />
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+    </x-rpd::table>
+</x-rpd::card>

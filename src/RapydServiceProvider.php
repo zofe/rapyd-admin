@@ -28,6 +28,10 @@ class RapydServiceProvider extends ServiceProvider
     protected $shouldInjectAssets = true;
     public function boot()
     {
+        if (! isset(\Illuminate\Support\Facades\Blade::getCustomDirectives()['aiWidget'])) {
+            \Illuminate\Support\Facades\Blade::directive('aiWidget', fn () => '');
+        }
+
         \Livewire\Livewire::resolveMissingComponent(function ($name) {
             $class = collect(explode('.', $name))
                 ->map(fn ($segment) => \Illuminate\Support\Str::studly($segment))

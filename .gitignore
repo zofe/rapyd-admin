@@ -16,3 +16,7 @@ psalm.xml
 CONTEXT.md
 PROJECT_CONTEXT.md
 app/Modules/Search/
+
+# tooling output
+graphify-out/
+test-results/

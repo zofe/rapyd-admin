@@ -46,7 +46,10 @@ class RapydMakeSetupCommand extends Command
         config()->set('scout.driver', $value);
 
         $this->call('rpd:make:home');
-        $this->call('rpd:install', ['--uuid-users' => true]);
+        $this->call('rpd:install', [
+            '--uuid-users' => true,
+            '--companies' => (bool) config('rapyd.companies.enabled', true),
+        ]);
         $this->call('migrate', ['--force' => true]);
         $this->call('db:seed', ['--class' => \Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder::class, '--force' => true]);
 

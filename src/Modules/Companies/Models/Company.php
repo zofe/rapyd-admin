@@ -32,13 +32,30 @@ class Company extends Model
 
     protected $casts = [
         'registration_date' => 'datetime',
-        'activation_date' => 'datetime',
+        'activation_date'   => 'datetime',
     ];
 
     public function users()
     {
         return $this->belongsToMany(config('auth.providers.users.model'), 'company_user')
+            ->withPivot('role', 'is_primary')
             ->withTimestamps();
+    }
+
+    public function owners()
+    {
+        return $this->belongsToMany(config('auth.providers.users.model'), 'company_user')
+            ->withPivot('role', 'is_primary')
+            ->withTimestamps()
+            ->wherePivot('role', 'owner');
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(config('auth.providers.users.model'), 'company_user')
+            ->withPivot('role', 'is_primary')
+            ->withTimestamps()
+            ->wherePivot('role', 'member');
     }
 
     public function parent()
@@ -54,5 +71,17 @@ class Company extends Model
     public function children()
     {
         return $this->hasMany(Company::class, 'parent_id');
+    }
+
+    public function addUser($user, string $role = 'member', bool $asPrimary = false): void
+    {
+        $this->users()->syncWithoutDetaching([
+            $user->id => ['role' => $role, 'is_primary' => $asPrimary],
+        ]);
+
+        if ($asPrimary) {
+            $user->company_id = $this->id;
+            $user->save();
+        }
     }
 }

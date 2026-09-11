@@ -37,7 +37,7 @@ trait Authorize
             throw UnauthorizedException::forRolesOrPermissions($rolesOrPermissions);
         }
 
-        if ($entity) {
+        if ($entity && ! $user->hasAnyRole(config('rapyd.auth.super_admin_roles', ['admin']))) {
             foreach (config('auth.authorizations', []) as $check) {
                 if (get_class($entity) === $check::$model && $entity->exists) {
                     if (! call_user_func([$check, 'check'], $entity, $user)) {

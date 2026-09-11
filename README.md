@@ -33,7 +33,7 @@
 ```bash
 composer create-project --prefer-dist laravel/laravel myapp
 cd myapp
-composer require zofe/rapyd-admin
+composer require zofe/rapyd-admin -W
 ```
 
 Run the setup command to configure the database, publish configs, and seed the default admin user:
@@ -51,6 +51,20 @@ password: admin
 ```
 
 ---
+
+### Social login (Google)
+
+Google sign-in is built in. Set the credentials in `.env` and the "Sign in with Google" button appears on the login page:
+
+```
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT=https://your-app.test/google/auth/callback
+```
+
+Without `GOOGLE_CLIENT_ID` the Google routes are not registered at all.
+
+> `-W` is needed on Laravel 13 because `laravel/socialite` (through `league/oauth1-client`) still pins Guzzle 7, while a fresh Laravel 13 app locks Guzzle 8. Guzzle 7 is fully supported by Laravel 13.
 
 ## What's included
 

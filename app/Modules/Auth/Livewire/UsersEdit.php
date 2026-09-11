@@ -28,7 +28,6 @@ class UsersEdit extends Component
     public $readonly = false;
 
     public $available_roles = [];
-    public $company_roles = [];
 
 
     protected $rules = [

@@ -54,18 +54,20 @@ if (Route::hasMacro('impersonate')) {
     Route::impersonate();
 }
 
-Route::get('/google/auth/redirect', function () {
-    return Socialite::driver('google')->redirect();
-})->name('google.redirect');
+if (config('services.google.client_id')) {
+    Route::get('/google/auth/redirect', function () {
+        return Socialite::driver('google')->redirect();
+    })->middleware('web')->name('google.redirect');
 
-Route::get('/google/auth/callback', function () {
-    try {
-        $payload = Socialite::driver('google')->stateless()->user();
-    } catch (\Exception $e) {
-        return redirect('/login');
-    }
-    return SocialiteService::loginOrRegister('google', $payload);
-});
+    Route::get('/google/auth/callback', function () {
+        try {
+            $payload = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return redirect('/login');
+        }
+        return SocialiteService::loginOrRegister('google', $payload);
+    })->middleware('web')->name('google.callback');
+}
 
 
 

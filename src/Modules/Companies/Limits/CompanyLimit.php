@@ -23,13 +23,10 @@ class CompanyLimit
 
         Company::addGlobalScope('onlyMine', function (Builder $builder) use ($user) {
             $builder->where(function ($q) use ($user) {
-                // The user's own company
-                if ($user->company_id) {
-                    $q->where('id', $user->company_id)
-                      ->orWhere('parent_id', $user->company_id);
-                }
-                // Companies where the user is a member via pivot
-                $q->orWhereHas('users', fn ($qq) => $qq->where('company_user.user_id', $user->id));
+                // Direct member via pivot
+                $q->whereHas('users', fn ($qq) => $qq->where('user_id', $user->id));
+                // Children of a company where the user is a member
+                $q->orWhereHas('parentCompany.users', fn ($qq) => $qq->where('user_id', $user->id));
             });
         });
     }
