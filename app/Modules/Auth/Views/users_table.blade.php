@@ -15,19 +15,18 @@
         <table class="table">
             <thead>
             <tr>
-                <th>
-                    <x-rpd::sort model="id" label="id" />
-                </th>
+                <th>Id</th>
                 <th>{{__('auth::user.firstname')}}</th>
                 <th>{{__('auth::user.email')}}</th>
                 <th>{{__('auth::user.roles')}}</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             @foreach ($items as $user)
             <tr>
                 <td>
-                    <a href="{{ route_lang('auth.users.view',$user->id) }}">{{ $user->id }}</a>
+                    <x-rpd::nav-link :label="$user->shortId" route="auth.users.view" :params="$user->id" />
                 </td>
                 <td>
                     @canImpersonate
@@ -43,6 +42,9 @@
                 </td>
                 <td>{{ $user->email }}</td>
                 <td>{{ optional(optional($user->roles)->pluck('name'))->join(',') }}</td>
+                <td class="text-end">
+                    <x-rpd::icon name="edit" route="auth.users.edit" :params="$user->id" />
+                </td>
             </tr>
             @endforeach
             </tbody>

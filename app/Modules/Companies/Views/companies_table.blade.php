@@ -12,6 +12,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th>Id</th>
                     <th><x-rpd::sort model="business_name" label="Business Name" /></th>
                     <th>Email</th>
                     <th>Tier</th>
@@ -24,8 +25,9 @@
                 @foreach ($items as $company)
                     <tr>
                         <td>
-                            <x-rpd::nav-link :label="$company->business_name" route="companies.view" :params="$company->id" />
+                            <x-rpd::nav-link :label="$company->shortId" route="companies.view" :params="$company->id" />
                         </td>
+                        <td>{{ $company->business_name }}</td>
                         <td>{{ $company->email }}</td>
                         <td>{{ $company->tier }}</td>
                         <td>
@@ -35,7 +37,7 @@
                         </td>
                         <td><x-rpd::date-formatted :date="$company->created_at" /></td>
                         <td class="text-end">
-                            <x-rpd::icon name="edit" route="companies.view" :params="$company->id" />
+                            <x-rpd::icon name="edit" route="companies.edit" :params="$company->id" />
                         </td>
                     </tr>
                 @endforeach

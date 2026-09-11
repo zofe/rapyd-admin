@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;
+use Zofe\Rapyd\Traits\ShortId;
 
 class Company extends Model
 {
-    use HasUuids;
+    use HasUuids, ShortId;
     use HasAddresses;
     use SoftDeletes;
 
