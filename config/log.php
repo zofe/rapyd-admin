@@ -15,4 +15,19 @@ return [
 
         'per_page' => 50,
     ],
+
+    'activity' => [
+        'enabled' => env('ACTIVITY_LOGGER_ENABLED', true),
+
+        // login, logout, failed attempts, impersonation start/stop
+        'track_auth' => true,
+
+        'per_page' => 50,
+
+        // activitylog:clean removes older rows (schedule it in the app)
+        'delete_records_older_than_days' => 180,
+
+        // never shown in the activity table
+        'hidden_properties' => ['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes', 'api_token'],
+    ],
 ];

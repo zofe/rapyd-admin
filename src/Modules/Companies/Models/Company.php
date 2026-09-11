@@ -6,16 +6,24 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;
+use Zofe\Rapyd\Modules\Log\LogOptions;
+use Zofe\Rapyd\Modules\Log\Traits\LogsActivity;
 use Zofe\Rapyd\Traits\ShortId;
 use Zofe\Rapyd\Traits\SSearch;
 
 class Company extends Model
 {
     use HasUuids;
-    use ShortId;
+    use ShortId, LogsActivity;
     use SSearch;
 
     public static array $searchableColumns = ['business_name', 'email', 'vat'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->useLogName('company')
+            ->logOnly(['business_name', 'email', 'vat', 'phone', 'status', 'tier', 'parent_id']);
+    }
     use HasAddresses;
     use SoftDeletes;
 

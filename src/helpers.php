@@ -195,3 +195,30 @@ if (! function_exists('item_href')) {
         return $href;
     }
 }
+
+if (! function_exists('log_activity')) {
+    /**
+     * Record a user/application event in the activity log.
+     *
+     * @param  mixed  $causer  null = current user, false = no causer (system)
+     */
+    function log_activity(string $logName, ?\Illuminate\Database\Eloquent\Model $subject = null, array $properties = [], ?string $description = null, $causer = null): ?\Spatie\Activitylog\Models\Activity
+    {
+        if (! function_exists('activity') || ! config('rapyd.log.activity.enabled', true)) {
+            return null;
+        }
+
+        $activity = activity($logName);
+        if ($causer !== false) {
+            $activity->causedBy($causer ?? auth()->user());
+        }
+        if ($subject) {
+            $activity->performedOn($subject);
+        }
+        if ($properties) {
+            $activity->withProperties($properties);
+        }
+
+        return $activity->log($description ?? str_replace('_', ' ', $logName));
+    }
+}

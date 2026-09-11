@@ -2,7 +2,10 @@
 
 namespace Zofe\Rapyd\Modules\Log;
 
+use Illuminate\Support\Facades\Event;
 use Zofe\Rapyd\Modules\Log\Ai\LogAiToolProvider;
+use Zofe\Rapyd\Modules\Log\Listeners\LogAuthEvents;
+use Zofe\Rapyd\Modules\Log\Models\Activity;
 use Zofe\Rapyd\Modules\RapydModuleServiceProvider;
 
 class LogModuleServiceProvider extends RapydModuleServiceProvider
@@ -16,6 +19,17 @@ class LogModuleServiceProvider extends RapydModuleServiceProvider
         if (file_exists($this->appModulePath('config.php'))) {
             $this->mergeConfigFrom($this->appModulePath('config.php'), 'log');
         }
+
+        if (class_exists(\Spatie\Activitylog\ActivitylogServiceProvider::class)) {
+            if (! $this->app->providerIsLoaded(\Spatie\Activitylog\ActivitylogServiceProvider::class)) {
+                $this->app->register(\Spatie\Activitylog\ActivitylogServiceProvider::class);
+            }
+            // Our model unless the app published its own choice.
+            if (config('activitylog.activity_model') === \Spatie\Activitylog\Models\Activity::class) {
+                config(['activitylog.activity_model' => Activity::class]);
+            }
+            config(['activitylog.delete_records_older_than_days' => config('rapyd.log.activity.delete_records_older_than_days', 180)]);
+        }
     }
 
     public function boot(): void
@@ -24,7 +38,12 @@ class LogModuleServiceProvider extends RapydModuleServiceProvider
             return;
         }
 
+        $this->loadMigrationsFrom($this->srcPath('Database/Migrations'));
         $this->bootAppModule('log');
+
+        if (config('rapyd.log.activity.enabled', true) && config('rapyd.log.activity.track_auth', true)) {
+            Event::subscribe(LogAuthEvents::class);
+        }
 
         if (class_exists(\Zofe\Ai\AiRegistry::class)) {
             \Zofe\Ai\AiRegistry::register(new LogAiToolProvider());
