@@ -12,7 +12,8 @@ use Zofe\Rapyd\Traits\SSearch;
 class Company extends Model
 {
     use HasUuids;
-    use ShortId, SSearch;
+    use ShortId;
+    use SSearch;
 
     public static array $searchableColumns = ['business_name', 'email', 'vat'];
     use HasAddresses;
