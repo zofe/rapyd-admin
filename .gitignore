@@ -15,7 +15,6 @@ psalm.xml
 .phpunit.cache/
 CONTEXT.md
 PROJECT_CONTEXT.md
-app/Modules/Search/
 
 # tooling output
 graphify-out/
