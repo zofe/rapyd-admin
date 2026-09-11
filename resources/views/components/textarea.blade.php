@@ -15,7 +15,7 @@
 @php
     if ($debounce) $bind = 'live.debounce.' . (ctype_digit($debounce) ? $debounce : 150) . 'ms';
     else if ($lazy) $bind = 'blur';
-    else $bind = 'defer';
+    else $bind = 'live.debounce.150ms';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);
     $id = $attributes->get('id', $model ?? $wireModel);

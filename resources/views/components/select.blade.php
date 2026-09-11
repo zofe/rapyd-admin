@@ -19,7 +19,7 @@
     }
 
     if ($lazy) $bind = 'blur';
-    else $bind = 'defer';
+    else $bind = 'live';
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);
     $id = $attributes->get('id', $model ?? $wireModel);
