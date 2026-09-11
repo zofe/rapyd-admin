@@ -8,7 +8,6 @@ use Zofe\Rapyd\Modules\Auth\Traits\Authorize;
 use Zofe\Rapyd\Modules\Auth\Traits\HasRoles;
 use Zofe\Rapyd\Modules\Auth\Traits\Impersonate;
 use Zofe\Rapyd\Modules\Auth\Traits\Limit;
-use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;
 use Zofe\Rapyd\Modules\Companies\Traits\HasCompanies;
 
 class User extends Authenticatable

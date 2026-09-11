@@ -3,13 +3,14 @@
 namespace Zofe\Rapyd\Modules\Companies\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;
 
 class Company extends Model
 {
-    use HasUuids, HasAddresses;
+    use HasUuids;
+    use HasAddresses;
     use SoftDeletes;
 
     protected $table = 'companies';

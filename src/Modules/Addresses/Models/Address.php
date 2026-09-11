@@ -9,7 +9,9 @@ use Zofe\Rapyd\Traits\ShortId;
 
 class Address extends Model
 {
-    use HasUuids, SoftDeletes, ShortId;
+    use HasUuids;
+    use SoftDeletes;
+    use ShortId;
 
     protected $keyType = 'string';
 
