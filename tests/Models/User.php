@@ -12,7 +12,12 @@ use Zofe\Rapyd\Modules\Companies\Traits\HasCompanies;
 
 class User extends Authenticatable
 {
-    use HasUuids, HasRoles, Authorize, Limit, Impersonate, HasCompanies;
+    use HasUuids;
+    use HasRoles;
+    use Authorize;
+    use Limit;
+    use Impersonate;
+    use HasCompanies;
 
     protected $guarded = [];
 
