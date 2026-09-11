@@ -10,7 +10,8 @@ use Zofe\Rapyd\Traits\ShortId;
 
 class Company extends Model
 {
-    use HasUuids, ShortId;
+    use HasUuids;
+    use ShortId;
     use HasAddresses;
     use SoftDeletes;
 
