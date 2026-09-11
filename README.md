@@ -33,7 +33,7 @@
 ```bash
 composer create-project --prefer-dist laravel/laravel myapp
 cd myapp
-composer require zofe/rapyd-admin -W
+composer require zofe/rapyd-admin:^9 -W
 ```
 
 Run the setup command to configure the database, publish configs, and seed the default admin user:
