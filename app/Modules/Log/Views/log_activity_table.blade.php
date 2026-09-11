@@ -2,8 +2,8 @@
     <x-rpd::card>
         <x-rpd::table title="Activity" :items="$items">
             <x-slot name="filters">
-                <x-rpd::date col="col-auto" model="date_from" placeholder="from" />
-                <x-rpd::date col="col-auto" model="date_to" placeholder="to" />
+                <x-rpd::date col="col-auto" model="date_from" label="From" />
+                <x-rpd::date col="col-auto" model="date_to" label="To" />
                 <x-rpd::select-list col="col" model="user" multiple :options="$users" placeholder="Author..." />
                 <x-rpd::select-list col="col" model="log_name" multiple :options="$log_names" placeholder="Event..." />
                 <x-rpd::input col="col" debounce="300" model="search" placeholder="search..." />

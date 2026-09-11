@@ -3,7 +3,7 @@
 'help' => null,
 'model' => null,
 'size' => null,
-'lazy' => true,
+'lazy' => false,
 'col'  => null,
 ])
 
@@ -11,7 +11,7 @@
     if($lazy) {
         $bind = 'blur';
     } else {
-        $bind = 'live.debounce.150ms';
+        $bind = 'live';
     }
     $wireModel = $attributes->whereStartsWith('wire:model')->first();
     $key = $attributes->get('name', $model ?? $wireModel);
