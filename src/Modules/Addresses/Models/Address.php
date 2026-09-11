@@ -1,5 +1,6 @@
 <?php
-namespace App\Modules\Addresses\Models;
+
+namespace Zofe\Rapyd\Modules\Addresses\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -10,24 +11,15 @@ class Address extends Model
 {
     use HasUuids, SoftDeletes, ShortId;
 
-    protected $primaryKey = 'id';
-    public $incrementing = false;
     protected $keyType = 'string';
 
+    public $incrementing = false;
+
     protected $fillable = [
-        'address',
-        'street_number',
-        'zipcode',
-        'city',
-        'province',
-        'region',
-        'country',
-        'country_code',
-        'address_lat',
-        'address_lon',
+        'address', 'street_number', 'zipcode', 'city', 'province', 'region',
+        'country', 'country_code', 'address_lat', 'address_lon',
     ];
 
-    // Relazione polimorfica
     public function addressable()
     {
         return $this->morphTo();

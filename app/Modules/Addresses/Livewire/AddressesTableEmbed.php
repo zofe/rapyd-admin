@@ -3,48 +3,39 @@
 namespace App\Modules\Addresses\Livewire;
 
 use App\Modules\Auth\Traits\Authorize;
-use Livewire\Component;
-use Zofe\Rapyd\Traits\WithDataTable;
 use Illuminate\Database\Eloquent\Relations\Relation;
-
+use Livewire\Attributes\On;
+use Livewire\Component;
 
 class AddressesTableEmbed extends Component
 {
-    use WithDataTable, Authorize;
+    use Authorize;
 
-    public $search = '';
-    public $sortField = 'id';
     public $entity;
-    public $editable = false;
+
+    public bool $editable = false;
+
     public $addresses;
 
-    protected $listeners = ['savedAddress' => 'refreshAddresses'];
-
-    public function booted()
-    {
-        $this->authorize('admin|edit addresses');
-    }
-
-    public function mount(string $addressableType, string $addressableId, $editable = false)
+    public function mount(string $addressableType, string $addressableId, bool $editable = false): void
     {
         $modelClass = Relation::getMorphedModel($addressableType) ?? $addressableType;
-        if (!$modelClass) {
-            abort(404, "Invalid addressable type");
-        }
+        abort_unless(class_exists($modelClass), 404);
+
         $this->entity = $modelClass::findOrFail($addressableId);
         $this->editable = $editable;
-
+        $this->authorize('admin|edit everything|edit users|edit own users|edit own business', $this->entity);
         $this->refreshAddresses();
     }
 
-    public function refreshAddresses()
+    #[On('savedAddress')]
+    public function refreshAddresses(): void
     {
         $this->addresses = $this->entity->addresses()->get();
     }
 
     public function render()
     {
-        $addresses = $this->addresses;
-        return view('addresses::addresses_table_embed', compact('addresses'));
+        return view('addresses::addresses_table_embed', ['addresses' => $this->addresses]);
     }
 }

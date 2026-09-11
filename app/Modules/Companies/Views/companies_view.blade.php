@@ -83,6 +83,20 @@
             />
         </x-rpd::card>
 
+        @if(config('rapyd.addresses.enabled', true))
+            <x-rpd::card title="Addresses">
+                <x-slot name="buttons">
+                    <livewire:addresses::addresses-button-add-embed addressableType="company" :addressableId="$company->id" />
+                </x-slot>
+
+                <livewire:addresses::addresses-table-embed
+                    addressableType="company"
+                    :addressableId="$company->id"
+                    :editable="true"
+                />
+            </x-rpd::card>
+        @endif
+
     </div>
 </div>
 

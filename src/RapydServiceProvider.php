@@ -18,6 +18,7 @@ use Zofe\Rapyd\Commands\RapydMakeTableCommand;
 use Zofe\Rapyd\Commands\RapydMakeViewCommand;
 use Zofe\Rapyd\Mechanisms\RapydTagPrecompiler;
 use Zofe\Rapyd\Modules\Auth\AuthModuleServiceProvider;
+use Zofe\Rapyd\Modules\Addresses\AddressesModuleServiceProvider;
 use Zofe\Rapyd\Modules\Companies\CompaniesModuleServiceProvider;
 use Zofe\Rapyd\Modules\Layout\LayoutModuleServiceProvider;
 use Zofe\Rapyd\Modules\ModuleServiceProvider;
@@ -148,6 +149,7 @@ class RapydServiceProvider extends ServiceProvider
         $this->app->register(ModuleServiceProvider::class);
         $this->app->register(AuthModuleServiceProvider::class);
         $this->app->register(CompaniesModuleServiceProvider::class);
+        $this->app->register(AddressesModuleServiceProvider::class);
         $this->app->register(LayoutModuleServiceProvider::class);
         $this->app->bind('stub-generator', function () {
             return new StubGenerator;

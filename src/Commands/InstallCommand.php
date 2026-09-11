@@ -12,6 +12,7 @@ class InstallCommand extends Command
         {--uuid-users : Publish the migration that converts users.id to UUID}
         {--no-user-model : Skip trait injection into app/Models/User.php}
         {--companies : Also add HasCompanies trait to the User model}
+        {--addresses : Also add HasAddresses trait to the User model}
         {--force : Overwrite already published config files}';
 
     protected $description = 'Install rapyd-admin v2 — injects traits into User model and publishes configs';
@@ -97,6 +98,9 @@ class InstallCommand extends Command
         if ($this->option('companies')) {
             $imports[] = 'use Zofe\Rapyd\Modules\Companies\Traits\HasCompanies;';
         }
+        if ($this->option('addresses')) {
+            $imports[] = 'use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;';
+        }
 
         $content = $this->injectImports($content, $imports);
 
@@ -105,6 +109,9 @@ class InstallCommand extends Command
 
         if ($this->option('companies')) {
             $traits[] = 'HasCompanies';
+        }
+        if ($this->option('addresses')) {
+            $traits[] = 'HasAddresses';
         }
 
         $content = $this->injectTraitUses($content, $traits);

@@ -14,10 +14,6 @@ class CompaniesModuleServiceProvider extends RapydModuleServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../../../config/companies.php', 'rapyd.companies');
 
-        $moduleConfig = dirname(__DIR__, 3) . '/app/Modules/Companies/config.php';
-        if (file_exists($moduleConfig)) {
-            $this->mergeConfigFrom($moduleConfig, 'companies');
-        }
     }
 
     public function boot(): void

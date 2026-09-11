@@ -2,15 +2,9 @@
 
 namespace App\Modules\Addresses\Traits;
 
-
-use App\Modules\Addresses\Models\Address;
-
+use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses as BaseHasAddresses;
 
 trait HasAddresses
 {
-    public function addresses()
-    {
-        return $this->morphMany(Address::class, 'addressable');
-    }
-
+    use BaseHasAddresses;
 }

@@ -3,9 +3,8 @@
 namespace App\Modules\Addresses\Livewire;
 
 use App\Modules\Auth\Traits\Authorize;
-use Livewire\Component;
 use Illuminate\Database\Eloquent\Relations\Relation;
-
+use Livewire\Component;
 
 class AddressesButtonAddEmbed extends Component
 {
@@ -13,18 +12,13 @@ class AddressesButtonAddEmbed extends Component
 
     public $entity;
 
-    public function booted()
-    {
-        $this->authorize('admin|edit addresses');
-    }
-
-    public function mount(string $addressableType, string $addressableId)
+    public function mount(string $addressableType, string $addressableId): void
     {
         $modelClass = Relation::getMorphedModel($addressableType) ?? $addressableType;
-        if (!$modelClass) {
-            abort(404, "Invalid addressable type");
-        }
+        abort_unless(class_exists($modelClass), 404);
+
         $this->entity = $modelClass::findOrFail($addressableId);
+        $this->authorize('admin|edit everything|edit users|edit own users|edit own business', $this->entity);
     }
 
     public function render()

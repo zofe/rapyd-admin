@@ -39,6 +39,7 @@ class RapydMakeSetupCommand extends Command
         $this->call('rpd:install', [
             '--uuid-users' => true,
             '--companies' => (bool) config('rapyd.companies.enabled', true),
+            '--addresses' => (bool) config('rapyd.addresses.enabled', true),
         ]);
         $this->call('migrate', ['--force' => true]);
         $this->call('db:seed', ['--class' => \Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder::class, '--force' => true]);

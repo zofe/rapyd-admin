@@ -2,12 +2,11 @@
 
 namespace App\Modules\Addresses\Livewire;
 
-use App\Modules\Addresses\Models\Address;
-
 use App\Modules\Auth\Traits\Authorize;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Livewire\Attributes\On;
 use Livewire\Component;
-
-
+use Zofe\Rapyd\Modules\Addresses\Models\Address;
 
 class AddressesModalEditEmbed extends Component
 {
@@ -15,57 +14,64 @@ class AddressesModalEditEmbed extends Component
 
     public $address;
 
-    protected $listeners = [
-        'editAddress' => 'editAddress',
-        'deleteAddress' => 'deleteAddress'
-    ];
-
     protected $rules = [
-        'address.address' => 'required',
-        'address.zipcode' => 'required',
-        'address.city' => 'required',
+        'address.address' => 'required|string|max:255',
+        'address.city'    => 'required|string|max:255',
+        'address.zipcode' => 'required|string|max:20',
+        // kept in the rules so Livewire carries them across requests on an unsaved model
         'address.addressable_type' => 'nullable',
-        'address.addressable_id' => 'nullable',
-
+        'address.addressable_id'   => 'nullable',
     ];
 
-    public function booted()
+    public function booted(): void
     {
-        $this->authorize('admin|edit addresses');
+        $this->authorize('admin|edit everything|edit users|edit own users|edit own business');
     }
 
-    public function editAddress($addressId = null, $addressableType = null, $addressableId = null)
+    #[On('editAddress')]
+    public function editAddress(?string $addressId = null, ?string $addressableType = null, ?string $addressableId = null): void
     {
-        if ($addressId) {
-            $this->address = Address::find($addressId) ?: new Address;
-        } else {
-            $this->address = new Address;
+        $this->address = $addressId ? (Address::find($addressId) ?? new Address()) : new Address();
 
-            if ($addressableType && $addressableId) {
-
-                $this->address->addressable_type = $addressableType;
-                $this->address->addressable_id = $addressableId;
-            }
+        if (! $this->address->exists && $addressableType && $addressableId) {
+            $this->address->addressable_type = $addressableType;
+            $this->address->addressable_id = $addressableId;
         }
 
-        $this->dispatch('show-modal',['editAddress']);
+        $this->authorizeOwner();
+        $this->dispatch('show-modal', ['editAddress']);
     }
 
-    public function save()
+    public function save(): void
     {
-        $this->validate([
-            'address.address' => 'required|string|max:255',
-        ]);
+        $this->validate();
+        $this->authorizeOwner();
         $this->address->save();
+
         $this->dispatch('hide-modals');
         $this->dispatch('savedAddress');
     }
 
-    public function deleteAddress($addressId)
+    #[On('deleteAddress')]
+    public function deleteAddress(string $addressId): void
     {
-        $this->address = Address::findOrfail($addressId);
+        $this->address = Address::findOrFail($addressId);
+        $this->authorizeOwner();
         $this->address->delete();
+
         $this->dispatch('savedAddress');
+    }
+
+    // The address belongs to a user or a company: the entity-level checks
+    // (e.g. CompanyAuth) decide who may touch its addresses.
+    protected function authorizeOwner(): void
+    {
+        $type = $this->address->addressable_type;
+        $modelClass = $type ? (Relation::getMorphedModel($type) ?? $type) : null;
+        $owner = $modelClass && class_exists($modelClass) ? $modelClass::find($this->address->addressable_id) : null;
+
+        abort_unless($owner, 404);
+        $this->authorize('admin|edit everything|edit users|edit own users|edit own business', $owner);
     }
 
     public function render()

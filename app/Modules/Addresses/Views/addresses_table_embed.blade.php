@@ -3,14 +3,15 @@
     <ul class="list-group list-group-flush ">
         @foreach($addresses as $address)
             <li class="list-group-item text-body p-1 d-flex justify-content-between align-items-start">
-                {{ $address->address }}
-                {{ $address->street_number }},
-                {{ $address->zipcode }}
-                {{ $address->city }}
-                ({{ $address->province }}),
-                {{ $address->region }} -
-                {{ $address->country }}
-                ({{ $address->country_code }})
+                @php
+                    $line = array_filter([
+                        trim($address->address . ' ' . $address->street_number),
+                        trim($address->zipcode . ' ' . $address->city . ($address->province ? " ({$address->province})" : '')),
+                        $address->region,
+                        trim($address->country . ($address->country_code ? " ({$address->country_code})" : '')),
+                    ]);
+                @endphp
+                {{ implode(', ', $line) }}
 
                 @if($editable)
                     <div class="text-nowrap small">
