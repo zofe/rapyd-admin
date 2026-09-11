@@ -60,7 +60,7 @@ class AddressesTest extends TestCase
         Livewire::test('addresses::addresses-table-embed', ['addressableType' => 'company', 'addressableId' => $this->company->id])
             ->assertNotFound();
 
-        $customer->attachToCompany($this->company, 'member');
+        $customer->assignToCompany($this->company, 'member');
 
         Livewire::test('addresses::addresses-table-embed', ['addressableType' => 'company', 'addressableId' => $this->company->id])
             ->assertSee('Via Roma 1');

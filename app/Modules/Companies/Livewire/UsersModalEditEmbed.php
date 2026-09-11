@@ -6,6 +6,7 @@ use App\Modules\Auth\Traits\Authorize;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Zofe\Rapyd\Modules\Companies\Models\Company;
 
 class UsersModalEditEmbed extends Component
 {
@@ -35,13 +36,7 @@ class UsersModalEditEmbed extends Component
         $this->user       = $userId ? ($userModel::find($userId) ?? new $userModel()) : new $userModel();
         $this->company_id = $companyId;
         $this->passwd     = '';
-
-        if ($userId && $this->company_id) {
-            $pivot = $this->user->companies()->where('companies.id', $this->company_id)->first()?->pivot;
-            $this->role = $pivot?->role ?? 'member';
-        } else {
-            $this->role = 'member';
-        }
+        $this->role       = $this->user->company_role ?: 'member';
 
         $this->dispatch('show-modal', ['editUser']);
     }
@@ -67,16 +62,12 @@ class UsersModalEditEmbed extends Component
             $this->user->assignRole(config('rapyd.companies.user_role', 'customer'));
         }
 
-        if ($this->company_id) {
-            $this->user->companies()->syncWithoutDetaching([
-                $this->company_id => ['role' => $this->role, 'is_primary' => true],
-            ]);
-            if ($isNew) {
-                $this->user->company_id = $this->company_id;
-                $this->user->save();
-            }
-            $this->company_id = null;
+        // A new user joins this company; an existing member only changes role here.
+        // Moving a user to another company is done from the user page by a super admin.
+        if ($this->company_id && ($isNew || $this->user->company_id === $this->company_id)) {
+            $this->user->assignToCompany(Company::findOrFail($this->company_id), $this->role);
         }
+        $this->company_id = null;
 
         $this->dispatch('hide-modals');
         $this->dispatch('savedUser');

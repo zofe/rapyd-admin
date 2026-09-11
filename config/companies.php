@@ -5,7 +5,7 @@ return [
 
     /*
      | Roles available within a company.
-     | Key = stored value in company_user.role
+     | Key = stored value in users.company_role
      | Value = display label
      | Projects can override this via config/rapyd/companies.php after publishing.
      */

@@ -54,25 +54,17 @@ class Company extends Model
 
     public function users()
     {
-        return $this->belongsToMany(config('auth.providers.users.model'), 'company_user')
-            ->withPivot('role', 'is_primary')
-            ->withTimestamps();
+        return $this->hasMany(config('auth.providers.users.model'), 'company_id');
     }
 
     public function owners()
     {
-        return $this->belongsToMany(config('auth.providers.users.model'), 'company_user')
-            ->withPivot('role', 'is_primary')
-            ->withTimestamps()
-            ->wherePivot('role', 'owner');
+        return $this->users()->where('company_role', 'owner');
     }
 
     public function members()
     {
-        return $this->belongsToMany(config('auth.providers.users.model'), 'company_user')
-            ->withPivot('role', 'is_primary')
-            ->withTimestamps()
-            ->wherePivot('role', 'member');
+        return $this->users()->where('company_role', 'member');
     }
 
     public function parent()

@@ -83,7 +83,7 @@ class CompaniesTest extends TestCase
         Livewire::test('companies::companies-view', ['company' => $company])
             ->assertNotFound();
 
-        $customer->attachToCompany($company, 'member');
+        $customer->assignToCompany($company, 'member');
 
         Livewire::test('companies::companies-view', ['company' => $company])
             ->assertSee('Acme');
@@ -99,7 +99,7 @@ class CompaniesTest extends TestCase
         Livewire::test('companies::companies-view', ['company' => $company])
             ->assertNotFound();
 
-        $operator->attachToCompany($company, 'member');
+        $operator->assignToCompany($company, 'member');
 
         Livewire::test('companies::companies-view', ['company' => $company])
             ->assertSee('Acme');
@@ -131,7 +131,6 @@ class CompaniesTest extends TestCase
 
         $user = User::where('email', 'mario@example.com')->firstOrFail();
         $this->assertTrue($user->isOwnerOf($company));
-        $this->assertEquals($company->id, $user->primaryCompany()?->id);
         $this->assertEquals($company->id, $user->company_id);
         $this->assertTrue($user->hasRole(config('rapyd.companies.user_role')));
 

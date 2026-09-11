@@ -10,20 +10,12 @@ class CompanyAuth
 
     public static function check($company, $user = null): bool
     {
-        if (! $user) {
+        if (! $user || ! $user->company_id) {
             return false;
         }
 
-        // Direct member via pivot
-        if ($company->users()->where('user_id', $user->id)->exists()) {
-            return true;
-        }
-
-        // Member of the parent company inherits access to children
-        if ($company->parentCompany && $company->parentCompany->users()->where('user_id', $user->id)->exists()) {
-            return true;
-        }
-
-        return false;
+        // Own company, or a child of it.
+        return $company->id === $user->company_id
+            || $company->parent_id === $user->company_id;
     }
 }

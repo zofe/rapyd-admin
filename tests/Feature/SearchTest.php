@@ -45,7 +45,7 @@ class SearchTest extends TestCase
     {
         $customer = User::where('email', 'mario@example.com')->firstOrFail();
         $customer->assignRole('customer');
-        $customer->attachToCompany(Company::where('business_name', 'Globex')->firstOrFail(), 'member');
+        $customer->assignToCompany(Company::where('business_name', 'Globex')->firstOrFail(), 'member');
         $this->actingAs($customer);
 
         $html = collect($this->getJson('/search/items?q=o')->assertOk()->json())->pluck('html')->implode(' ');

@@ -9,7 +9,7 @@
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         @php
-                            $role = $user->pivot->role ?? 'member';
+                            $role = $user->company_role ?: 'member';
                             $badgeColor = $role === 'owner' ? 'primary' : 'secondary';
                         @endphp
                         <span class="badge bg-{{ $badgeColor }}">{{ ucfirst($role) }}</span>
