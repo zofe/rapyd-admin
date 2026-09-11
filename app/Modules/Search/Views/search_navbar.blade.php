@@ -1,7 +1,13 @@
 <div class="d-flex " id="mainsearch">
 
-   <div x-data x-init="
-    new TomSelect($refs.mySelect, {
+   <div x-data="{ ts: null, typing: false }" x-init="
+    ts = new TomSelect($refs.mySelect, {
+        shouldLoad: function(query) { return query.length > 0; }
+        ,onType: function(query) {
+            typing = query.length > 0;
+            if (!query.length) { this.clearOptions(); this.close(); }
+        }
+        ,
         valueField: 'id'
         ,labelField: 'html'
         ,searchField: 'html'
@@ -30,8 +36,13 @@
             }
         }
     })
-" style="min-width: 200px">
+" style="min-width: 200px" class="position-relative">
         <select x-ref="mySelect" placeholder="search..." ></select>
+        <button type="button" x-show="typing" x-cloak
+                @click="ts.setTextboxValue(''); ts.clearOptions(); ts.close(); typing = false"
+                class="btn btn-link btn-sm text-muted position-absolute top-50 translate-middle-y" style="right: 28px; padding: 0 4px; z-index: 5;" aria-label="clear search">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
     <style>
