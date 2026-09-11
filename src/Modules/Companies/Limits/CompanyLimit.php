@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd\Modules\Companies\Limits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Zofe\Rapyd\Modules\Companies\Models\Company;
 
 class CompanyLimit
@@ -21,12 +22,14 @@ class CompanyLimit
             return;
         }
 
+        // Plain subqueries on the pivot: touching Company relations here would re-apply
+        // this very scope and recurse forever.
         Company::addGlobalScope('onlyMine', function (Builder $builder) use ($user) {
-            $builder->where(function ($q) use ($user) {
-                // Direct member via pivot
-                $q->whereHas('users', fn ($qq) => $qq->where('user_id', $user->id));
-                // Children of a company where the user is a member
-                $q->orWhereHas('parentCompany.users', fn ($qq) => $qq->where('user_id', $user->id));
+            $mine = DB::table('company_user')->select('company_id')->where('user_id', $user->id);
+
+            $builder->where(function ($q) use ($mine) {
+                $q->whereIn('companies.id', $mine)
+                  ->orWhereIn('companies.parent_id', $mine);
             });
         });
     }

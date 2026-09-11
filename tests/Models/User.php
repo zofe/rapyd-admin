@@ -8,7 +8,10 @@ use Zofe\Rapyd\Modules\Auth\Traits\Authorize;
 use Zofe\Rapyd\Modules\Auth\Traits\HasRoles;
 use Zofe\Rapyd\Modules\Auth\Traits\Impersonate;
 use Zofe\Rapyd\Modules\Auth\Traits\Limit;
+use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;
 use Zofe\Rapyd\Modules\Companies\Traits\HasCompanies;
+use Zofe\Rapyd\Traits\ShortId;
+use Zofe\Rapyd\Traits\SSearch;
 
 class User extends Authenticatable
 {
@@ -18,6 +21,9 @@ class User extends Authenticatable
     use Limit;
     use Impersonate;
     use HasCompanies;
+    use HasAddresses;
+    use ShortId;
+    use SSearch;
 
     protected $guarded = [];
 

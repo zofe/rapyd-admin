@@ -94,6 +94,7 @@ class InstallCommand extends Command
             'use Zofe\Rapyd\Modules\Auth\Traits\Limit;',
             'use Zofe\Rapyd\Modules\Auth\Traits\Impersonate;',
             'use Zofe\Rapyd\Traits\ShortId;',
+            'use Zofe\Rapyd\Traits\SSearch;',
         ];
 
         if ($this->option('companies')) {
@@ -106,7 +107,7 @@ class InstallCommand extends Command
         $content = $this->injectImports($content, $imports);
 
         // ---- Trait uses inside class body -----------------------------------
-        $traits = ['HasUuids', 'HasRoles', 'Authorize', 'Limit', 'Impersonate', 'ShortId'];
+        $traits = ['HasUuids', 'HasRoles', 'Authorize', 'Limit', 'Impersonate', 'ShortId', 'SSearch'];
 
         if ($this->option('companies')) {
             $traits[] = 'HasCompanies';
@@ -206,9 +207,10 @@ class InstallCommand extends Command
         $this->line('    use Zofe\Rapyd\Modules\Auth\Traits\Limit;');
         $this->line('    use Zofe\Rapyd\Modules\Auth\Traits\Impersonate;');
         $this->line('    use Zofe\Rapyd\Traits\ShortId;');
+        $this->line('    use Zofe\Rapyd\Traits\SSearch;');
         $this->line('');
         $this->line('  <fg=cyan>Trait uses inside the class body:</>');
-        $this->line('    use HasUuids, HasRoles, Authorize, Limit, Impersonate, ShortId;');
+        $this->line('    use HasUuids, HasRoles, Authorize, Limit, Impersonate, ShortId, SSearch;');
         $this->line('');
     }
 

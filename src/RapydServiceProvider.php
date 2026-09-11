@@ -22,6 +22,7 @@ use Zofe\Rapyd\Modules\Auth\AuthModuleServiceProvider;
 use Zofe\Rapyd\Modules\Companies\CompaniesModuleServiceProvider;
 use Zofe\Rapyd\Modules\Layout\LayoutModuleServiceProvider;
 use Zofe\Rapyd\Modules\ModuleServiceProvider;
+use Zofe\Rapyd\Modules\Search\SearchModuleServiceProvider;
 use Zofe\Rapyd\Modules\Workflow\WorkflowModuleServiceProvider;
 use Zofe\Rapyd\Stubs\StubGenerator;
 
@@ -152,6 +153,7 @@ class RapydServiceProvider extends ServiceProvider
         $this->app->register(CompaniesModuleServiceProvider::class);
         $this->app->register(AddressesModuleServiceProvider::class);
         $this->app->register(WorkflowModuleServiceProvider::class);
+        $this->app->register(SearchModuleServiceProvider::class);
         $this->app->register(LayoutModuleServiceProvider::class);
         $this->app->bind('stub-generator', function () {
             return new StubGenerator;

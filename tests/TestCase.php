@@ -93,6 +93,10 @@ class TestCase extends Orchestra
         $app['config']->set('session.driver', 'file');
 
         $app['config']->set('auth.providers.users.model', \Zofe\Rapyd\Tests\Models\User::class);
+        $app['config']->set('rapyd.search.models', [
+            ['class' => \Zofe\Rapyd\Tests\Models\User::class, 'scope' => 'ssearch', 'route' => 'auth.users.view', 'label' => 'name', 'icon' => 'user', 'limit' => 5],
+            ['class' => \Zofe\Rapyd\Modules\Companies\Models\Company::class, 'scope' => 'ssearch', 'route' => 'companies.view', 'label' => 'business_name', 'icon' => 'building', 'limit' => 5],
+        ]);
         $app['config']->set('workflow.ticket', [
             'type' => 'state_machine',
             'marking_store' => ['type' => 'single_state', 'property' => 'status'],

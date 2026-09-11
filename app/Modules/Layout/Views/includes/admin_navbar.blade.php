@@ -12,7 +12,7 @@
         <!-- Topbar Navbar -->
         <ul class="navbar-nav ml-auto">
 
-            @if(config('search.models'))
+            @if(config('rapyd.search.enabled', true) && Route::has('search.items'))
                 @ifcomponent('search::search-navbar')
                     @livewire('search::search-navbar')
                 @endifcomponent

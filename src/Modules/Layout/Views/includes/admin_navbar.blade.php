@@ -7,7 +7,7 @@
 
         <div class="collapse navbar-collapse rounded d-flex" id="navbarScroll">
 
-            @if(config('search.models'))
+            @if(config('rapyd.search.enabled', true) && Route::has('search.items'))
                 @livewire('search::search-navbar')
             @endif
 

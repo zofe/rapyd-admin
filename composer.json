@@ -91,5 +91,9 @@
             "type": "other",
             "url": "https://feliceostuni.com"
         }
-    ]
+    ],
+    "suggest": {
+        "laravel/scout": "Full-text search behind Zofe\\Rapyd\\Traits\\SSearch (set RAPYD_SEARCH_USE_SCOUT=true)",
+        "meilisearch/meilisearch-php": "Meilisearch driver for Laravel Scout"
+    }
 }

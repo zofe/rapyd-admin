@@ -7,11 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Zofe\Rapyd\Modules\Addresses\Traits\HasAddresses;
 use Zofe\Rapyd\Traits\ShortId;
+use Zofe\Rapyd\Traits\SSearch;
 
 class Company extends Model
 {
     use HasUuids;
-    use ShortId;
+    use ShortId, SSearch;
+
+    public static array $searchableColumns = ['business_name', 'email', 'vat'];
     use HasAddresses;
     use SoftDeletes;
 
