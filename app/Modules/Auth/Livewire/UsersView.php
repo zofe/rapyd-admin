@@ -2,16 +2,14 @@
 
 namespace App\Modules\Auth\Livewire;
 
-
-
-use App\Models\User;
-use Livewire\Component;
 use App\Modules\Auth\Traits\Authorize;
-
+use Illuminate\Database\Eloquent\Model;
+use Livewire\Component;
 
 class UsersView extends Component
 {
     use Authorize;
+
     public $user;
 
     public function booted()
@@ -19,9 +17,15 @@ class UsersView extends Component
         $this->authorize('admin|edit users');
     }
 
-    public function mount(User $user)
+    public function mount($user)
     {
-        $this->user = $user;
+        $userModel = config('auth.providers.users.model');
+        $this->user = $user instanceof Model ? $user : $userModel::findOrFail($user);
+    }
+
+    public function hasCompanies(): bool
+    {
+        return config('rapyd.companies.enabled') && method_exists($this->user, 'company');
     }
 
     public function render()

@@ -19,6 +19,9 @@
                 <th>{{__('auth::user.firstname')}}</th>
                 <th>{{__('auth::user.email')}}</th>
                 <th>{{__('auth::user.roles')}}</th>
+                @if($this->hasCompanies())
+                    <th>{{__('auth::user.company')}}</th>
+                @endif
                 <th></th>
             </tr>
             </thead>
@@ -42,6 +45,16 @@
                 </td>
                 <td>{{ $user->email }}</td>
                 <td>{{ optional(optional($user->roles)->pluck('name'))->join(',') }}</td>
+                @if($this->hasCompanies())
+                    <td>
+                        @if($user->company)
+                            <x-rpd::nav-link :label="$user->company->business_name" route="companies.view" :params="$user->company_id" />
+                            @if($user->company_role === 'owner')
+                                <span class="badge bg-primary ms-1">Owner</span>
+                            @endif
+                        @endif
+                    </td>
+                @endif
                 <td class="text-end">
                     <x-rpd::icon name="edit" route="auth.users.edit" :params="$user->id" />
                 </td>
@@ -52,4 +65,3 @@
 
     </x-rpd::table>
 </x-rpd::card>
-

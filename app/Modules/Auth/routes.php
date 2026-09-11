@@ -10,6 +10,10 @@ use App\Modules\Auth\Services\SocialiteService;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 
+// Bind {user} to the configured auth model: the Livewire pages below must not
+// depend on App\Models\User existing.
+Route::model('user', config('auth.providers.users.model'));
+
 Route::get('auth/users', UsersTable::class)
     ->middleware(['web'])
     ->name('auth.users')

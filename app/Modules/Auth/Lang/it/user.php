@@ -25,6 +25,8 @@ return [
     'email'         => 'Indirizzo email',
     'roles'         => 'Ruoli',
     'role'          => 'Ruolo',
+    'company_role'  => 'Ruolo in azienda',
+    'no_company'    => 'Nessuna azienda assegnata.',
 
     'password'      => 'Password',
     'new_password'  => 'Nuova Password',
