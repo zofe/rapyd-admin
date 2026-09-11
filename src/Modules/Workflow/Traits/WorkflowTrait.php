@@ -33,6 +33,7 @@ trait WorkflowTrait
     public function workflow_transitions($workflow = null)
     {
         $workflow = Workflow::get($this, $workflow);
+
         try {
             return $workflow->getEnabledTransitions($this);
         } catch (\Exception $e) {
@@ -49,6 +50,7 @@ trait WorkflowTrait
     public function workflow_transition_blocked($workflow = null)
     {
         $workflow = Workflow::get($this, $workflow);
+
         try {
             $marking = $workflow->getMarking($this);
         } catch (\Exception $e) {
@@ -69,7 +71,7 @@ trait WorkflowTrait
         foreach ($transitions as $transition) {
             if (in_array($currentState, $transition->getFroms())) {
                 $blockerList = $workflow->buildTransitionBlockerList($this, $transition->getName());
-                if (!$blockerList->isEmpty()) {
+                if (! $blockerList->isEmpty()) {
                     foreach ($blockerList as $blocker) {
                         $messages[$blocker->getMessage()][] = $transition->getName();
                     }
@@ -81,7 +83,7 @@ trait WorkflowTrait
         $result = [];
         foreach ($messages as $message => $actions) {
             foreach ($actions as $action) {
-                if (!isset($result[$action])) {
+                if (! isset($result[$action])) {
                     $result[$action] = [];
                 }
                 $result[$action][] = $message;
@@ -91,7 +93,7 @@ trait WorkflowTrait
         return $result;
     }
 
-    public function workflow_metadata($meta, $place_or_transition, $as_array = false, $workflow=null)
+    public function workflow_metadata($meta, $place_or_transition, $as_array = false, $workflow = null)
     {
         $dot_meta = strpos($meta, '.');
         $workflow = Workflow::get($this, $workflow);
@@ -100,6 +102,7 @@ trait WorkflowTrait
             foreach ($workflow->getDefinition()->getTransitions() as $t) {
                 if ($t->getName() === $place_or_transition) {
                     $place_or_transition = $t;
+
                     break;
                 }
             }
@@ -127,22 +130,23 @@ trait WorkflowTrait
         return $result;
     }
 
-    public static function workflow_count_transition_blocked_from(Collection $items, $workflow=null): int
+    public static function workflow_count_transition_blocked_from(Collection $items, $workflow = null): int
     {
         return $items
-            ->flatMap(fn($item) =>
+            ->flatMap(
+                fn ($item) =>
             collect($item->workflow_transition_blocked($workflow))
-                ->flatMap(fn(array $subarray) => $subarray)
+                ->flatMap(fn (array $subarray) => $subarray)
             )
-            ->filter(fn(string $value) => trim($value) !== '')
+            ->filter(fn (string $value) => trim($value) !== '')
             ->count();
     }
 
-    public static function workflow_count_incomplete_from(Collection $items, $workflow=null): int
+    public static function workflow_count_incomplete_from(Collection $items, $workflow = null): int
     {
         return $items
-            ->map(fn($item) => $item->workflow_metadata('final', $item->status))
-            ->filter(fn($value) => $value !== true)
+            ->map(fn ($item) => $item->workflow_metadata('final', $item->status))
+            ->filter(fn ($value) => $value !== true)
             ->count();
     }
 

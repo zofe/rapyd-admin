@@ -8,7 +8,8 @@ use Zofe\Rapyd\Modules\Workflow\Traits\WorkflowTrait;
 
 class Ticket extends Model
 {
-    use HasUuids, WorkflowTrait;
+    use HasUuids;
+    use WorkflowTrait;
 
     protected $guarded = [];
 }
