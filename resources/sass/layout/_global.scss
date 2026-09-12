@@ -20,7 +20,7 @@ a {
 #wrapper {
   display: flex;
   #content-wrapper {
-    background-color: $gray-100;
+    background-color: var(--rpd-content-bg, #{$gray-100});
     width: 100%;
     overflow-x: hidden;
     #content {

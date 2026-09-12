@@ -7,7 +7,7 @@
     text-decoration: none;
 }
 .sidebar .collapse-inner a.active {
-    background-color: #ddd;
+    background-color: var(--rpd-sidebar-active-bg, #ddd);
 }
 //.sidebar .nav-item .nav-link {
 //    padding-top: 0.5rem;
@@ -21,7 +21,7 @@
     width: $sidebar-collapsed-width;  // di default la trattiamo collapsed
     min-height: 100vh;
     border-right: 1px solid var(--bs-border-color);
-    background-color: $sidebar-bg;
+    background-color: var(--rpd-sidebar-bg, #{$sidebar-bg});
 
     .nav-item {
         position: relative;
@@ -143,10 +143,10 @@
 }
 
 .bg-sidebar {
-    background-color: $sidebar-bg;
+    background-color: var(--rpd-sidebar-bg, #{$sidebar-bg});
 }
 .bg-sidebar .collapse.show {
-    background-color: $body-bg;
+    background-color: var(--rpd-sidebar-inner-bg, #{$body-bg});
     border-radius: 0.35rem;
 }
 

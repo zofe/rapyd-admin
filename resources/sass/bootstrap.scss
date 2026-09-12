@@ -1,3 +1,5 @@
 
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-icons/font/bootstrap-icons';
+@import 'bootstrap/scss/bootstrap';
+
+$bootstrap-icons-font-dir: "@bootstrap-icons-fonts";
+@import 'bootstrap-icons/font/bootstrap-icons';

@@ -28,7 +28,7 @@ body.theme-dark {
     border-bottom: 1px solid $border-color;
 }
 .navbar-admin {
-    background-color: $navbar-admin-bg;
+    background-color: var(--rpd-topbar-bg, #{$navbar-admin-bg});
     border-bottom: 1px solid $border-color;
 }
 
@@ -113,7 +113,7 @@ body.theme-dark {
 }
 
 .btn-uania {
-    background-color: #4e73df !important;
+    background-color: $primary !important;
 }
 
 //form rimpiccioliti
@@ -260,12 +260,6 @@ table.table tr.tr-small {
 .sidebar {
     font-size: 0.90rem;
     line-height: 1;
-    border-right: 1px solid var(--bs-border-color);
-
-    /////////////
-    background-color: white;
-    /////////////
-
 }
 //.sidebar-dark .nav-item .nav-link, .sidebar .nav-item .nav-link {
 //    padding-top: 0.5rem;

@@ -39,6 +39,9 @@ $green: #1cc88a !default;
 $teal: #20c9a6 !default;
 $cyan: #36b9cc !default;
 
+// Theme accent: buttons, links, active nav. Change it here (or in a theme).
+$primary: $blue !default;
+
 // Custom Colors
 $brand-google: #ea4335 !default;
 $brand-facebook: #3b5998 !default;
@@ -96,8 +99,8 @@ $transition-collapse: height .15s ease !default;
 $dropdown-font-size: 0.85rem !default;
 $dropdown-border-color: $border-color !default;
 
-$link-color: $blue !default;
-$primary-color: #5a8dee;
+$link-color: $primary !default;
+$primary-color: $primary;
 $body-bg: #f3f4f4;
 $rgba-to-hex-bg: #fff !default; // (C)
 $rgba-to-hex-bg-inverted: #000 !default; // (C)

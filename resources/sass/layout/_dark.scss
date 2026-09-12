@@ -39,6 +39,14 @@
     --bs-link-color: #6388f5;
 
     --bs-navbar-brand-color: #f8f9fa;
+
+    /* Bootstrap 5.3 semantic colours (muted text, emphasis, secondary surfaces) */
+    --bs-emphasis-color: #fff;
+    --bs-emphasis-color-rgb: 255, 255, 255;
+    --bs-secondary-color: rgba(248, 249, 250, .75);
+    --bs-tertiary-color: rgba(248, 249, 250, .5);
+    --bs-secondary-bg: #242c3a;
+    --bs-tertiary-bg: #2d3748;
 }
 
 .text-body {
@@ -93,7 +101,12 @@
 
 /* Tables */
 .dark .table {
-    background-color: var(--table-bg);
+    /* cells read the --bs-table-* variables, not the inherited colour */
+    --bs-table-color: var(--table-color);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--table-border);
+    --bs-table-striped-color: var(--table-color);
+    --bs-table-hover-color: var(--table-color);
     color: var(--table-color);
     border-color: var(--table-border);
 }

@@ -2,14 +2,16 @@ import * as bootstrap from 'bootstrap';
 import modbox from 'bootstrap-modbox/dist/bootstrap-modbox.esm';
 import TomSelect from 'tom-select/dist/js/tom-select.complete';
 import { ThemeSwitcher } from './theme-switcher';
+import registerSortable from 'livewire-sortable';
+import '../sass/rapyd.scss';
 
 window.bootstrap  = bootstrap;
 window.modbox     = modbox;
 window.TomSelect  = TomSelect;
 
-// livewire-sortable throws at import time when window.Livewire is missing (e.g. the
-// login page has no Livewire at all): register it once Livewire is initialised.
-document.addEventListener('livewire:init', () => require('livewire-sortable'));
+// livewire-sortable throws when window.Livewire is missing (the login page has no
+// Livewire at all): vite.config.js wraps it in a function, run once Livewire is up.
+document.addEventListener('livewire:init', registerSortable);
 
 // ── Modali ────────────────────────────────────────────────────────────────────
 function hideModals() {

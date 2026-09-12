@@ -4,9 +4,9 @@ export const ThemeSwitcher = {
             (!('theme' in localStorage) &&
                 window.matchMedia('(prefers-color-scheme: dark)').matches)
 
-        isDark
-            ? document.documentElement.classList.add('dark')
-            : document.documentElement.classList.remove('dark')
+        // Our own .dark rules + Bootstrap 5.3 native dark mode (tables, forms, dropdowns, modals).
+        document.documentElement.classList.toggle('dark', isDark)
+        document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light')
 
         ThemeSwitcher.updateAdminTheme()
     },

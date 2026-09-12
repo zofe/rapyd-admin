@@ -1,0 +1,71 @@
+// ─── Runtime design tokens ───────────────────────────────────────────────────
+// Bootstrap compiles the primary colour into each component (.btn-primary,
+// focus rings, checks…). These rules map them back onto the CSS variables so
+// that --bs-primary can be changed at runtime (config rapyd.layout.palette,
+// a theme, or a plain <style>) without recompiling. Hover/active/tint shades
+// are derived with color-mix(). See docs/THEMES.md, "Design tokens".
+
+:root {
+    --rpd-primary-hover:  color-mix(in srgb, var(--bs-primary) 85%, black);
+    --rpd-primary-active: color-mix(in srgb, var(--bs-primary) 78%, black);
+    --rpd-primary-tint:   color-mix(in srgb, var(--bs-primary) 45%, white);
+    --rpd-primary-contrast: #fff;
+}
+
+.btn-primary {
+    --bs-btn-color: var(--rpd-primary-contrast);
+    --bs-btn-bg: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-color: var(--rpd-primary-contrast);
+    --bs-btn-hover-bg: var(--rpd-primary-hover);
+    --bs-btn-hover-border-color: var(--rpd-primary-hover);
+    --bs-btn-active-color: var(--rpd-primary-contrast);
+    --bs-btn-active-bg: var(--rpd-primary-active);
+    --bs-btn-active-border-color: var(--rpd-primary-active);
+    --bs-btn-disabled-color: var(--rpd-primary-contrast);
+    --bs-btn-disabled-bg: var(--bs-primary);
+    --bs-btn-disabled-border-color: var(--bs-primary);
+    --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+    --bs-btn-hover-color: var(--rpd-primary-contrast);
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: var(--bs-primary);
+    --bs-btn-active-color: var(--rpd-primary-contrast);
+    --bs-btn-active-bg: var(--bs-primary);
+    --bs-btn-active-border-color: var(--bs-primary);
+    --bs-btn-disabled-color: var(--bs-primary);
+    --bs-btn-disabled-border-color: var(--bs-primary);
+    --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+}
+
+.btn-link {
+    --bs-btn-color: var(--bs-link-color);
+    --bs-btn-hover-color: var(--bs-link-hover-color);
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--rpd-primary-tint);
+    box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25);
+}
+
+.form-check-input:checked,
+.form-check-input[type=checkbox]:indeterminate {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+.nav-pills      { --bs-nav-pills-link-active-bg: var(--bs-primary); }
+.nav            { --bs-nav-link-color: var(--bs-link-color); --bs-nav-link-hover-color: var(--bs-link-hover-color); }
+.pagination     { --bs-pagination-color: var(--bs-link-color); --bs-pagination-hover-color: var(--bs-link-hover-color);
+                  --bs-pagination-active-bg: var(--bs-primary); --bs-pagination-active-border-color: var(--bs-primary);
+                  --bs-pagination-focus-color: var(--bs-link-hover-color); }
+.dropdown-menu  { --bs-dropdown-link-active-bg: var(--bs-primary); }
+.list-group     { --bs-list-group-active-bg: var(--bs-primary); --bs-list-group-active-border-color: var(--bs-primary); }
+.progress, .progress-stacked { --bs-progress-bar-bg: var(--bs-primary); }
+.text-bg-primary { background-color: var(--bs-primary) !important; color: var(--rpd-primary-contrast) !important; }
