@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.6.2] - 2026-09-12
+
+### Fixed
+
+- `composer.json` required `laravel/framework ^13` while CI tests Laravel 12 too: now `^12.0|^13.0`. README: Laravel 12 or 13.
+
 ## [9.6.1] - 2026-09-12
 
 ### Added

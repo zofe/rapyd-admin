@@ -20,7 +20,7 @@ auth and multi-tenancy included, one command to start.
 
 ## Quick start
 
-Requires PHP 8.2+, Laravel 11 / 12 / 13 and Livewire 4.
+Requires PHP 8.2+, Laravel 12 or 13 and Livewire 4.
 
 ```bash
 composer create-project laravel/laravel myapp && cd myapp
