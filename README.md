@@ -6,297 +6,155 @@
 
 [![rapyd.dev](screenshot.jpg)](https://rapyd.dev)
 
-**Rapyd Admin** is an open-source admin panel for Laravel — a light alternative to Nova, Filament and Backpack, designed for teams building SaaS products and for development with AI agents.
+**Rapyd Admin** is an open-source admin panel for Laravel: a light alternative to Nova, Filament and Backpack for teams
+building SaaS products, and for development with AI agents. Plain Livewire + Blade files that live in your codebase,
+auth and multi-tenancy included, one command to start.
 
 **[Live demo →](https://rapyd.dev)**
 
 ## Why Rapyd Admin
 
-**Consistent patterns, plain code.** No DSL, no proprietary resource classes. Unlike Nova or Filament, Rapyd Admin generates plain Livewire + Blade files that live in your codebase and are yours to edit. It gives you the structure you'd write anyway — consistent module layout, a unified `x-rpd::` field component API, auth and multi-tenancy included — then stays out of the way.
+- **Plain code, no DSL.** No resource classes to learn: the generators write ordinary Livewire components and Blade views into `app/Modules`, yours to edit. A unified `x-rpd::` component set gives every table, form and detail page the same shape.
+- **Built for SaaS.** Login, registration, 2FA and Google sign-in (Fortify + Socialite), roles and permissions (Spatie), multi-tenant Companies with 1–3 tiers, activity log, workflows. All bundled, all optional.
+- **Agent-friendly.** Flat, self-contained module folders with consistent naming, `php artisan rpd:context` to brief an agent, and a verification loop (tests, browser) an agent can run by itself.
 
-**Built for SaaS.** Auth (Fortify, Socialite, 2FA), roles & permissions, and multi-tenant Companies (1–3 tiers, optional UUID keys) are bundled. One command sets up a production-ready starting point.
+## Quick start
 
-**Agent-friendly.** Flat, self-contained module folders with consistent naming. LLMs can scaffold and extend without reverse-engineering proprietary abstractions.
-
----
-
-## Requirements
-
-- PHP 8.2+
-- Laravel 11 / 12 / 13
-- Livewire 4
-
----
-
-## Installation
+Requires PHP 8.2+, Laravel 11 / 12 / 13 and Livewire 4.
 
 ```bash
-composer create-project --prefer-dist laravel/laravel myapp
-cd myapp
+composer create-project laravel/laravel myapp && cd myapp
 composer require zofe/rapyd-admin:^9 -W
-```
-
-Run the setup command to configure the database, publish configs, and seed the default admin user:
-
-```bash
-php artisan rpd:make:setup
+php artisan rpd:make:setup     # .env, database, configs, migrations, admin user, home page
 php artisan serve
 ```
 
-Login with the default admin account:
+Log in with `admin@laravel` / `admin`. You get a sidebar with Users, Companies, Roles & Permissions and Logs, a landing
+page, and an `app/Modules` folder ready for your own modules.
 
-```
-email:    admin@laravel
-password: admin
-```
-
----
-
-### Social login (Google)
-
-Google sign-in is built in. Set the credentials in `.env` and the "Sign in with Google" button appears on the login page:
-
-```
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-GOOGLE_REDIRECT=https://your-app.test/google/auth/callback
-```
-
-Without `GOOGLE_CLIENT_ID` the Google routes are not registered at all.
-
-> `-W` is needed on Laravel 13 because `laravel/socialite` (through `league/oauth1-client`) still pins Guzzle 7, while a fresh Laravel 13 app locks Guzzle 8. Guzzle 7 is fully supported by Laravel 13.
+> `-W` lets Composer downgrade Guzzle to 7 on Laravel 13: `laravel/socialite` still requires it through `league/oauth1-client`.
+> Google sign-in appears on the login page as soon as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set, see [docs/AUTH.md](docs/AUTH.md).
 
 ## What's included
 
-Rapyd Admin ships three bundled modules — no extra packages needed:
+| Module | What it gives you |
+|---|---|
+| **Auth** | Fortify login, registration, password reset, email verification, 2FA; Google sign-in; users, roles and permissions pages; impersonation |
+| **Companies** | Multi-tenant company hierarchy (1–3 tiers), owner/member role, data scoping through `Limit` and `Authorize` |
+| **Addresses** | Postal addresses attachable to any model, with an embeddable editor |
+| **Workflow** | Symfony Workflow state machines on your models, with transition buttons and history embeds |
+| **Log** | Application log viewer with error analysis by AI, and an activity log of what users do |
+| **Search** | Global search box in the navbar across the models you configure |
+| **Layout** | Bootstrap 5.3 admin shell (sidebar, topbar, dark mode), the reference theme |
 
-- **Layout** — navbar/sidebar based on SBAdmin 3, updated to Bootstrap 5.3, SCSS customizable, anonymous Blade components.
-- **Auth** — authentication via Laravel Fortify, Socialite, 2FA, and role/permission management via `spatie/laravel-permission`.
-- **Companies** — multi-tenant company hierarchy (1–3 tiers), with optional UUID primary keys.
+Every module can be copied into your app with `php artisan rpd:eject Module` when you need to change it deeply.
+Details in [docs/MODULES.md](docs/MODULES.md).
 
 [![rapyd.dev](screencast.gif)](https://rapyd.dev)
 
----
-
-## Generators
-
-### Livewire component
+## Your first module in two minutes
 
 ```bash
-php artisan rpd:make UserTable User
+php artisan rpd:make all Article --module=Blog
 ```
 
-Generates `app/Livewire/UserTable.php` and its blade view.
-
-### Module (Table + View + Edit)
-
-```bash
-php artisan rpd:make Articles Article --module=Blog
-```
-
-Creates `app/Modules/Blog/` with:
+creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry
+(if the model does not exist yet, the command asks for its fields and creates it):
 
 ```
 app/Modules/Blog/
-├── Livewire/
-│   ├── ArticlesEdit.php
-│   ├── ArticlesTable.php
-│   └── ArticlesView.php
-├── Views/
-│   ├── articles_edit.blade.php
-│   ├── articles_table.blade.php
-│   └── articles_view.blade.php
+├── Livewire/ArticlesTable.php   ArticlesView.php   ArticlesEdit.php
+├── Views/articles_table.blade.php   articles_view.blade.php   articles_edit.blade.php   menu.blade.php
+├── config.php                   layout, menu entry and position
 └── routes.php
 ```
 
----
-
-## Blade Components
-
-### Table
-
-Datatable with filters, sorting, and pagination:
+The views are short because the work is done by the components:
 
 ```html
 <x-rpd::table title="Articles" :items="$items">
-
     <x-slot name="filters">
-        <x-rpd::input col="col-8" debounce="350" model="search" placeholder="search..." />
-        <x-rpd::select col="col-4" model="author_id" :options="$authors" placeholder="author..." addempty />
+        <x-rpd::input col="col-8" model="search" placeholder="search..." />
     </x-slot>
-
     <table class="table">
-        <thead><tr>
-            <th><x-rpd::sort model="id" label="id" /></th>
-            <th>title</th>
-        </tr></thead>
+        <thead><tr><th><x-rpd::sort model="id" label="id" /></th><th>title</th></tr></thead>
         <tbody>
         @foreach ($items as $article)
-        <tr>
-            <td><a href="{{ route('articles.view', $article->id) }}">{{ $article->id }}</a></td>
-            <td>{{ $article->title }}</td>
-        </tr>
+            <tr><td>{{ $article->id }}</td><td>{{ $article->title }}</td></tr>
         @endforeach
         </tbody>
     </table>
-
 </x-rpd::table>
 ```
 
-### View
-
-Detail page with buttons and actions:
-
 ```html
-<x-rpd::view title="Article Detail">
-    <x-slot name="buttons">
-        <x-rpd::button route="articles" color="outline-primary" label="list" />
-        <x-rpd::button :route="['articles.edit', $model->getKey()]" color="outline-primary" label="edit" />
-    </x-slot>
-    <div>Title: {{ $article->title }}</div>
-</x-rpd::view>
-```
-
-### Edit
-
-Form bound to a Livewire model:
-
-```html
-<x-rpd::edit title="Article Edit">
+<x-rpd::edit title="Article">
     <x-rpd::input model="article.title" label="Title" />
     <x-rpd::rich-text model="article.body" label="Body" />
 </x-rpd::edit>
 ```
 
----
+Tables, detail pages, forms, every field type and the navigation components are documented in
+[docs/COMPONENTS.md](docs/COMPONENTS.md).
 
-## Form Fields
+## Make it yours
 
-All field components use `wire:model.live.debounce.150ms` by default. Pass `:lazy="true"` to switch to `wire:model.blur`.
-
-```html
-<x-rpd::input model="search" debounce="350" placeholder="search..." />
-
-<x-rpd::select model="author_id" :options="$authors" />
-
-<!-- TomSelect dropdown, supports remote endpoint -->
-<x-rpd::select-list model="roles" multiple :options="$available_roles" label="Roles" />
-<x-rpd::select-list model="roles" multiple endpoint="/ajax/roles" label="Roles" />
-
-<x-rpd::date model="date" format="dd/MM/yyyy" value-format="yyyy-MM-dd" label="Date" />
-<x-rpd::datetime model="date_time" format="dd/MM/yyyy HH:mm" value-format="yyyy-MM-dd HH:mm:ss" label="DateTime" />
-
-<x-rpd::textarea model="body" label="Body" rows="5" />
-
-<!-- Quill WYSIWYG -->
-<x-rpd::rich-text model="body" label="Body" />
-
-<x-rpd::upload model="file" label="Upload" />
-
-<x-rpd::checkbox model="active" label="Active" />
-
-<x-rpd::radiogroup model="status" :options="['active','inactive']" label="Status" />
-```
-
-**Common props:** `label`, `placeholder`, `model`, `options`, `debounce`, `prepend`, `append`, `help`, `icon`, `size`, `multiple`, `endpoint`, `format`, `value-format`, `rows`.
-
----
-
-## Navigation Components
-
-```html
-<!-- Sort link inside a datatable -->
-<x-rpd::sort model="id" label="id" />
-
-<!-- Nav tabs -->
-<ul class="nav nav-tabs">
-    <x-rpd::nav-link label="Home" route="home" />
-    <x-rpd::nav-link label="Articles" route="articles" />
-</ul>
-
-<!-- Sidebar with grouped items -->
-<x-rpd::sidebar title="Rapyd.dev" class="p-3 text-white border-end">
-    <x-rpd::nav-item label="Demo" route="demo" active="/rapyd-demo" />
-</x-rpd::sidebar>
-
-<!-- Collapsible dropdown in sidebar -->
-<x-rpd::nav-dropdown icon="fas fa-fw fa-book" label="KnowledgeBase" active="/kb">
-    <x-rpd::nav-link label="Edit Articles" route="kb.admin.articles.table" type="collapse-item" />
-</x-rpd::nav-dropdown>
-```
-
----
-
-## Companies / Multi-tenancy
-
-Enable Companies in your `.env`:
-
-```env
-RPD_TIERS=2
-RPD_TIER1_LABEL=partner
-RPD_TIER2_LABEL=customer
-```
-
-Run `php artisan rpd:make:setup` — it will seed a root company and a demo tenant automatically.
-
-To enable company scoping on your User model, run:
-
-```bash
-php artisan rpd:install --companies
-```
-
----
-
-## Livewire 4 notes
-
-- `wire:model.lazy` has been removed in LW4. All `x-rpd::` field components default to `wire:model.live.debounce.150ms`. Pass `:lazy="true"` to use `wire:model.blur`.
-- Module components referenced in Blade views use `.` as directory separator in the namespace: `livewire:mymodule::subdir.component-name`.
-- LW4 ships Alpine.js 3.14 internally — do not include a separate Alpine bundle.
-
----
-
-## Styles and scripts
-
-The package ships its compiled assets in `public/` (`rapyd.js`, `rapyd.css`, `fonts/`); `vendor:publish` copies them to
-`public/vendor/rapyd` and the layouts include them with `@rapydStyles` / `@rapydScripts`. Applications need no Node toolchain.
-
-To change the look (Bootstrap variables, the sidebar/topbar layout, the Rapyd components) edit the SCSS in `resources/sass`
-and rebuild with Vite from the package root:
-
-```bash
-npm i
-npm run dev      # vite build --watch: rebuilds public/ on every save
-npm run build    # production build, commit the result
-php artisan vendor:publish --tag=laravel-assets --force   # in the app, to pick up the new files
-```
-
-Where things live:
-
-- `resources/sass/rapyd.scss` — entry point, imports everything in order
-- `resources/sass/layout/_variables.scss` — Bootstrap variable overrides (colors, fonts, radius…)
-- `resources/sass/layout/` — sidebar, topbar, navs, dark mode, sections
-- `resources/sass/data-view.scss`, `utils.scss` — Rapyd components
-- `resources/js/rapyd.js` — Bootstrap, TomSelect, modals, theme switcher, livewire-sortable
-
-`resources/js/bootstrap.js` + `resources/sass/bootstrap.scss` build the plain `bootstrap.js` / `bootstrap.css` (with
-bootstrap-icons) used by the legacy `rpd::app` view.
-
-## Themes
-
-The admin look is a theme: a folder of Blade layouts plus compiled assets, activated with `RAPYD_THEME`. Start from
-any Bootstrap 5 template, follow the contract in [docs/THEMES.md](docs/THEMES.md) and verify it with
-`php artisan rpd:theme:check`. Branding (logo, brand name, favicon, extra CSS) is read from `config('rapyd.layout.*')`, and the colours can be
-changed from `.env` without recompiling anything:
+**Colours, from `.env`, no build step** (quote the values: an unquoted `#` is a comment):
 
 ```dotenv
 RAPYD_PRIMARY="#6a1c9a"        # buttons, links, active items
 RAPYD_SIDEBAR_BG="#1e293b"     # optional: sidebar, topbar and content backgrounds
 RAPYD_SIDEBAR_TEXT="#f8fafc"
-RAPYD_TOPBAR_BG="#ffffff"
-RAPYD_CONTENT_BG="#f1f5f9"
 ```
 
-Quote the values: in a `.env` file an unquoted `#` starts a comment.
+**Brand**: `RAPYD_BRAND`, `RAPYD_LOGO_SIDEBAR`, `RAPYD_LOGO_LOGIN`, `RAPYD_FAVICON`, `RAPYD_CUSTOM_CSS`.
+
+**A different look**: the admin shell is a theme, a folder of Blade layouts plus compiled assets activated with
+`RAPYD_THEME`. Start from any Bootstrap 5 template, follow the contract in [docs/THEMES.md](docs/THEMES.md) and check
+it with `php artisan rpd:theme:check`.
+
+**A single view**: publish it to `resources/views/vendor/rpd` (components) or `resources/views/vendor/layout`
+(layouts) and edit the copy. **A whole module**: `php artisan rpd:eject Auth`.
+
+## Working with AI agents
+
+```bash
+php artisan rpd:context            # JSON brief: modules, routes, models, config, extension patterns
+php artisan rpd:context --format=text --no-routes
+```
+
+Paste it at the start of a session, or add to your `CLAUDE.md` / `AGENTS.md`:
+
+```
+Rapyd Admin app. Run `php artisan rpd:context --format=text` before changing modules.
+New modules: `php artisan rpd:make all Model --module=Name`; follow the structure of app/Modules/*.
+Verify with `vendor/bin/phpunit` and a browser check of the page you touched.
+```
+
+The package itself is developed this way: see [docs/AI.md](docs/AI.md) for the agent brief, the AI error analysis in
+the log viewer and the browser verification loop.
+
+## Modules and marketplace
+
+Anything beyond the bundle is a Composer package with the same structure as a bundled module: `composer require`,
+`php artisan migrate`, done. Available today: `zofe/shop-module`, `zofe/payments-module` (Stripe, GoCardless, Paddle),
+`zofe/ai-module`. Premium modules and themes will be distributed through a private Composer repository for subscribers.
+How to write one: [docs/MODULES.md](docs/MODULES.md).
+
+## Testing
+
+```bash
+vendor/bin/phpunit            # in the package: PHPUnit + Orchestra Testbench, the same suite as CI
+```
+
+## Documentation
+
+- [docs/COMPONENTS.md](docs/COMPONENTS.md) — tables, detail pages, forms, fields, navigation
+- [docs/MODULES.md](docs/MODULES.md) — module structure, generators, config and menu, eject, Companies, Livewire 4 notes
+- [docs/AUTH.md](docs/AUTH.md) — Fortify, Google sign-in, roles and permissions, impersonation
+- [docs/THEMES.md](docs/THEMES.md) — the layout contract, design tokens, building a theme
+- [docs/AI.md](docs/AI.md) — `rpd:context`, AI error analysis, verification loop
+- [CHANGELOG.md](CHANGELOG.md)
 
 ## Credits
 
@@ -306,4 +164,3 @@ Quote the values: in a `.env` file an unquoted `#` starts a comment.
 ## License
 
 MIT — [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT)
-

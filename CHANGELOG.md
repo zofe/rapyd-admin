@@ -2,15 +2,32 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
-## [Unreleased]
+## [9.6.0] - 2026-09-12
+
+### Added
+
+- Themes: a theme is a folder of Blade layouts (`app`, `admin`, `frontend`, `auth`) plus compiled assets, registered by a ServiceProvider extending `Zofe\Rapyd\Themes\RapydThemeServiceProvider` and activated with `RAPYD_THEME`. The contract is in `docs/THEMES.md`; `php artisan rpd:theme:check` verifies it. Hooks `sidebar_footer`, `navbar_right`, `page_header`, `footer`.
+- `config('rapyd.layout.*')` (brand, logo_sidebar, logo_login, favicon, custom_css); the old `config('layout.*')` keys are still read.
+- `resources/sass/rapyd-base.scss`: the component styles alone, for external themes.
+- Runtime palette: `RAPYD_PRIMARY`, `RAPYD_SIDEBAR_BG`, `RAPYD_SIDEBAR_TEXT`, `RAPYD_TOPBAR_BG`, `RAPYD_CONTENT_BG` (`config('rapyd.layout.palette')`) change the colours without recompiling; the components read Bootstrap's CSS variables (`resources/sass/_tokens.scss`).
+
+### Changed
+
+- One layout name for every module: `layout::admin` (the `auth::admin`, `companies::admin`, `log::admin` wrappers are gone). The auth pages extend `layout::auth`, styled by the theme instead of a CDN Bootstrap.
+
+- Assets are built with Vite instead of laravel-mix (`npm run dev` / `npm run build` from the package root, see "Styles and scripts" in the README). Same output files, no manifest; `public/fonts/` replaces `public/fonts/vendor/bootstrap-icons/`.
 
 ### Fixed
 
+- Dark mode: tables were black-on-dark because Bootstrap 5.3 colours cells through `--bs-table-*` variables. The theme switcher now also sets `data-bs-theme="dark"` (native Bootstrap dark mode for tables, forms, dropdowns, modals) and the theme maps its dark palette onto Bootstrap's semantic variables (`--bs-emphasis-color`, `--bs-secondary-color`, `--bs-table-*`).
+- `layout/navs/_sidebar.scss` and `_topbar.scss` were identical copies of `layout/_sidebar.scss` / `_topbar.scss`, compiled twice: removed.
 - `rapyd.js` no longer throws on pages without Livewire (the login page): `livewire-sortable` is registered on `livewire:init` instead of at import time, so the theme switcher and modals initialise everywhere.
 
 ### Removed
 
 - Leftovers of the old standalone `zofe/auth-module` and `zofe/layout-module` packages inside `app/Modules/{Auth,Layout}`: the unregistered `rpd:make:auth` command and its User stub, `DatabaseSeederTests`, per-module `.gitignore`, `LICENSE.md` and test folders that no suite ran.
+- `app/Modules/Layout` inside the package: a stale, divergent copy of the bundled Layout module that nothing loaded (`rpd:eject` copies from `src`).
+- The second Node toolchain in `app/Modules/Layout` (`package.json`, lock, `webpack.mix.js`, `resources/`): the layout SCSS lives in `resources/sass/layout`. Unused dev dependencies (axios, lodash, moment, popper.js) and the dead `resources/js/alpine.js` / `livewire.esm.js` sources.
 
 ## [9.5.0] - 2026-09-11
 
