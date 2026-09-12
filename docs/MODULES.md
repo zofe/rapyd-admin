@@ -146,10 +146,41 @@ actions call `CompanyOwnerAuth::check($company, $user)` explicitly.
 
 ## Writing a module as a package
 
-A package module is the same folder with a service provider extending `Zofe\Rapyd\Modules\RapydModuleServiceProvider`
-and calling `bootAppModule('name')`, which registers views, translations, routes and Livewire components under the
-`name::` namespace. Register limits and authorizations with `registerLimit()` / `registerAuthorization()`, migrations with
-`loadMigrationsFrom()`. Look at `src/Modules/Addresses` in this package for a complete, small example.
+A package module is the same folder as an app module, plus `composer.json` and a service provider. The provider
+extends `Zofe\Rapyd\Modules\RapydModuleServiceProvider`, names the module and points `$modulePath` at the folder:
+
+```php
+namespace App\Modules\Blog;
+
+use Zofe\Rapyd\Modules\RapydModuleServiceProvider;
+
+class BlogModuleServiceProvider extends RapydModuleServiceProvider
+{
+    protected string $moduleName = 'Blog';
+    protected ?string $modulePath = __DIR__;
+
+    public function boot(): void
+    {
+        if ($this->isEjected()) {          // copied to app/Modules/Blog: the app loads it
+            return;
+        }
+        $this->bootAppModule('blog');      // migrations, views, lang, routes, Livewire "blog::" components
+        // $this->registerLimit(BlogLimit::class); $this->registerAuthorization(BlogAuth::class);
+    }
+}
+```
+
+`config.php` is merged as `config('blog')` automatically (menu, layout, permissions). `composer.json` declares the
+PSR-4 root and the provider:
+
+```json
+"autoload": { "psr-4": { "App\\Modules\\Blog\\": "./" } },
+"extra": { "laravel": { "providers": ["App\\Modules\\Blog\\BlogModuleServiceProvider"] } },
+"require": { "zofe/rapyd-admin": "^9.6" }
+```
+
+Keeping the `App\Modules\{Name}` namespace makes the package identical to a module generated in `app/Modules`:
+users can copy it there and it keeps working. `zofe/demo-module` is the reference example, with tests.
 
 ## Livewire 4 notes
 

@@ -11,9 +11,41 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
 {
     /**
      * The module name, e.g. "Auth", "Companies".
-     * Must be overridden in every bundled module provider.
+     * Must be overridden in every module provider.
      */
     protected string $moduleName = '';
+
+    /**
+     * Root of the module when it is a package of its own (e.g. zofe/demo-module):
+     * the folder holding Livewire/, Views/, routes.php, config.php…
+     * Set it to __DIR__ in the package provider. Null = bundled module, whose
+     * ejectable part lives in the package's app/Modules/{name}.
+     */
+    protected ?string $modulePath = null;
+
+    /**
+     * PSR-4 namespace of the module's Livewire components.
+     * Defaults to App\Modules\{Name}\Livewire, the convention every module follows.
+     */
+    protected ?string $livewireNamespace = null;
+
+    /**
+     * External modules: merge config.php as config('{name}') so the menu and
+     * layout entries are known before ModuleServiceProvider builds the menus.
+     * Bundled modules override register() and merge what they need themselves.
+     */
+    public function register(): void
+    {
+        $this->mergeModuleConfig();
+    }
+
+    protected function mergeModuleConfig(): void
+    {
+        $config = $this->appModulePath('config.php');
+        if ($this->modulePath && file_exists($config)) {
+            $this->mergeConfigFrom($config, Str::lower($this->moduleName));
+        }
+    }
 
     /**
      * True when the user has ejected this module to app/Modules/{name}.
@@ -35,22 +67,29 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
     }
 
     /**
-     * Absolute path inside the package's app/Modules/{name} directory
-     * (admin UI, views, translations, routes — the part that can be ejected).
+     * Absolute path of the module's UI part (views, translations, routes, Livewire):
+     * $modulePath for an external package, app/Modules/{name} of this package for
+     * a bundled module (the part that can be ejected).
      */
     protected function appModulePath(string $relative = ''): string
     {
-        $base = dirname(__DIR__, 2) . "/app/Modules/{$this->moduleName}";
+        $base = $this->modulePath
+            ? rtrim($this->modulePath, '/\\')
+            : dirname(__DIR__, 2) . "/app/Modules/{$this->moduleName}";
 
         return $relative ? $base . DIRECTORY_SEPARATOR . ltrim($relative, '/\\') : $base;
     }
 
     /**
-     * Load everything a non-ejected module ships in app/Modules/{name}:
-     * views, translations, routes and the "{namespace}::" Livewire components.
+     * Load everything a non-ejected module ships: views, translations, routes,
+     * the "{namespace}::" Livewire components and, for external modules, the
+     * migrations in Database/Migrations.
      */
     protected function bootAppModule(string $namespace): void
     {
+        if ($this->modulePath && is_dir($this->appModulePath('Database/Migrations'))) {
+            $this->loadMigrationsFrom($this->appModulePath('Database/Migrations'));
+        }
         if (is_dir($this->appModulePath('Views'))) {
             $this->loadViewsFrom($this->appModulePath('Views'), $namespace);
         }
@@ -74,7 +113,9 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
     {
         $module = Str::lower($this->moduleName);
 
-        Livewire::addNamespace($module, null, "App\\Modules\\{$this->moduleName}\\Livewire", $componentsDir);
+        $namespace = $this->livewireNamespace ?? "App\\Modules\\{$this->moduleName}\\Livewire";
+
+        Livewire::addNamespace($module, null, $namespace, $componentsDir);
 
         $modules = config('rapyd.modules', []);
         if (! in_array($module, $modules)) {

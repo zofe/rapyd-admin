@@ -1,0 +1,1 @@
+<div>HELLO FROM SAMPLE MODULE</div>

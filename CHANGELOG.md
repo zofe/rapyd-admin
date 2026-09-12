@@ -2,6 +2,13 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.6.1] - 2026-09-12
+
+### Added
+
+- `RapydModuleServiceProvider` works for module packages too: set `$modulePath = __DIR__` and `bootAppModule('name')` loads migrations, views, translations, routes and the `name::` Livewire components; `config.php` is merged as `config('name')`. `docs/MODULES.md` documents it (the previous text was wrong for packages), `tests/Feature/ExternalModuleTest` covers it.
+- `branch-alias` `dev-main` → `9.x-dev`, so packages requiring `^9.6` resolve against a path repository.
+
 ## [9.6.0] - 2026-09-12
 
 ### Added
