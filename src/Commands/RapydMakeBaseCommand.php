@@ -52,14 +52,6 @@ class RapydMakeBaseCommand extends Command
 
         }
 
-        //global menu
-        if (! file_exists(base_path('resources/views/menu.blade.php'))) {
-            StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
-                ->to(base_path('resources/views'), true, true)
-                ->as('menu.blade')
-                ->save();
-
-        }
     }
 
 
@@ -196,10 +188,16 @@ class RapydMakeBaseCommand extends Command
             });
     }
 
+    /**
+     * Append the sidebar entries to the module menu (app/Modules/{Module}/Views/menu.blade.php)
+     * or, for components generated outside a module, to the app's resources/views/menu.blade.php
+     * (included by the layout with @includeIf("menu")). The file is created only when there is
+     * something to write in it.
+     */
     protected function addNavItemIfNotExists($navItems)
     {
-        $filePath = $this->module ? path_module("app/Views/menu.blade.php", $this->module) :  base_path('resources/views/menu.blade.php');
-        $content = file_get_contents($filePath);
+        $filePath = $this->module ? path_module("app/Views/menu.blade.php", $this->module) : base_path('resources/views/menu.blade.php');
+        $content = file_exists($filePath) ? file_get_contents($filePath) : '';
 
         preg_match_all('/<x-rpd::nav-item[^>]*route="([^"]*)"/', $content, $matches);
         $existingRoutes = $matches[1];
@@ -215,6 +213,14 @@ class RapydMakeBaseCommand extends Command
             }
         }
 
-        file_put_contents($filePath, $newNavItems, FILE_APPEND);
+        if ($newNavItems === '') {
+            return;
+        }
+
+        if (! is_dir(dirname($filePath))) {
+            mkdir(dirname($filePath), 0755, true);
+        }
+
+        file_put_contents($filePath, $content . $newNavItems);
     }
 }

@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.6.5] - 2026-09-12
+
+### Fixed
+
+- `rpd:make` created an empty `resources/views/menu.blade.php` in the application even when generating into a module; the global menu is now written only when an entry goes into it.
+
 ## [9.6.4] - 2026-09-12
 
 ### Fixed
