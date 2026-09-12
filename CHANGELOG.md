@@ -2,6 +2,33 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- `rapyd.js` no longer throws on pages without Livewire (the login page): `livewire-sortable` is registered on `livewire:init` instead of at import time, so the theme switcher and modals initialise everywhere.
+
+### Removed
+
+- Leftovers of the old standalone `zofe/auth-module` and `zofe/layout-module` packages inside `app/Modules/{Auth,Layout}`: the unregistered `rpd:make:auth` command and its User stub, `DatabaseSeederTests`, per-module `.gitignore`, `LICENSE.md` and test folders that no suite ran.
+
+## [9.5.0] - 2026-09-11
+
+### Breaking changes
+
+- **One company per user.** `users.company_id` + `users.company_role` (`owner|member`) replace the `company_user` pivot; the migration `2026_09_11_000001_drop_company_user_table` moves the primary (or only) membership onto `users` and drops the pivot. `HasCompanies` now exposes `company()`, `isOwner()`, `isOwnerOf()`, `belongsToCompany()` and `assignToCompany($company, $role)`; `attachToCompany()`, `primaryCompany()`, `companies()` are gone. `Company::users()` is a `hasMany`.
+
+### Added
+
+- Auth users pages show and assign the company: Company column in the table, Company card in the view, Company / Role in company selects in the edit form (limited to the companies the viewer can see; only `rapyd.auth.super_admin_roles` can move an existing user).
+- `tests/Feature/AuthUsersTest`.
+
+### Changed
+
+- `UsersTable`, `UsersView` and `UsersEdit` use `config('auth.providers.users.model')` instead of `App\Models\User` (`Route::model('user', …)` in the Auth routes).
+- `x-rpd::input/select/select-list/rich-text` accept array validation rules when detecting `required`.
+- The package test case boots the `laravel-impersonate` and `laravel-disposable-email` providers.
+
 ## [1.0.0] - 2026-08-17
 
 ### Breaking changes

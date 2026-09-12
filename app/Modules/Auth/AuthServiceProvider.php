@@ -5,7 +5,6 @@ namespace App\Modules\Auth;
 
 use App\Modules\Auth\Actions\Fortify\CreateNewUser;
 use App\Modules\Auth\Actions\Fortify\ResetUserPassword;
-use App\Modules\Auth\Console\Commands\AuthCommand;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -98,10 +97,6 @@ class AuthServiceProvider extends ServiceProvider
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
-
-        $this->commands([
-            AuthCommand::class,
-        ]);
 
 
 
