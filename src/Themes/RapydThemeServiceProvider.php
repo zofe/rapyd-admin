@@ -39,8 +39,10 @@ abstract class RapydThemeServiceProvider extends ServiceProvider
 
         $this->app['view']->prependNamespace('layout', $this->path . '/resources/views');
 
-        if (is_dir($this->path . '/resources/views/components')) {
-            $this->app['view']->prependNamespace('rpd', $this->path . '/resources/views/components');
+        // Overrides of the rpd:: views (x-rpd:: components live in rpd::components.*):
+        // resources/views/rpd/components/nav-link.blade.php replaces x-rpd::nav-link.
+        if (is_dir($this->path . '/resources/views/rpd')) {
+            $this->app['view']->prependNamespace('rpd', $this->path . '/resources/views/rpd');
         }
 
         config(['rapyd.theme_assets' => $this->assetsPath()]);

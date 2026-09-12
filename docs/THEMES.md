@@ -11,8 +11,9 @@ This document is the contract. It is written for developers and for AI agents al
 
 1. The theme's ServiceProvider extends `Zofe\Rapyd\Themes\RapydThemeServiceProvider` and sets `$name` and `$path`.
 2. When `config('rapyd.theme')` (env `RAPYD_THEME`) equals `$name`, the theme's `resources/views` is looked up
-   **before** the bundled views on the `layout` namespace, and `resources/views/components` (if present) before
-   the `rpd` components. Modules keep calling `->layout('layout::admin')`: nothing changes for them.
+   **before** the bundled views on the `layout` namespace, and `resources/views/rpd` (if present) before the
+   package's `rpd` views: `resources/views/rpd/components/nav-link.blade.php` replaces `x-rpd::nav-link`.
+   Modules keep calling `->layout('layout::admin')`: nothing changes for them.
 3. `@rapydStyles` / `@rapydScripts` emit `public/vendor/themes/{name}/rapyd.css` and `rapyd.js`, published from
    the theme's `public/` folder by `vendor:publish` (tag `laravel-assets` or `rapyd-theme-{name}`).
 4. One theme at a time. A registered but inactive theme changes nothing.
@@ -31,9 +32,9 @@ theme-acme/
 │   ├── frontend.blade.php        public area with navbar (extends layout::app)
 │   ├── auth.blade.php            login / register / password / 2FA shell
 │   ├── includes/…                sidebar, navbar, user dropdown… (free)
-│   └── components/               OPTIONAL overrides of nav-dropdown, nav-link, breadcrumbs, notifies
+│   └── rpd/components/           OPTIONAL overrides of nav-dropdown, nav-link, nav-item, breadcrumbs, notifies
 ├── resources/sass/theme.scss     variables → bootstrap → rapyd-base → your layout
-├── resources/js/theme.js         optional (defaults to the bundled rapyd.js behaviour)
+├── resources/js/theme.js         imports @rapyd/js/rapyd-core (Bootstrap, TomSelect, modals, theme switcher) + theme.scss
 ├── vite.config.js                copy of the package one, outputs rapyd.css / rapyd.js into public/
 └── public/                       compiled: rapyd.css, rapyd.js, fonts/, img/ (committed)
 ```

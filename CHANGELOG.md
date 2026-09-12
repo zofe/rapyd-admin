@@ -2,6 +2,16 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.7.0] - 2026-09-12
+
+### Added
+
+- `resources/js/rapyd-core.js`: the JavaScript of the package without the bundled stylesheet, for themes (`import '@rapyd/js/rapyd-core'`).
+
+### Changed
+
+- Theme overrides of the `rpd::` views live in `resources/views/rpd/` (e.g. `rpd/components/nav-link.blade.php` replaces `x-rpd::nav-link`); the previous `resources/views/components` path never matched. `docs/THEMES.md` updated. First external theme: `zofe/theme-tabler`.
+
 ## [9.6.5] - 2026-09-12
 
 ### Fixed
