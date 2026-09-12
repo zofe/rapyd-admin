@@ -25,6 +25,6 @@ class CompaniesView extends Component
     public function render()
     {
         return view('companies::companies_view', ['company' => $this->company])
-            ->layout('companies::admin');
+            ->layout('layout::admin');
     }
 }

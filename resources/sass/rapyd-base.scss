@@ -1,0 +1,7 @@
+// Styles of the rapyd components (tables, views, forms, tom-select), WITHOUT
+// Bootstrap and WITHOUT the layout. A theme imports this after its own
+// variables + Bootstrap, then adds its layout. See docs/THEMES.md.
+@import "data-view";
+@import "utils";
+@import "tom-select/dist/scss/tom-select.bootstrap5";
+@import "tokens";

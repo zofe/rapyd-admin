@@ -66,6 +66,6 @@ class PermissionsEdit extends Component
     public function render()
     {
         return view('auth::permissions_edit')
-            ->layout('auth::admin');
+            ->layout('layout::admin');
     }
 }

@@ -81,6 +81,6 @@ class LogActivityTable extends Component
 
     public function render()
     {
-        return view('log::log_activity_table', ['items' => $this->getDataSet()])->layout('log::admin');
+        return view('log::log_activity_table', ['items' => $this->getDataSet()])->layout('layout::admin');
     }
 }

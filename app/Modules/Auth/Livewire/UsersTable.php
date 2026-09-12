@@ -54,6 +54,6 @@ class UsersTable extends Component
         $items = $this->getDataSet();
 
         return view('auth::users_table', compact('items'))
-            ->layout('auth::admin');
+            ->layout('layout::admin');
     }
 }

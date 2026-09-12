@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsServiceProvider;
 use Zofe\Rapyd\Commands\EjectCommand;
 use Zofe\Rapyd\Commands\InstallCommand;
+use Zofe\Rapyd\Commands\ThemeCheckCommand;
 use Zofe\Rapyd\Commands\RapydContextCommand;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
 use Zofe\Rapyd\Commands\RapydMakeEditCommand;
@@ -63,6 +64,7 @@ class RapydServiceProvider extends ServiceProvider
 
             $this->commands([
                 InstallCommand::class,
+                ThemeCheckCommand::class,
                 EjectCommand::class,
                 RapydContextCommand::class,
                 RapydMakeCommand::class,
@@ -80,7 +82,7 @@ class RapydServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views/livewire', 'livewire');
 
         Blade::directive('rapydScripts', function () {
-            $scripts = "<script src=\"{{ asset('vendor/rapyd/rapyd.js') }}\"></script>\n";
+            $scripts = "<script src=\"{{ asset(config('rapyd.theme_assets', 'vendor/rapyd') . '/rapyd.js') }}\"></script>\n";
             // $scripts .= "<script src=\"{{ asset('vendor/rapyd/bootstrap.js') }}\"></script>";
             $scripts .= '<?php echo $__env->yieldPushContent(\'rapyd_scripts\'); ?>';
 
@@ -88,8 +90,9 @@ class RapydServiceProvider extends ServiceProvider
         });
 
         Blade::directive('rapydStyles', function () {
-            $styles = "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/rapyd.css') }}\">\n";
-            // $styles .= "<link rel=\"stylesheet\" href=\"{{ asset('vendor/rapyd/bootstrap.css') }}\">";
+            $styles = "<link rel=\"stylesheet\" href=\"{{ asset(config('rapyd.theme_assets', 'vendor/rapyd') . '/rapyd.css') }}\">\n";
+            // Runtime palette (config rapyd.layout.palette): overrides the CSS variables, no rebuild.
+            $styles .= '<?php echo \\Zofe\\Rapyd\\Themes\\Palette::styleTag(); ?>';
             $styles .= '<?php echo $__env->yieldPushContent(\'rapyd_styles\'); ?>';
 
             return $styles;
@@ -123,7 +126,7 @@ class RapydServiceProvider extends ServiceProvider
     protected function assetsAreIncluded($content)
     {
         $bodyTagIncluded = strpos($content, '</body>') !== false;
-        $scriptDirectiveIncluded = strpos($content, 'rapyd/rapyd.js') !== false;
+        $scriptDirectiveIncluded = strpos($content, '/rapyd.js') !== false;
 
         return $bodyTagIncluded && $scriptDirectiveIncluded;
     }

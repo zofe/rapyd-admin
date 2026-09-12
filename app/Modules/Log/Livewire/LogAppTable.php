@@ -84,6 +84,6 @@ class LogAppTable extends Component
             'levels' => array_keys(LogParser::LEVEL_CLASSES),
             // file-wide summary, hidden while a filter narrows the table
             'summary' => ($this->logFile && $this->search === '' && $this->level === '') ? $this->parser()->summary($this->logFile) : [],
-        ])->layout('log::admin');
+        ])->layout('layout::admin');
     }
 }

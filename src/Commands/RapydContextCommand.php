@@ -154,7 +154,7 @@ class RapydContextCommand extends Command
             'generate_component' => 'php artisan rpd:make ModelName Model',
             'module_structure' => 'app/Modules/{Name}/{Livewire/,Views/,Models/,routes.php,config.php}',
             'blade_components' => 'x-rpd::{table,edit,view,input,select,select-list,date,datetime,checkbox,radiogroup,rich-text,upload,sort,button,nav-link,nav-dropdown}',
-            'livewire_pattern' => 'extends Component; use WithDataTable; render() returns view()->layout("module::admin")',
+            'livewire_pattern' => 'extends Component; use WithDataTable; render() returns view()->layout("layout::admin")',
             'field_binding' => 'x-rpd:: use model= prop (wire:model.live.debounce.150ms by default; :lazy="true" for blur)',
             'authorization' => 'use Authorize trait; call $this->authorize("role") in booted()',
             'company_scoping' => 'add HasCompanyScope global scope on models when config rapyd.companies.tiers > 1',

@@ -1,4 +1,4 @@
-@extends('auth::layouts.blank')
+@extends('layout::auth')
 
 @section('title', __('Login'))
 
@@ -13,10 +13,10 @@
                         {{-- Logo / Brand --}}
                         <div class="col-lg-5 d-flex align-items-center justify-content-center bg-primary text-white rounded-start p-5">
                             <div class="text-center">
-                                @if(config('layout.logo_login'))
-                                    <img src="{{ config('layout.logo_login') }}" class="img-fluid mb-3" style="max-height:80px">
+                                @if(config('rapyd.layout.logo_login'))
+                                    <img src="{{ config('rapyd.layout.logo_login') }}" class="img-fluid mb-3" style="max-height:80px">
                                 @else
-                                    <h2 class="fw-bold mb-0">{{ config('app.name', 'Laravel') }}</h2>
+                                    <h2 class="fw-bold mb-0">{{ config('rapyd.layout.brand') ?: config('app.name', 'Laravel') }}</h2>
                                 @endif
                             </div>
                         </div>

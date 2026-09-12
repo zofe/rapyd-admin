@@ -2,7 +2,7 @@
 @import "layout/variables";
 
 // ─── 2. Bootstrap completo ───────────────────────────────────────────────────
-@import "~bootstrap/scss/bootstrap";
+@import "bootstrap/scss/bootstrap";
 
 // ─── 3. Layout base ──────────────────────────────────────────────────────────
 @import "layout/functions";
@@ -24,9 +24,5 @@
 @import "layout/fallback";
 @import "layout/dark";
 
-// ─── 6. Componenti Rapyd ─────────────────────────────────────────────────────
-@import "data-view";
-@import "utils";
-
-// ─── 7. Terze parti ──────────────────────────────────────────────────────────
-@import "~tom-select/dist/scss/tom-select.bootstrap5";
+// ─── 6. Componenti Rapyd + terze parti (condiviso con i temi esterni) ───────
+@import "rapyd-base";

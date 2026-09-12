@@ -30,6 +30,6 @@ class UsersView extends Component
 
     public function render()
     {
-        return view('auth::users_view')->layout('auth::admin');
+        return view('auth::users_view')->layout('layout::admin');
     }
 }

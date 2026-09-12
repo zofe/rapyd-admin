@@ -2,6 +2,7 @@
 @extends('layout::app')
 
 @section('main')
+    <div class="demo-theme-marker">DEMO THEME</div>
     <div id="wrapper">
 
         @include('layout::includes.admin_sidebar')

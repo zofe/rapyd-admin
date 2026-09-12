@@ -143,6 +143,6 @@ class UsersEdit extends Component
             'availableCompanies' => $availableCompanies,
             'currentCompany' => $currentCompany,
             'companyRoles' => $this->companyRoles(),
-        ])->layout('auth::admin');
+        ])->layout('layout::admin');
     }
 }

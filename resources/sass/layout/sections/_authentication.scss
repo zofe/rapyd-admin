@@ -16,3 +16,19 @@
         min-width: 0;
     }
 }
+
+//
+// Auth pages (login, register, password, 2FA): body + card widths
+//
+
+.auth-body {
+    background-color: var(--bs-tertiary-bg, #f8f9fa);
+}
+
+.auth-card {
+    max-width: 900px;
+}
+
+.auth-card-narrow {
+    max-width: 460px;
+}

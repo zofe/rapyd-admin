@@ -1,4 +1,4 @@
-@extends('auth::layouts.blank')
+@extends('layout::auth')
 
 @section('title', __('Verify Email'))
 

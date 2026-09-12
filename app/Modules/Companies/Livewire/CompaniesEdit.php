@@ -46,6 +46,6 @@ class CompaniesEdit extends Component
 
     public function render()
     {
-        return view('companies::companies_edit')->layout('companies::admin');
+        return view('companies::companies_edit')->layout('layout::admin');
     }
 }

@@ -12,6 +12,12 @@ class LayoutModuleServiceProvider extends RapydModuleServiceProvider
 
     public function register(): void
     {
+        // Branding used to live in config('layout.*'): keep reading it.
+        foreach (['brand', 'logo_sidebar', 'logo_login', 'favicon', 'custom_css'] as $key) {
+            if (config("rapyd.layout.{$key}") === null && config("layout.{$key}") !== null) {
+                config(["rapyd.layout.{$key}" => config("layout.{$key}")]);
+            }
+        }
     }
 
     public function boot(): void

@@ -8,7 +8,7 @@
 |
 */
 return [
-    'layout' => 'auth::admin',
+    'layout' => 'layout::admin',
     'menu_admin' => 'auth::admin_menu',
     'menu_admin_position' => 0,
 

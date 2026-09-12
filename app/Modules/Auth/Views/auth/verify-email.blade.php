@@ -3,7 +3,7 @@
 @section('main-content')
     <x-rpd::card>
         <div class="text-center mb-4">
-            <img src="{{ config('layout.logo_login') }}" class="img-fluid px-2" style="width: 450px;" alt="Logo"/>
+            <img src="{{ config('rapyd.layout.logo_login') }}" class="img-fluid px-2" style="width: 450px;" alt="Logo"/>
         </div>
 
         <h4 style="font-size: 1.2rem; font-weight: 700!important; color:#3b3e42; margin-bottom: 1rem;">

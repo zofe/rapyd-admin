@@ -35,6 +35,6 @@ class CompaniesTable extends Component
     public function render()
     {
         $items = $this->getDataSet();
-        return view('companies::companies_table', compact('items'))->layout('companies::admin');
+        return view('companies::companies_table', compact('items'))->layout('layout::admin');
     }
 }

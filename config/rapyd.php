@@ -13,6 +13,35 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Theme / Layout
+    |--------------------------------------------------------------------------
+    | theme: name of the active theme (a package or folder whose ServiceProvider
+    |        extends Zofe\Rapyd\Themes\RapydThemeServiceProvider). Null = the
+    |        bundled look. See docs/THEMES.md for the contract a theme fulfils.
+    | layout: branding read by every theme.
+    */
+    'theme' => env('RAPYD_THEME'),
+
+    'layout' => [
+        'brand'        => env('RAPYD_BRAND'),          // null → app.name
+        'logo_sidebar' => env('RAPYD_LOGO_SIDEBAR'),   // url of the sidebar logo, null → brand text
+        'logo_login'   => env('RAPYD_LOGO_LOGIN'),     // url of the login logo, null → brand text
+        'favicon'      => env('RAPYD_FAVICON', 'img/favicon.png'),
+        'custom_css'   => env('RAPYD_CUSTOM_CSS'),     // extra stylesheet url loaded after the theme
+
+        // Runtime palette: any CSS colour, applied without recompiling the theme
+        // (see docs/THEMES.md, "Design tokens"). Null = the theme's own colour.
+        'palette' => [
+            'primary'      => env('RAPYD_PRIMARY'),        // buttons, links, active items, badges
+            'sidebar_bg'   => env('RAPYD_SIDEBAR_BG'),
+            'sidebar_text' => env('RAPYD_SIDEBAR_TEXT'),
+            'topbar_bg'    => env('RAPYD_TOPBAR_BG'),
+            'content_bg'   => env('RAPYD_CONTENT_BG'),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Users
     |--------------------------------------------------------------------------
     */

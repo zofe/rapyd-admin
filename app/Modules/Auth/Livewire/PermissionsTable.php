@@ -43,6 +43,6 @@ class PermissionsTable extends Component
         $items = $this->getDataSet();
 
         return view('auth::permissions_table', compact('items'))
-            ->layout('auth::admin');
+            ->layout('layout::admin');
     }
 }
