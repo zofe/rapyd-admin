@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.6.3] - 2026-09-12
+
+### Fixed
+
+- Upgrading from 1.x: roles and permissions vanished because `model_has_roles.model_type` held the User class name while 9.x registers the `user` morph alias. A migration aligns the rows (`model_has_roles`, `model_has_permissions`).
+
 ## [9.6.2] - 2026-09-12
 
 ### Fixed
