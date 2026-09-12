@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.7.2] - 2026-09-12
+
+### Added
+
+- Module packages (`RapydModuleServiceProvider` with `$modulePath`): the Blade files next to the Livewire classes (`Livewire/`, `Components/`) resolve as `{name}::` views, like an app module's; a `workflow.php` in the package registers its state machines. Needed by `zofe/shop-module`.
+
 ## [9.7.1] - 2026-09-12
 
 ### Fixed

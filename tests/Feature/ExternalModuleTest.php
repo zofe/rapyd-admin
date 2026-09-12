@@ -47,6 +47,12 @@ class ExternalModuleTest extends TestCase
         Livewire::test('sample::hello-table')->assertSee('HELLO FROM SAMPLE MODULE');
     }
 
+    public function test_views_next_to_the_components_and_the_workflow_file_are_loaded()
+    {
+        $this->assertTrue(view()->exists('sample::hello_inline'), 'Livewire dir is a view root');
+        $this->assertSame(['open', 'closed'], config('workflow.sample_ticket.places'), 'workflow.php merged');
+    }
+
     public function test_the_page_renders_inside_the_admin_layout()
     {
         $this->get(route('sample.hello'))->assertOk()->assertSee('HELLO FROM SAMPLE MODULE')->assertSee('logged as');

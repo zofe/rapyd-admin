@@ -90,14 +90,21 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
         if ($this->modulePath && is_dir($this->appModulePath('Database/Migrations'))) {
             $this->loadMigrationsFrom($this->appModulePath('Database/Migrations'));
         }
-        if (is_dir($this->appModulePath('Views'))) {
-            $this->loadViewsFrom($this->appModulePath('Views'), $namespace);
+        // Same view roots as ModuleServiceProvider gives an app module: the
+        // Blade files next to the Livewire classes resolve as "{namespace}::" too.
+        foreach (['Views', 'Livewire', 'Components'] as $dir) {
+            if (is_dir($this->appModulePath($dir))) {
+                $this->loadViewsFrom($this->appModulePath($dir), $namespace);
+            }
         }
         if (is_dir($this->appModulePath('Lang'))) {
             $this->loadTranslationsFrom($this->appModulePath('Lang'), $namespace);
         }
         if (file_exists($this->appModulePath('routes.php'))) {
             $this->loadRoutesFrom($this->appModulePath('routes.php'));
+        }
+        if ($this->modulePath && file_exists($this->appModulePath('workflow.php'))) {
+            $this->registerWorkflowDefinitions($this->appModulePath('workflow.php'));
         }
         if (is_dir($this->appModulePath('Livewire'))) {
             $this->registerLivewireNamespace($this->appModulePath('Livewire'));
@@ -122,6 +129,22 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
             $modules[] = $module;
             config(['rapyd.modules' => $modules]);
         }
+    }
+
+    /**
+     * Add the state machines of a workflow.php to config('workflow'), which
+     * laravel-workflow reads lazily; a name already defined wins.
+     */
+    protected function registerWorkflowDefinitions(string $file): void
+    {
+        $definitions = config('workflow', []);
+        $defs = require $file;
+        foreach (is_array($defs) ? $defs : [] as $name => $definition) {
+            if (is_array($definition) && ! isset($definitions[$name])) {
+                $definitions[$name] = $definition;
+            }
+        }
+        config(['workflow' => $definitions]);
     }
 
     /**
