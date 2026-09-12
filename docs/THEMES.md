@@ -40,7 +40,8 @@ theme-acme/
 ```
 
 The bundled look lives in `src/Modules/Layout/Views` of `zofe/rapyd-admin` and follows the same contract:
-copy it as the starting point of a new theme.
+copy it as the starting point of a new theme. [zofe/theme-tabler](https://github.com/zofe/theme-tabler) is a complete
+example built from a third-party template: read it next to this document.
 
 ## The layout contract
 

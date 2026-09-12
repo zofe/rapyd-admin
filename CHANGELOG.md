@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- README and `docs/THEMES.md` point to `zofe/theme-tabler`, the first external theme.
+
 ## [9.7.0] - 2026-09-12
 
 ### Added

@@ -111,7 +111,8 @@ RAPYD_SIDEBAR_TEXT="#f8fafc"
 
 **A different look**: the admin shell is a theme, a folder of Blade layouts plus compiled assets activated with
 `RAPYD_THEME`. Start from any Bootstrap 5 template, follow the contract in [docs/THEMES.md](docs/THEMES.md) and check
-it with `php artisan rpd:theme:check`.
+it with `php artisan rpd:theme:check`. Ready to use: [zofe/theme-tabler](https://github.com/zofe/theme-tabler), the
+[Tabler](https://tabler.io) template (`composer require zofe/theme-tabler`, then `RAPYD_THEME=tabler`).
 
 **A single view**: publish it to `resources/views/vendor/rpd` (components) or `resources/views/vendor/layout`
 (layouts) and edit the copy. **A whole module**: `php artisan rpd:eject Auth`.
