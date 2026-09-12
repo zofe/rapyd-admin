@@ -149,6 +149,15 @@ class InstallCommand extends Command
                 continue;
             }
 
+            // The same short name imported from elsewhere (e.g. the 1.x App\Modules\*
+            // wrappers): two "use" with one alias is a fatal error, so replace it.
+            $short = preg_quote(class_basename(trim(substr($import, 4), ';')), '/');
+            if (preg_match('/^use [A-Za-z\\\\]+\\\\' . $short . ';$/m', $content, $legacy)) {
+                $content = str_replace($legacy[0], $import, $content);
+
+                continue;
+            }
+
             // Insert after the last top-level "use X;" line
             if (preg_match_all('/^use [A-Za-z\\\\{][^;]+;/m', $content, $matches, PREG_OFFSET_CAPTURE)) {
                 $last = end($matches[0]);

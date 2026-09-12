@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.6.4] - 2026-09-12
+
+### Fixed
+
+- `rpd:install` on a User model that still imports the 1.x `App\Modules\*` traits added a second `use` with the same short name (a fatal error): the legacy import is now replaced. Tests for the trait injection.
+
 ## [9.6.3] - 2026-09-12
 
 ### Fixed
