@@ -2,7 +2,11 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
-## [Unreleased]
+## [9.7.1] - 2026-09-12
+
+### Fixed
+
+- Coloured buttons and badges (`btn-danger`, `btn-success`…) had black text: `$min-contrast-ratio` lowered to 3 so Bootstrap keeps white text on the theme's saturated colours.
 
 ### Changed
 

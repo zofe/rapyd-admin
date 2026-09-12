@@ -46,7 +46,9 @@ $primary: $blue !default;
 $brand-google: #ea4335 !default;
 $brand-facebook: #3b5998 !default;
 
-// Set Contrast Threshold
+// Text colour on coloured buttons/badges: white on primary, danger, success…
+// (Bootstrap's default 4.5 would pick black on this red and this blue).
+$min-contrast-ratio: 3 !default;
 $yiq-contrasted-threshold: 195 !default;
 
 // Typography
