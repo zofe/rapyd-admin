@@ -1,12 +1,15 @@
 import * as bootstrap from 'bootstrap';
 import modbox from 'bootstrap-modbox/dist/bootstrap-modbox.esm';
 import TomSelect from 'tom-select/dist/js/tom-select.complete';
-import 'livewire-sortable';
 import { ThemeSwitcher } from './theme-switcher';
 
 window.bootstrap  = bootstrap;
 window.modbox     = modbox;
 window.TomSelect  = TomSelect;
+
+// livewire-sortable throws at import time when window.Livewire is missing (e.g. the
+// login page has no Livewire at all): register it once Livewire is initialised.
+document.addEventListener('livewire:init', () => require('livewire-sortable'));
 
 // ── Modali ────────────────────────────────────────────────────────────────────
 function hideModals() {
