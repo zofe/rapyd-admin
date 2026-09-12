@@ -255,15 +255,53 @@ php artisan rpd:install --companies
 
 ---
 
+## Styles and scripts
+
+The package ships its compiled assets in `public/` (`rapyd.js`, `rapyd.css`, `fonts/`); `vendor:publish` copies them to
+`public/vendor/rapyd` and the layouts include them with `@rapydStyles` / `@rapydScripts`. Applications need no Node toolchain.
+
+To change the look (Bootstrap variables, the sidebar/topbar layout, the Rapyd components) edit the SCSS in `resources/sass`
+and rebuild with Vite from the package root:
+
+```bash
+npm i
+npm run dev      # vite build --watch: rebuilds public/ on every save
+npm run build    # production build, commit the result
+php artisan vendor:publish --tag=laravel-assets --force   # in the app, to pick up the new files
+```
+
+Where things live:
+
+- `resources/sass/rapyd.scss` — entry point, imports everything in order
+- `resources/sass/layout/_variables.scss` — Bootstrap variable overrides (colors, fonts, radius…)
+- `resources/sass/layout/` — sidebar, topbar, navs, dark mode, sections
+- `resources/sass/data-view.scss`, `utils.scss` — Rapyd components
+- `resources/js/rapyd.js` — Bootstrap, TomSelect, modals, theme switcher, livewire-sortable
+
+`resources/js/bootstrap.js` + `resources/sass/bootstrap.scss` build the plain `bootstrap.js` / `bootstrap.css` (with
+bootstrap-icons) used by the legacy `rpd::app` view.
+
+## Themes
+
+The admin look is a theme: a folder of Blade layouts plus compiled assets, activated with `RAPYD_THEME`. Start from
+any Bootstrap 5 template, follow the contract in [docs/THEMES.md](docs/THEMES.md) and verify it with
+`php artisan rpd:theme:check`. Branding (logo, brand name, favicon, extra CSS) is read from `config('rapyd.layout.*')`, and the colours can be
+changed from `.env` without recompiling anything:
+
+```dotenv
+RAPYD_PRIMARY="#6a1c9a"        # buttons, links, active items
+RAPYD_SIDEBAR_BG="#1e293b"     # optional: sidebar, topbar and content backgrounds
+RAPYD_SIDEBAR_TEXT="#f8fafc"
+RAPYD_TOPBAR_BG="#ffffff"
+RAPYD_CONTENT_BG="#f1f5f9"
+```
+
+Quote the values: in a `.env` file an unquoted `#` starts a comment.
+
 ## Credits
 
 - [Felice Ostuni](https://github.com/zofe)
 - [All Contributors](../../contributors)
-
-Inspired by:
-- [rapyd-laravel](https://github.com/zofe/rapyd-laravel) — the original library, 900+ GitHub stars and 150k+ downloads. Rapyd Admin is its modern successor.
-- [livewire](https://livewire.laravel.com/)
-- [laravel-bootstrap-components](https://github.com/bastinald/laravel-bootstrap-components)
 
 ## License
 
