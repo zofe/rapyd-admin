@@ -41,10 +41,11 @@
 @endphp
 
 
-<div class="{{$col}}" wire:ignore wire:key="ignore-{{$id}}">
+{{-- Only the select is wire:ignore (TomSelect owns its DOM): label, error and help re-render --}}
+<div class="{{$col}}">
     <x-rpd::label :for="$id" :label="$label" :required="$required" />
 
-    <div class="input-group">
+    <div class="input-group {{ $errors->has($key) ? 'is-invalid' : '' }}" wire:ignore wire:key="ignore-{{$id}}">
         <select x-data="{
 		tomSelectInstance: null
 		}" x-init="
@@ -101,8 +102,10 @@
             <option value="{{ $optionValue }}">{!! $optionLabel !!}</option>
         @endforeach
         </select>
-        <x-rpd::error :key="$key"/>
     </div>
+    {{-- keyed: Livewire must morph these siblings even though the block above is ignored --}}
+    <div wire:key="feedback-{{$id}}" class="{{ $errors->has($key) ? 'is-invalid' : '' }}"></div>
+    <x-rpd::error :key="$key"/>
 
     <x-rpd::help :label="$help"/>
 </div>

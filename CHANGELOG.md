@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.8.1] - 2026-09-13
+
+### Fixed
+
+- `x-rpd::select-list`: the validation error never appeared in the browser. The whole component sat in the `wire:ignore` block that protects TomSelect; now only the select is ignored and the label, error and help re-render (a keyed sibling makes Livewire morph them next to the ignored block).
+
 ## [9.8.0] - 2026-09-13
 
 ### Added
