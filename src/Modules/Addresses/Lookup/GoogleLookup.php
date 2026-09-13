@@ -66,7 +66,7 @@ class GoogleLookup implements AddressLookup, AddressValidator
             $params['sessionToken'] = $session;
         }
         $json = $this->call(fn () => Http::timeout(6)->withHeaders([
-            'X-Goog-Api-Key'   => $key,
+            'X-Goog-Api-Key' => $key,
             'X-Goog-FieldMask' => 'addressComponents,location,formattedAddress',
         ])->get(self::DETAILS . $candidate->placeId, $params), 'place details');
 
@@ -81,12 +81,12 @@ class GoogleLookup implements AddressLookup, AddressValidator
         }
 
         $body = ['address' => array_filter([
-            'regionCode'         => strtoupper($address->country_code),
-            'languageCode'       => $this->lang(),
-            'postalCode'         => $address->zipcode,
-            'locality'           => $address->city,
+            'regionCode' => strtoupper($address->country_code),
+            'languageCode' => $this->lang(),
+            'postalCode' => $address->zipcode,
+            'locality' => $address->city,
             'administrativeArea' => $address->state_code ?: $address->region,
-            'addressLines'       => [trim($address->address . ' ' . $address->street_number)],
+            'addressLines' => [trim($address->address . ' ' . $address->street_number)],
         ])];
 
         $json = $this->call(fn () => Http::timeout(8)->post(self::VALIDATE . '?key=' . $key, $body), 'address validation');
@@ -122,6 +122,7 @@ class GoogleLookup implements AddressLookup, AddressValidator
                     return $c[$field] ?? null;
                 }
             }
+
             return null;
         };
         $number = $get('street_number');
@@ -154,11 +155,14 @@ class GoogleLookup implements AddressLookup, AddressValidator
             $response = $request();
             if (! $response->ok()) {
                 Log::warning("google {$what}: " . $response->status(), ['body' => mb_substr($response->body(), 0, 300)]);
+
                 return null;
             }
+
             return $response->json();
         } catch (\Throwable $e) {
             Log::warning("google {$what}: unreachable", ['error' => $e->getMessage()]);
+
             return null;
         }
     }
