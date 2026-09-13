@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.8.3] - 2026-09-13
+
+### Changed
+
+- User page: List and Edit buttons capitalised like the Companies page.
+
 ## [9.8.2] - 2026-09-13
 
 ### Fixed

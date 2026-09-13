@@ -4,8 +4,8 @@
         <x-rpd::card>
             <x-rpd::view title="User Detail">
               <x-slot name="buttons">
-                <a href="{{ route_lang('auth.users') }}" class="btn btn-outline-primary">list</a>
-                <a href="{{ route_lang('auth.users.edit',$user->id) }}" class="btn btn-outline-primary">edit</a>
+                <a href="{{ route_lang('auth.users') }}" class="btn btn-outline-primary">List</a>
+                <a href="{{ route_lang('auth.users.edit',$user->id) }}" class="btn btn-outline-primary">Edit</a>
               </x-slot>
 
               <dl class="row">
