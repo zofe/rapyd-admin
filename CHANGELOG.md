@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.7.3] - 2026-09-13
+
+### Fixed
+
+- `Authorize::authorize()` for a guest: the redirect to the login page no longer goes through the `redirect()` helper, which inside a Livewire component returns Livewire's `Redirector` (no `send()` on 4.4.0: HTTP 500 on every protected page). A guest now gets a plain 302; test added.
+
 ## [9.7.2] - 2026-09-12
 
 ### Added

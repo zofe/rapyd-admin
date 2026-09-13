@@ -2,6 +2,8 @@
 
 namespace Zofe\Rapyd\Modules\Auth\Traits;
 
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
@@ -16,8 +18,9 @@ trait Authorize
         }
 
         if (! $user) {
-            redirect()->to(route_lang('login'))->send();
-            exit;
+            // A plain response, not the redirect() helper: inside a Livewire component the
+            // helper returns Livewire's Redirector, which has no send() on some 4.x releases.
+            throw new HttpResponseException(new RedirectResponse(route_lang('login')));
         }
 
         if (! app()->environment('testing')) {

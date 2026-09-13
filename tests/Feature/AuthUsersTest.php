@@ -34,6 +34,14 @@ class AuthUsersTest extends TestCase
         return User::create(['name' => $name, 'email' => $email, 'password' => 'secret']);
     }
 
+    public function test_a_guest_is_redirected_to_the_login_page()
+    {
+        auth()->logout();
+
+        $this->get(route('auth.users'))->assertRedirect(route('login'));
+        $this->get(route('companies.table'))->assertRedirect(route('login'));
+    }
+
     public function test_table_shows_company_and_owner_badge()
     {
         $this->makeUser('Mario', 'mario@example.com')->assignToCompany($this->acme, 'owner');
