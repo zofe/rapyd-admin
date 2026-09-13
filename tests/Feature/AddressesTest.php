@@ -31,23 +31,36 @@ class AddressesTest extends TestCase
             ->set('address.address', 'Via Roma 1')
             ->set('address.city', 'Milano')
             ->set('address.zipcode', '20100')
+            ->set('address.country_code', 'it')
+            ->set('address.state_code', 'mi')
             ->call('save')
             ->assertHasNoErrors()
             ->assertDispatched('savedAddress');
 
         $this->assertEquals(1, $this->company->addresses()->count());
+        $address = $this->company->addresses()->first();
+        $this->assertSame(['IT', 'Italy', 'MI'], [$address->country_code, $address->country, $address->state_code], 'normalised from the ISO code');
 
         Livewire::test('addresses::addresses-table-embed', ['addressableType' => 'company', 'addressableId' => $this->company->id, 'editable' => true])
             ->assertSee('Via Roma 1')
             ->assertSee('Milano');
     }
 
-    public function test_address_requires_street_city_and_zipcode()
+    public function test_address_requires_street_city_zipcode_and_country()
     {
         Livewire::test('addresses::addresses-modal-edit-embed')
             ->call('editAddress', null, 'company', $this->company->id)
             ->call('save')
-            ->assertHasErrors(['address.address', 'address.city', 'address.zipcode']);
+            ->assertHasErrors(['address.address', 'address.city', 'address.zipcode', 'address.country_code']);
+    }
+
+    public function test_countries_helper()
+    {
+        $this->assertSame('Italy', \Zofe\Rapyd\Support\Countries::name('it'));
+        $this->assertTrue(\Zofe\Rapyd\Support\Countries::isEu('DE'));
+        $this->assertFalse(\Zofe\Rapyd\Support\Countries::isEu('CH'));
+        $this->assertCount(27, \Zofe\Rapyd\Support\Countries::EU);
+        $this->assertArrayHasKey('US', \Zofe\Rapyd\Support\Countries::all());
     }
 
     public function test_customer_sees_addresses_only_of_his_own_company()

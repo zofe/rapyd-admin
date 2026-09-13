@@ -2,6 +2,14 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.8.0] - 2026-09-13
+
+### Added
+
+- Addresses: `country_code` (ISO 3166-1) is required and chosen from a list, `state_code` (ISO 3166-2 subdivision, e.g. US states) is optional; `country` is filled from the code. Both feed the tax rules of `zofe/shop-module`.
+- Companies: `vat_validated_at`, when the VAT number was last confirmed by VIES.
+- `Zofe\Rapyd\Support\Countries`: ISO country codes with names, `isEu()`.
+
 ## [9.7.3] - 2026-09-13
 
 ### Fixed

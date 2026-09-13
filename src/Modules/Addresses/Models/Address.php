@@ -19,7 +19,7 @@ class Address extends Model
 
     protected $fillable = [
         'address', 'street_number', 'zipcode', 'city', 'province', 'region',
-        'country', 'country_code', 'address_lat', 'address_lon',
+        'country', 'country_code', 'state_code', 'address_lat', 'address_lon',
     ];
 
     public function addressable()

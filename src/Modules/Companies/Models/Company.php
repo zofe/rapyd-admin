@@ -38,6 +38,7 @@ class Company extends Model
         'name',
         'email',
         'vat',
+        'vat_validated_at',
         'phone',
         'mobile',
         'website',
@@ -48,6 +49,7 @@ class Company extends Model
     ];
 
     protected $casts = [
+        'vat_validated_at' => 'datetime',
         'registration_date' => 'datetime',
         'activation_date' => 'datetime',
     ];

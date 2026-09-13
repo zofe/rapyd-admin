@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Zofe\Rapyd\Modules\Addresses\Models\Address;
+use Zofe\Rapyd\Support\Countries;
 
 class AddressesModalEditEmbed extends Component
 {
@@ -18,6 +19,8 @@ class AddressesModalEditEmbed extends Component
         'address.address' => 'required|string|max:255',
         'address.city'    => 'required|string|max:255',
         'address.zipcode' => 'required|string|max:20',
+        'address.country_code' => 'required|string|size:2',
+        'address.state_code'   => 'nullable|string|max:10',
         // kept in the rules so Livewire carries them across requests on an unsaved model
         'address.addressable_type' => 'nullable',
         'address.addressable_id'   => 'nullable',
@@ -46,6 +49,9 @@ class AddressesModalEditEmbed extends Component
     {
         $this->validate();
         $this->authorizeOwner();
+        $this->address->country_code = strtoupper($this->address->country_code);
+        $this->address->country = Countries::name($this->address->country_code);
+        $this->address->state_code = $this->address->state_code ? strtoupper($this->address->state_code) : null;
         $this->address->save();
 
         $this->dispatch('hide-modals');
@@ -76,6 +82,6 @@ class AddressesModalEditEmbed extends Component
 
     public function render()
     {
-        return view('addresses::addresses_modal_edit_embed');
+        return view('addresses::addresses_modal_edit_embed', ['countries' => Countries::all()]);
     }
 }
