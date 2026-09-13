@@ -17,8 +17,8 @@ class AddressesModuleServiceProvider extends RapydModuleServiceProvider
 
             return match ($driver) {
                 'none', null, '' => new Lookup\NullLookup(),
-                'geoapify' => new Lookup\GeoapifyLookup(),
-                default => $app->make($driver),
+                'google'         => new Lookup\GoogleLookup(),
+                default          => $app->make($driver),
             };
         });
 

@@ -12,8 +12,13 @@ class NullLookup implements AddressLookup
         return 'none';
     }
 
-    public function search(string $query): array
+    public function search(string $query, ?string $session = null): array
     {
         return [];
+    }
+
+    public function resolve(AddressCandidate $candidate, ?string $session = null): AddressCandidate
+    {
+        return $candidate;
     }
 }

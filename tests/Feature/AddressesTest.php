@@ -72,44 +72,106 @@ class AddressesTest extends TestCase
             ->assertDontSeeHtml('type="radio"');
     }
 
-    public function test_geoapify_suggestions_fill_the_form()
+    protected function fakeGoogle(): void
     {
-        config(['rapyd.addresses.lookup' => 'geoapify', 'rapyd.addresses.geoapify_key' => 'k', 'rapyd.addresses.lookup_country' => 'it']);
-        \Illuminate\Support\Facades\Http::fake(['api.geoapify.com/*' => \Illuminate\Support\Facades\Http::response(['results' => [[
-            'formatted' => 'Piazza del Duomo 1, 20122 Milano MI, Italy', 'street' => 'Piazza del Duomo', 'housenumber' => '1',
-            'postcode' => '20122', 'city' => 'Milano', 'county' => 'Milano', 'state' => 'Lombardia', 'country' => 'Italy',
-            'country_code' => 'it', 'lat' => 45.4641, 'lon' => 9.1919, 'result_type' => 'building', 'rank' => ['confidence' => 1],
-        ], [
-            'formatted' => 'Piazza del Duomo, Milano, Italy', 'street' => 'Piazza del Duomo', 'city' => 'Milano',
-            'country' => 'Italy', 'country_code' => 'it', 'lat' => 45.46, 'lon' => 9.19, 'result_type' => 'street',
-        ]]])]);
+        config(['rapyd.addresses.lookup' => 'google', 'rapyd.addresses.google_key' => 'k', 'rapyd.addresses.lookup_country' => 'it']);
+        \Illuminate\Support\Facades\Http::fake([
+            'places.googleapis.com/v1/places:autocomplete' => \Illuminate\Support\Facades\Http::response(['suggestions' => [
+                ['placePrediction' => ['placeId' => 'ChIJduomo', 'text' => ['text' => 'Piazza del Duomo, 1, Milano MI, Italy']]],
+                ['placePrediction' => ['placeId' => 'ChIJroad', 'text' => ['text' => 'Piazza del Duomo, Milano MI, Italy']]],
+            ]]),
+            'places.googleapis.com/v1/places/*' => \Illuminate\Support\Facades\Http::response([
+                'formattedAddress' => 'P.za del Duomo, 1, 20122 Milano MI, Italy',
+                'location' => ['latitude' => 45.4641, 'longitude' => 9.1919],
+                'addressComponents' => [
+                    ['longText' => '1', 'shortText' => '1', 'types' => ['street_number']],
+                    ['longText' => 'Piazza del Duomo', 'shortText' => 'P.za del Duomo', 'types' => ['route']],
+                    ['longText' => 'Milano', 'shortText' => 'Milano', 'types' => ['locality', 'political']],
+                    ['longText' => 'Città Metropolitana di Milano', 'shortText' => 'MI', 'types' => ['administrative_area_level_2', 'political']],
+                    ['longText' => 'Lombardia', 'shortText' => 'Lombardia', 'types' => ['administrative_area_level_1', 'political']],
+                    ['longText' => 'Italy', 'shortText' => 'IT', 'types' => ['country', 'political']],
+                    ['longText' => '20122', 'shortText' => '20122', 'types' => ['postal_code']],
+                ],
+            ]),
+            'addressvalidation.googleapis.com/*' => \Illuminate\Support\Facades\Http::response(['result' => [
+                'verdict' => ['validationGranularity' => 'OTHER', 'hasUnconfirmedComponents' => true],
+                'address' => ['formattedAddress' => 'Via Inesistente 999, Milano', 'addressComponents' => []],
+            ]]),
+        ]);
+    }
+
+    public function test_google_places_fills_the_form_within_one_billing_session()
+    {
+        $this->fakeGoogle();
 
         $modal = Livewire::test('addresses::addresses-modal-edit-embed')
             ->call('editAddress', null, 'company', $this->company->id)
             ->assertSee('Search address')
-            ->set('lookup', 'piazza duomo milano')
+            ->set('lookup', 'piazza duomo 1 milano')
             ->assertCount('suggestions', 2)
-            ->assertSee('Piazza del Duomo 1, 20122 Milano MI, Italy')
-            ->call('pick', 0)
+            ->assertSee('Piazza del Duomo, 1, Milano MI, Italy');
+        $session = $modal->get('lookupSession');
+        $this->assertNotEmpty($session);
+
+        $modal->call('pick', 0)
             ->assertSet('address.address', 'Piazza del Duomo')
             ->assertSet('address.street_number', '1')
             ->assertSet('address.zipcode', '20122')
-            ->assertSet('address.country_code', 'IT')
+            ->assertSet('address.city', 'Milano')
+            ->assertSet('address.province', 'MI')
             ->assertSet('address.region', 'Lombardia')
+            ->assertSet('address.country_code', 'IT')
+            ->assertSet('address.state_code', null)
             ->assertSet('address.confidence', 'verified')
-            ->assertSet('address.verified_by', 'geoapify')
+            ->assertSet('address.verified_by', 'google')
             ->assertCount('suggestions', 0)
             ->call('save')
             ->assertHasNoErrors();
 
-        \Illuminate\Support\Facades\Http::assertSent(fn ($r) => $r['text'] === 'piazza duomo milano' && $r['filter'] === 'countrycode:it' && $r['format'] === 'json');
+        \Illuminate\Support\Facades\Http::assertSent(fn ($r) => str_contains($r->url(), 'places:autocomplete') && $r['sessionToken'] === $session && $r['includedRegionCodes'] === ['it'] && $r->hasHeader('X-Goog-Api-Key', 'k'));
+        \Illuminate\Support\Facades\Http::assertSent(fn ($r) => str_contains($r->url(), 'places/ChIJduomo') && str_contains($r->url(), 'sessionToken=' . $session) && $r->hasHeader('X-Goog-FieldMask'));
+        $this->assertNotSame($session, $modal->get('lookupSession'), 'a new session after the details call');
 
         $address = $this->company->addresses()->first();
         $this->assertEqualsWithDelta(45.4641, $address->address_lat, 0.0001);
         $this->assertNotNull($address->verified_at);
+    }
 
-        $partial = (new \Zofe\Rapyd\Modules\Addresses\Lookup\GeoapifyLookup())->candidate(['formatted' => 'x', 'street' => 'Via Roma', 'city' => 'Bari', 'country_code' => 'it', 'result_type' => 'street']);
-        $this->assertSame('partial', $partial->confidence);
+    public function test_us_components_give_the_state_code()
+    {
+        $c = (new \Zofe\Rapyd\Modules\Addresses\Lookup\GoogleLookup())->fromComponents([
+            ['longText' => '1600', 'shortText' => '1600', 'types' => ['street_number']],
+            ['longText' => 'Amphitheatre Parkway', 'shortText' => 'Amphitheatre Pkwy', 'types' => ['route']],
+            ['longText' => 'Mountain View', 'shortText' => 'Mountain View', 'types' => ['locality']],
+            ['longText' => 'Santa Clara County', 'shortText' => 'Santa Clara County', 'types' => ['administrative_area_level_2']],
+            ['longText' => 'California', 'shortText' => 'CA', 'types' => ['administrative_area_level_1']],
+            ['longText' => 'United States', 'shortText' => 'US', 'types' => ['country']],
+            ['longText' => '94043', 'shortText' => '94043', 'types' => ['postal_code']],
+        ], ['latitude' => 37.42, 'longitude' => -122.08], 'x');
+        $this->assertSame(['CA', 'US', 'Santa Clara County', 'verified'], [$c->state_code, $c->country_code, $c->province, $c->confidence]);
+    }
+
+    public function test_strict_validation_refuses_an_address_google_cannot_find()
+    {
+        $this->fakeGoogle();
+        config(['rapyd.addresses.validate' => 'strict']);
+
+        Livewire::test('addresses::addresses-modal-edit-embed')
+            ->call('editAddress', null, 'company', $this->company->id)
+            ->set('address.address', 'Via Inesistente')->set('address.street_number', '999')
+            ->set('address.city', 'Milano')->set('address.zipcode', '20100')->set('address.country_code', 'IT')
+            ->call('save')
+            ->assertHasErrors(['address.address']);
+        $this->assertEquals(0, $this->company->addresses()->count());
+
+        config(['rapyd.addresses.validate' => true]);
+        Livewire::test('addresses::addresses-modal-edit-embed')
+            ->call('editAddress', null, 'company', $this->company->id)
+            ->set('address.address', 'Via Inesistente')->set('address.street_number', '999')
+            ->set('address.city', 'Milano')->set('address.zipcode', '20100')->set('address.country_code', 'IT')
+            ->call('save')
+            ->assertHasNoErrors();
+        $this->assertSame(['google', 'unknown'], [$this->company->addresses()->first()->verified_by, $this->company->addresses()->first()->confidence], 'saved, but flagged');
     }
 
     public function test_without_a_lookup_service_the_form_has_no_search_box()

@@ -7,6 +7,7 @@ final class AddressCandidate
 {
     public const VERIFIED = 'verified';  // matched down to the building / house number
     public const PARTIAL = 'partial';    // matched a street, a postcode or a city only
+    public const UNKNOWN = 'unknown';    // not found (validation)
 
     public function __construct(
         public readonly string $label,
@@ -22,6 +23,7 @@ final class AddressCandidate
         public readonly ?float $lat = null,
         public readonly ?float $lon = null,
         public readonly string $confidence = self::PARTIAL,
+        public readonly ?string $placeId = null,   // the service's id, for resolve()
     ) {
     }
 
@@ -45,7 +47,7 @@ final class AddressCandidate
 
     public function toArray(): array
     {
-        return ['label' => $this->label, 'confidence' => $this->confidence] + $this->attributes();
+        return ['label' => $this->label, 'confidence' => $this->confidence, 'placeId' => $this->placeId] + $this->attributes();
     }
 
     public static function fromArray(array $a): self
@@ -64,6 +66,7 @@ final class AddressCandidate
             lat: isset($a['address_lat']) ? (float) $a['address_lat'] : null,
             lon: isset($a['address_lon']) ? (float) $a['address_lon'] : null,
             confidence: $a['confidence'] ?? self::PARTIAL,
+            placeId: $a['placeId'] ?? null,
         );
     }
 }

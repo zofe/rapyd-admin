@@ -8,6 +8,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Zofe\Rapyd\Modules\Addresses\Lookup\AddressCandidate;
 use Zofe\Rapyd\Modules\Addresses\Lookup\Contracts\AddressLookup;
+use Zofe\Rapyd\Modules\Addresses\Lookup\Contracts\AddressValidator;
 use Zofe\Rapyd\Modules\Addresses\Models\Address;
 use Zofe\Rapyd\Support\Countries;
 
@@ -21,6 +22,9 @@ class AddressesModalEditEmbed extends Component
     public string $lookup = '';
 
     public array $suggestions = [];
+
+    /** One per opening of the form: services billing by session group the calls with it. */
+    public string $lookupSession = '';
 
     protected $rules = [
         'address.address' => 'required|string|max:255',
@@ -60,6 +64,7 @@ class AddressesModalEditEmbed extends Component
 
         $this->lookup = '';
         $this->suggestions = [];
+        $this->lookupSession = (string) \Illuminate\Support\Str::uuid();
         $this->authorizeOwner();
         $this->dispatch('show-modal', ['editAddress']);
     }
@@ -68,7 +73,7 @@ class AddressesModalEditEmbed extends Component
     {
         $this->suggestions = mb_strlen(trim($this->lookup)) < 3
             ? []
-            : array_map(fn (AddressCandidate $c) => $c->toArray(), app(AddressLookup::class)->search($this->lookup));
+            : array_map(fn (AddressCandidate $c) => $c->toArray(), app(AddressLookup::class)->search($this->lookup, $this->lookupSession));
     }
 
     /** Fill the fields from a suggestion; they stay editable. */
@@ -77,19 +82,22 @@ class AddressesModalEditEmbed extends Component
         if (! isset($this->suggestions[$index])) {
             return;
         }
-        $candidate = AddressCandidate::fromArray($this->suggestions[$index]);
-        $this->address->fill($candidate->attributes());
-        $this->address->verified_by = app(AddressLookup::class)->name();
+        $lookup = app(AddressLookup::class);
+        $candidate = $lookup->resolve(AddressCandidate::fromArray($this->suggestions[$index]), $this->lookupSession);
+        $this->address->fill(array_filter($candidate->attributes(), fn ($v) => $v !== null));
+        $this->address->verified_by = $lookup->name();
         $this->address->verified_at = now();
         $this->address->confidence = $candidate->confidence;
         $this->lookup = $candidate->label;
         $this->suggestions = [];
+        $this->lookupSession = (string) \Illuminate\Support\Str::uuid(); // the session ends with the details call
     }
 
     public function save(): void
     {
         $this->validate();
         $this->authorizeOwner();
+        $this->validateExistence();
         $this->address->country_code = strtoupper($this->address->country_code);
         $this->address->country = Countries::name($this->address->country_code);
         $this->address->state_code = $this->address->state_code ? strtoupper($this->address->state_code) : null;
@@ -97,6 +105,33 @@ class AddressesModalEditEmbed extends Component
 
         $this->dispatch('hide-modals');
         $this->dispatch('savedAddress');
+    }
+
+    /** config rapyd.addresses.validate: ask the service whether the address exists as typed. */
+    protected function validateExistence(): void
+    {
+        $mode = config('rapyd.addresses.validate', false);
+        $lookup = app(AddressLookup::class);
+        if (! $mode || ! $lookup instanceof AddressValidator || ! $this->address->isDirty(['address', 'street_number', 'zipcode', 'city', 'country_code'])) {
+            return;
+        }
+
+        $result = $lookup->validate($this->address);
+        if (! $result) {
+            return; // service down: the address is saved as typed
+        }
+
+        $this->address->verified_by = $lookup->name();
+        $this->address->verified_at = now();
+        $this->address->confidence = $result->confidence;
+        if ($result->confidence !== AddressCandidate::UNKNOWN) {
+            $this->address->address_lat = $result->lat ?? $this->address->address_lat;
+            $this->address->address_lon = $result->lon ?? $this->address->address_lon;
+        }
+
+        if ($mode === 'strict' && $result->confidence === AddressCandidate::UNKNOWN) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['address.address' => 'Address not found: check street, number, postcode and city.']);
+        }
     }
 
     #[On('deleteAddress')]

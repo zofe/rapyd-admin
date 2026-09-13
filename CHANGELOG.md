@@ -2,6 +2,16 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.11.0] - 2026-09-13
+
+### Changed
+
+- Address lookup: one built-in driver, Google Maps Platform (Places Autocomplete + Place Details in one billing session, the key on the server), enabled by `GOOGLE_MAPS_KEY`. The Geoapify driver of 9.10.0 is gone; other services plug in through `Lookup\Contracts\AddressLookup` (`search()` + `resolve()`).
+
+### Added
+
+- `RAPYD_ADDRESS_VALIDATE` (`true` | `strict`): on save, Google Address Validation says whether the address exists as typed; `strict` refuses one it cannot find. Result kept in `verified_by`, `verified_at`, `confidence` (verified, partial, unknown).
+
 ## [9.10.0] - 2026-09-13
 
 ### Added

@@ -149,14 +149,19 @@ actions call `CompanyOwnerAuth::check($company, $user)` explicitly.
 Postal addresses attachable to any model (`HasAddresses` on the model, `rpd:install --addresses` adds it to User).
 Embeds: `addresses::addresses-table-embed` (list; `editable`, `selectable` with a `selectedAddress` event for checkouts),
 `addresses::addresses-button-add-embed`, `addresses::addresses-modal-edit-embed` (the form). The country is required
-(ISO code, `Zofe\Rapyd\Support\Countries`), `state_code` optional. With a lookup service the form gets a search box that
-fills the fields and marks the address as verified:
+(ISO code, `Zofe\Rapyd\Support\Countries`), `state_code` optional. With a Google Maps Platform key the form gets a
+search box: type a few words, pick a suggestion, the fields and the coordinates are filled and the address is marked as
+verified (`verified_by`, `verified_at`, `confidence`). The key stays on the server.
 
 ```dotenv
-RAPYD_ADDRESS_LOOKUP=geoapify        # none (default) | geoapify | a class implementing Lookup\Contracts\AddressLookup
-GEOAPIFY_KEY=...                     # free tier: 3,000 requests a day
-RAPYD_ADDRESS_LOOKUP_COUNTRY=it      # optional bias
+GOOGLE_MAPS_KEY=...                 # Places API (New) enabled; the search box appears
+RAPYD_ADDRESS_VALIDATE=strict       # optional, Address Validation API enabled: refuse an address Google cannot find
+RAPYD_ADDRESS_LOOKUP_COUNTRY=it     # optional bias
 ```
+
+Costs (September 2026): suggestions are grouped in a free billing session, one Place Details per chosen address
+(10,000 free a month), one validation per saved address (5,000 free a month). Another service: a class implementing
+`Zofe\Rapyd\Modules\Addresses\Lookup\Contracts\AddressLookup` in `RAPYD_ADDRESS_LOOKUP`.
 
 ## Writing a module as a package
 
