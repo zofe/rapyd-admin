@@ -27,11 +27,11 @@ class GeoapifyLookup implements AddressLookup
         }
 
         $params = [
-            'text'   => trim($query),
+            'text' => trim($query),
             'apiKey' => $key,
             'format' => 'json',
-            'limit'  => (int) config('rapyd.addresses.lookup_limit', 5),
-            'lang'   => config('rapyd.addresses.lookup_lang') ?: substr(app()->getLocale(), 0, 2),
+            'limit' => (int) config('rapyd.addresses.lookup_limit', 5),
+            'lang' => config('rapyd.addresses.lookup_lang') ?: substr(app()->getLocale(), 0, 2),
         ];
         if ($country = config('rapyd.addresses.lookup_country')) {
             $params['filter'] = 'countrycode:' . strtolower($country);
@@ -41,10 +41,12 @@ class GeoapifyLookup implements AddressLookup
             $response = Http::timeout(6)->get(self::URL, $params);
             if (! $response->ok()) {
                 Log::warning('geoapify: ' . $response->status(), ['body' => mb_substr($response->body(), 0, 200)]);
+
                 return [];
             }
         } catch (\Throwable $e) {
             Log::warning('geoapify: unreachable', ['error' => $e->getMessage()]);
+
             return [];
         }
 

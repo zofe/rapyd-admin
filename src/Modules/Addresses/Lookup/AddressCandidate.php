@@ -29,17 +29,17 @@ final class AddressCandidate
     public function attributes(): array
     {
         return [
-            'address'       => $this->address,
+            'address' => $this->address,
             'street_number' => $this->street_number,
-            'zipcode'       => $this->zipcode,
-            'city'          => $this->city,
-            'province'      => $this->province,
-            'region'        => $this->region,
-            'country'       => $this->country,
-            'country_code'  => $this->country_code ? strtoupper($this->country_code) : null,
-            'state_code'    => $this->state_code ? strtoupper($this->state_code) : null,
-            'address_lat'   => $this->lat,
-            'address_lon'   => $this->lon,
+            'zipcode' => $this->zipcode,
+            'city' => $this->city,
+            'province' => $this->province,
+            'region' => $this->region,
+            'country' => $this->country,
+            'country_code' => $this->country_code ? strtoupper($this->country_code) : null,
+            'state_code' => $this->state_code ? strtoupper($this->state_code) : null,
+            'address_lat' => $this->lat,
+            'address_lon' => $this->lon,
         ];
     }
 
