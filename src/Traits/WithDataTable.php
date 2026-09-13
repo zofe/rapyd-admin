@@ -10,6 +10,12 @@ trait WithDataTable
 
     public $perPage = 10;
 
+    /** A new page size restarts from the first page (the current one may not exist any more). */
+    public function updatingPerPage(): void
+    {
+        $this->resetPage();
+    }
+
     public function pageName(): string
     {
         if (property_exists($this, 'pageName')) {

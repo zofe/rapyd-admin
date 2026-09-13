@@ -13,7 +13,7 @@
             </div>
             @if(is_array($limits) && count($limits) && $items->total()>$limits[0])
                 <div class="form-inline">
-                    <select wire:model="perPage" class="form-control">
+                    <select wire:model.live="perPage" class="form-control">
                         <option>5</option>
                         <option>10</option>
                         <option>20</option>

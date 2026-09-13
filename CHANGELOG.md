@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.8.2] - 2026-09-13
+
+### Fixed
+
+- The page-size select of the tables did nothing: `wire:model` was not live (Livewire 3+ defers it). Changing the size also restarts from the first page.
+
 ## [9.8.1] - 2026-09-13
 
 ### Fixed
