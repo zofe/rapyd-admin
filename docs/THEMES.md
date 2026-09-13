@@ -72,7 +72,7 @@ components and applications rely on it. `rpd:theme:check` verifies the list.
 | locale switcher | from `config('app.locales')` when set |
 | `@stack('navbar_right')` | hook in the right part of the topbar |
 | user dropdown | name, company, Profile (`Route::has('profile')`), impersonation leave, logout form (`route('logout')`), `@yield('user_info_dropdown')` |
-| theme switcher | light / dark / system, see `includes/theme_switcher.blade.php` |
+| theme switcher | a light / dark toggle (icon shows what the click gives; the choice lives in localStorage, nothing stored = system) |
 | `<x-rpd::breadcrumbs />` | |
 | `@stack('page_header')` | hook above the page content |
 | messages | `@include('layout::includes.messages')` or equivalent (session `success`, `status`, `message`) |

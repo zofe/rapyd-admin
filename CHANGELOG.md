@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.9.1] - 2026-09-13
+
+### Changed
+
+- Theme switcher of the reference theme: a light / dark toggle in the topbar (like the Tabler theme) instead of the light / dark / system dropdown. Nothing stored still means "follow the system".
+
 ## [9.9.0] - 2026-09-13
 
 ### Added
