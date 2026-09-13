@@ -163,6 +163,29 @@ Costs (September 2026): suggestions are grouped in a free billing session, one P
 (10,000 free a month), one validation per saved address (5,000 free a month). Another service: a class implementing
 `Zofe\Rapyd\Modules\Addresses\Lookup\Contracts\AddressLookup` in `RAPYD_ADDRESS_LOOKUP`.
 
+**Getting the key.** Google needs a Cloud project with a billing account (a card on file, even if you stay within the
+free usage). The billing account is the only step that requires the browser: https://console.cloud.google.com/billing.
+Everything else works from the terminal with the [gcloud CLI](https://cloud.google.com/sdk/docs/install)
+(`brew install --cask google-cloud-sdk` on macOS):
+
+```bash
+gcloud auth login
+gcloud projects create my-shop-maps --name="My shop maps"
+gcloud config set project my-shop-maps
+gcloud billing accounts list                                   # copy the ACCOUNT_ID
+gcloud billing projects link my-shop-maps --billing-account=ACCOUNT_ID
+gcloud services enable places.googleapis.com addressvalidation.googleapis.com
+gcloud services api-keys create --display-name="rapyd-admin" \
+    --api-target=service=places.googleapis.com \
+    --api-target=service=addressvalidation.googleapis.com \
+    --allowed-ips=1.2.3.4                                      # your server's IP; omit while developing
+```
+
+The last command prints `keyString`: that is `GOOGLE_MAPS_KEY`. The key is restricted to the two APIs (and to your
+server's IP when you pass it), so it is safe in the `.env` of the server. In the console the same steps are under
+APIs & Services → Library (enable *Places API (New)* and *Address Validation API*) and Credentials → Create credentials
+→ API key.
+
 ## Writing a module as a package
 
 A package module is the same folder as an app module, plus `composer.json` and a service provider. The provider
