@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.11.2] - 2026-09-13
+
+### Fixed
+
+- Address search: the suggestions list has an explicit surface colour (transparent in the Tabler theme).
+
 ## [9.11.1] - 2026-09-13
 
 ### Fixed

@@ -12,7 +12,9 @@
                                placeholder="Type a street and a city…"
                                wire:model.live.debounce.400ms="lookup" @focus="open = true" @input="open = true">
                         @if(count($suggestions))
-                            <div class="list-group position-absolute w-100 shadow" style="z-index: 1060; max-height: 16rem; overflow-y: auto;" x-show="open">
+                            {{-- explicit surface colours: some themes give list groups a transparent background --}}
+                            <div class="list-group position-absolute w-100 shadow border rounded" x-show="open"
+                                 style="z-index: 1060; max-height: 16rem; overflow-y: auto; background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #212529);">
                                 @foreach($suggestions as $i => $s)
                                     <button type="button" class="list-group-item list-group-item-action py-1 small"
                                             wire:click="pick({{ $i }})" @click="open = false">
