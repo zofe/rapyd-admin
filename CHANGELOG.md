@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.11.1] - 2026-09-13
+
+### Fixed
+
+- Address search: the suggestions no longer carry a "partial" tag (the precision is known only after the choice). Verified against the live Places API.
+
 ## [9.11.0] - 2026-09-13
 
 ### Changed

@@ -17,7 +17,6 @@
                                     <button type="button" class="list-group-item list-group-item-action py-1 small"
                                             wire:click="pick({{ $i }})" @click="open = false">
                                         {{ $s['label'] }}
-                                        @if($s['confidence'] !== 'verified')<span class="text-muted">· {{ $s['confidence'] }}</span>@endif
                                     </button>
                                 @endforeach
                             </div>
