@@ -20,6 +20,13 @@ class Address extends Model
     protected $fillable = [
         'address', 'street_number', 'zipcode', 'city', 'province', 'region',
         'country', 'country_code', 'state_code', 'address_lat', 'address_lon',
+        'verified_by', 'verified_at', 'confidence',
+    ];
+
+    protected $casts = [
+        'verified_at' => 'datetime',
+        'address_lat' => 'float',
+        'address_lon' => 'float',
     ];
 
     public function addressable()

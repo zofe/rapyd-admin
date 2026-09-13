@@ -12,6 +12,16 @@ class AddressesModuleServiceProvider extends RapydModuleServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../../../config/addresses.php', 'rapyd.addresses');
 
+        $this->app->bind(Lookup\Contracts\AddressLookup::class, function ($app) {
+            $driver = config('rapyd.addresses.lookup', 'none');
+
+            return match ($driver) {
+                'none', null, '' => new Lookup\NullLookup(),
+                'geoapify'       => new Lookup\GeoapifyLookup(),
+                default          => $app->make($driver),
+            };
+        });
+
         // Legacy names from the separate packages, still used by other modules (e.g. shop-module).
         if (! class_exists('App\Modules\Addresses\Models\Address', false)) {
             class_alias(\Zofe\Rapyd\Modules\Addresses\Models\Address::class, 'App\Modules\Addresses\Models\Address');

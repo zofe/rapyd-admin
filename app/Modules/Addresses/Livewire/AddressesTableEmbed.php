@@ -56,6 +56,12 @@ class AddressesTableEmbed extends Component
         $this->dispatch('selectedAddress', addressId: $this->selected);
     }
 
+    /** The radio (wire:model) changed. */
+    public function updatedSelected($value): void
+    {
+        $this->select($value ?: null);
+    }
+
     public function render()
     {
         return view('addresses::addresses_table_embed', ['addresses' => $this->addresses]);

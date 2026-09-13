@@ -144,6 +144,20 @@ Scoping is opt-in per component: `$this->limit()` in `booted()` applies every re
 runs the registered `Authorization` classes on that model (`CompanyAuth`: own company or a child). Owner-only
 actions call `CompanyOwnerAuth::check($company, $user)` explicitly.
 
+### Addresses
+
+Postal addresses attachable to any model (`HasAddresses` on the model, `rpd:install --addresses` adds it to User).
+Embeds: `addresses::addresses-table-embed` (list; `editable`, `selectable` with a `selectedAddress` event for checkouts),
+`addresses::addresses-button-add-embed`, `addresses::addresses-modal-edit-embed` (the form). The country is required
+(ISO code, `Zofe\Rapyd\Support\Countries`), `state_code` optional. With a lookup service the form gets a search box that
+fills the fields and marks the address as verified:
+
+```dotenv
+RAPYD_ADDRESS_LOOKUP=geoapify        # none (default) | geoapify | a class implementing Lookup\Contracts\AddressLookup
+GEOAPIFY_KEY=...                     # free tier: 3,000 requests a day
+RAPYD_ADDRESS_LOOKUP_COUNTRY=it      # optional bias
+```
+
 ## Writing a module as a package
 
 A package module is the same folder as an app module, plus `composer.json` and a service provider. The provider

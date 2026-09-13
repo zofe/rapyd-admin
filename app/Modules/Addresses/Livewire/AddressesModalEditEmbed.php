@@ -6,6 +6,8 @@ use App\Modules\Auth\Traits\Authorize;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Zofe\Rapyd\Modules\Addresses\Lookup\AddressCandidate;
+use Zofe\Rapyd\Modules\Addresses\Lookup\Contracts\AddressLookup;
 use Zofe\Rapyd\Modules\Addresses\Models\Address;
 use Zofe\Rapyd\Support\Countries;
 
@@ -15,12 +17,27 @@ class AddressesModalEditEmbed extends Component
 
     public $address;
 
+    /** The search box of the lookup service (config rapyd.addresses.lookup) and its suggestions. */
+    public string $lookup = '';
+
+    public array $suggestions = [];
+
     protected $rules = [
         'address.address' => 'required|string|max:255',
         'address.city'    => 'required|string|max:255',
         'address.zipcode' => 'required|string|max:20',
         'address.country_code' => 'required|string|size:2',
         'address.state_code'   => 'nullable|string|max:10',
+        'address.street_number' => 'nullable|string|max:20',
+        // filled by a lookup service; in the rules so Livewire keeps them on an unsaved model
+        'address.province'    => 'nullable|string|max:255',
+        'address.region'      => 'nullable|string|max:255',
+        'address.country'     => 'nullable|string|max:255',
+        'address.address_lat' => 'nullable|numeric',
+        'address.address_lon' => 'nullable|numeric',
+        'address.verified_by' => 'nullable|string|max:40',
+        'address.verified_at' => 'nullable',
+        'address.confidence'  => 'nullable|string|max:20',
         // kept in the rules so Livewire carries them across requests on an unsaved model
         'address.addressable_type' => 'nullable',
         'address.addressable_id'   => 'nullable',
@@ -41,8 +58,32 @@ class AddressesModalEditEmbed extends Component
             $this->address->addressable_id = $addressableId;
         }
 
+        $this->lookup = '';
+        $this->suggestions = [];
         $this->authorizeOwner();
         $this->dispatch('show-modal', ['editAddress']);
+    }
+
+    public function updatedLookup(): void
+    {
+        $this->suggestions = mb_strlen(trim($this->lookup)) < 3
+            ? []
+            : array_map(fn (AddressCandidate $c) => $c->toArray(), app(AddressLookup::class)->search($this->lookup));
+    }
+
+    /** Fill the fields from a suggestion; they stay editable. */
+    public function pick(int $index): void
+    {
+        if (! isset($this->suggestions[$index])) {
+            return;
+        }
+        $candidate = AddressCandidate::fromArray($this->suggestions[$index]);
+        $this->address->fill($candidate->attributes());
+        $this->address->verified_by = app(AddressLookup::class)->name();
+        $this->address->verified_at = now();
+        $this->address->confidence = $candidate->confidence;
+        $this->lookup = $candidate->label;
+        $this->suggestions = [];
     }
 
     public function save(): void
@@ -82,6 +123,9 @@ class AddressesModalEditEmbed extends Component
 
     public function render()
     {
-        return view('addresses::addresses_modal_edit_embed', ['countries' => Countries::all()]);
+        return view('addresses::addresses_modal_edit_embed', [
+            'countries' => Countries::all(),
+            'lookupEnabled' => app(AddressLookup::class)->name() !== 'none',
+        ]);
     }
 }

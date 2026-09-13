@@ -2,6 +2,17 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.10.0] - 2026-09-13
+
+### Added
+
+- Address lookup: a search box in the address form fills street, number, postcode, city, region, ISO country, state and coordinates from a geocoding service, and marks the address (`verified_by`, `verified_at`, `confidence`: verified at building level or partial). Drivers: `none` (default), `geoapify` (`RAPYD_ADDRESS_LOOKUP=geoapify`, `GEOAPIFY_KEY`, optional `RAPYD_ADDRESS_LOOKUP_COUNTRY`), or any class implementing `Zofe\Rapyd\Modules\Addresses\Lookup\Contracts\AddressLookup`. Fields stay editable.
+- Address form: street number field.
+
+### Fixed
+
+- Selectable addresses list: the radio is bound with `wire:model`, so the choice made by the server (after a delete, the default) shows in the browser; the address text is clickable too.
+
 ## [9.9.1] - 2026-09-13
 
 ### Changed
