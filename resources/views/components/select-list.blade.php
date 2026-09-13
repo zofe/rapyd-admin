@@ -96,6 +96,12 @@
             //this.refreshOptions();
         }
 
+        });
+        // The select lives in wire:ignore: when the server changes the value (a lookup, a reset) push it into TomSelect
+        $wire.$watch('{{ $key }}', (value) => {
+            const current = tomSelectInstance.getValue();
+            const next = value === null || value === undefined ? '' : String(value);
+            if (String(current) !== next) { tomSelectInstance.setValue(next, true); }
         });" x-ref="tomSelect" x-cloak {{ $attributes }}>
             <option value="">{{ $placeholder }}</option>
         @foreach($options as $optionValue => $optionLabel)

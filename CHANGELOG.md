@@ -2,6 +2,17 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.12.0] - 2026-09-13
+
+### Changed
+
+- Address form with a lookup service: city, country and state are read-only and come from the chosen suggestion (a consolidated address); street, number and postcode stay editable.
+- `state_code` from Google: the ISO 3166-2 subdivision, the first level when it is a code (US-CA), else the second (IT-MI).
+
+### Fixed
+
+- `x-rpd::select-list` did not show a value changed on the server (the select lives in `wire:ignore`): TomSelect now follows the Livewire property.
+
 ## [9.11.2] - 2026-09-13
 
 ### Fixed

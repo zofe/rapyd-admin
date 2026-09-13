@@ -107,6 +107,7 @@ class AddressesTest extends TestCase
         $modal = Livewire::test('addresses::addresses-modal-edit-embed')
             ->call('editAddress', null, 'company', $this->company->id)
             ->assertSee('Search address')
+            ->assertSeeHtml('readonly')
             ->set('lookup', 'piazza duomo 1 milano')
             ->assertCount('suggestions', 2)
             ->assertSee('Piazza del Duomo, 1, Milano MI, Italy');
@@ -121,7 +122,7 @@ class AddressesTest extends TestCase
             ->assertSet('address.province', 'MI')
             ->assertSet('address.region', 'Lombardia')
             ->assertSet('address.country_code', 'IT')
-            ->assertSet('address.state_code', null)
+            ->assertSet('address.state_code', 'MI')
             ->assertSet('address.confidence', 'verified')
             ->assertSet('address.verified_by', 'google')
             ->assertCount('suggestions', 0)
@@ -179,6 +180,7 @@ class AddressesTest extends TestCase
         Livewire::test('addresses::addresses-modal-edit-embed')
             ->call('editAddress', null, 'company', $this->company->id)
             ->assertDontSee('Search address')
+            ->assertDontSeeHtml('readonly')
             ->set('lookup', 'anything')
             ->assertCount('suggestions', 0);
     }

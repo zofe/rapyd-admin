@@ -130,6 +130,10 @@ class GoogleLookup implements AddressLookup, AddressValidator
         $provinceShort = $get('administrative_area_level_2', 'shortText');
         $countryCode = $get('country', 'shortText');
         $stateShort = $get('administrative_area_level_1', 'shortText');
+        $isCode = fn (?string $short, ?string $long) => $short && mb_strlen($short) <= 4 && $short !== $long;
+        // ISO 3166-2 subdivision: the first level when it is a code (US-CA), else the second (IT-MI, ES-B)
+        $stateCode = $isCode($stateShort, $get('administrative_area_level_1')) ? $stateShort
+            : ($isCode($provinceShort, $get('administrative_area_level_2')) ? $provinceShort : null);
 
         return new AddressCandidate(
             label: $label,
@@ -141,7 +145,7 @@ class GoogleLookup implements AddressLookup, AddressValidator
             region: $get('administrative_area_level_1'),
             country: $get('country'),
             country_code: $countryCode,
-            state_code: $stateShort && mb_strlen($stateShort) <= 4 && $stateShort !== $get('administrative_area_level_1') ? $stateShort : null,
+            state_code: $stateCode,
             lat: isset($location['latitude']) ? (float) $location['latitude'] : null,
             lon: isset($location['longitude']) ? (float) $location['longitude'] : null,
             confidence: $confidence ?? ($number ? AddressCandidate::VERIFIED : AddressCandidate::PARTIAL),
