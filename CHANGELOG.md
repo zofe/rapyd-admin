@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.9.0] - 2026-09-13
+
+### Added
+
+- `addresses::addresses-table-embed` has a `selectable` mode: a radio on each row, the chosen id dispatched as `selectedAddress`, the first address with a country selected by default. Used by the checkout of `zofe/shop-module`.
+
 ## [9.8.3] - 2026-09-13
 
 ### Changed

@@ -54,6 +54,24 @@ class AddressesTest extends TestCase
             ->assertHasErrors(['address.address', 'address.city', 'address.zipcode', 'address.country_code']);
     }
 
+    public function test_selectable_list_dispatches_the_chosen_address_and_defaults_to_the_first_with_a_country()
+    {
+        $old = $this->company->addresses()->create(['address' => 'Old 1', 'city' => 'Nowhere', 'zipcode' => '00000']);
+        $it = $this->company->addresses()->create(['address' => 'Via Roma 1', 'city' => 'Milano', 'zipcode' => '20100', 'country_code' => 'IT']);
+
+        $embed = Livewire::test('addresses::addresses-table-embed', ['addressableType' => 'company', 'addressableId' => $this->company->id, 'selectable' => true])
+            ->assertSet('selected', (string) $it->id)
+            ->assertDispatched('selectedAddress', addressId: (string) $it->id)
+            ->assertSeeHtml('type="radio"');
+
+        $embed->call('select', (string) $old->id)
+            ->assertSet('selected', (string) $old->id)
+            ->assertDispatched('selectedAddress', addressId: (string) $old->id);
+
+        Livewire::test('addresses::addresses-table-embed', ['addressableType' => 'company', 'addressableId' => $this->company->id])
+            ->assertDontSeeHtml('type="radio"');
+    }
+
     public function test_countries_helper()
     {
         $this->assertSame('Italy', \Zofe\Rapyd\Support\Countries::name('it'));
