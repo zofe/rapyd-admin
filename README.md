@@ -108,6 +108,7 @@ RAPYD_SIDEBAR_TEXT="#f8fafc"
 ```
 
 **Brand**: `RAPYD_BRAND`, `RAPYD_LOGO_SIDEBAR`, `RAPYD_LOGO_LOGIN`, `RAPYD_FAVICON`, `RAPYD_CUSTOM_CSS`.
+`RAPYD_AUTH_LINKS=false` hides the Login / Register links of the frontend navbar (the routes stay, e.g. a public site whose login is reached from `/login`).
 
 **A different look**: the admin shell is a theme, a folder of Blade layouts plus compiled assets activated with
 `RAPYD_THEME`. Start from any Bootstrap 5 template, follow the contract in [docs/THEMES.md](docs/THEMES.md) and check

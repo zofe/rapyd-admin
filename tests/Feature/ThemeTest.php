@@ -76,4 +76,27 @@ class ThemeTest extends TestCase
 
         $this->assertSame('/img/legacy.png', config('rapyd.layout.logo_sidebar'));
     }
+
+    public function test_layout_keys_missing_from_a_published_config_get_the_package_defaults()
+    {
+        config(['rapyd.layout' => ['brand' => 'Mine']]);
+        (new \Zofe\Rapyd\RapydServiceProvider($this->app))->register();
+
+        $this->assertSame('Mine', config('rapyd.layout.brand'));
+        $this->assertTrue(config('rapyd.layout.auth_links'));
+        $this->assertArrayHasKey('primary', config('rapyd.layout.palette'));
+    }
+
+    public function test_frontend_navbar_shows_the_theme_toggle_to_guests_and_can_hide_the_auth_links()
+    {
+        $this->seed(AuthSeeder::class);
+        $html = view('layout::frontend')->render();
+        $this->assertStringContainsString('Toggle dark mode', $html);
+        $this->assertStringContainsString(route('login'), $html);
+
+        config(['rapyd.layout.auth_links' => false]);
+        $html = view('layout::frontend')->render();
+        $this->assertStringContainsString('Toggle dark mode', $html);
+        $this->assertStringNotContainsString(route('login'), $html);
+    }
 }

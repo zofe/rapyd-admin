@@ -2,6 +2,17 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.12.1] - 2026-09-14
+
+### Changed
+
+- Frontend navbar: the light / dark toggle is shown to guests too (it was only in the logged-in navbar).
+- `rapyd.layout.auth_links` (`RAPYD_AUTH_LINKS`, default `true`): set to `false` to hide the Login / Register links of the frontend navbar; the routes stay.
+
+### Fixed
+
+- A published `config/rapyd.php` older than the package no longer drops the `layout` keys added since: they get the package defaults (read from `.env`).
+
 ## [9.12.0] - 2026-09-13
 
 ### Changed

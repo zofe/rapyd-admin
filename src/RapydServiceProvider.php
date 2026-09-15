@@ -151,6 +151,11 @@ class RapydServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/rapyd.php', 'rapyd');
         $this->mergeConfigFrom(__DIR__ . '/../config/livewire.php', 'livewire');
 
+        // mergeConfigFrom is shallow: a published config/rapyd.php older than the package would drop
+        // the layout keys added since (auth_links, custom_css...). Fill them with the package defaults.
+        $defaults = require __DIR__ . '/../config/rapyd.php';
+        config(['rapyd.layout' => array_replace_recursive($defaults['layout'], config('rapyd.layout', []))]);
+
         $this->app->register(BreadcrumbsServiceProvider::class);
         $this->app->register(ModuleServiceProvider::class);
         $this->app->register(AuthModuleServiceProvider::class);

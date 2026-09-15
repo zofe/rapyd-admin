@@ -36,20 +36,23 @@
                 @stack('right_navbar')
 
                 @guest
-                    @if(Route::has('login'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
-                        </li>
-                    @endif
-                    @if(Route::has('register'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                        </li>
+                    @if(config('rapyd.layout.auth_links', true))
+                        @if(Route::has('login'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                            </li>
+                        @endif
+                        @if(Route::has('register'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                            </li>
+                        @endif
                     @endif
                 @else
                     @include('layout::includes.user_info_dropdown')
-                    @include('layout::includes.theme_switcher')
                 @endguest
+
+                @include('layout::includes.theme_switcher')
             </ul>
 
         </div>
