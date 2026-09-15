@@ -22,6 +22,10 @@ return [
     */
     'theme' => env('RAPYD_THEME'),
 
+    // Per-visitor theme: a picker in the navbar and ?rapyd_theme=<name> (kept in the session)
+    // switch between the bundled look and the registered themes. For demos and for trying themes side by side.
+    'theme_switch' => env('RAPYD_THEME_SWITCH', false),
+
     'layout' => [
         'brand'        => env('RAPYD_BRAND'),          // null → app.name
         'logo_sidebar' => env('RAPYD_LOGO_SIDEBAR'),   // url of the sidebar logo, null → brand text

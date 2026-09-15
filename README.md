@@ -108,6 +108,7 @@ RAPYD_SIDEBAR_TEXT="#f8fafc"
 ```
 
 **Brand**: `RAPYD_BRAND`, `RAPYD_LOGO_SIDEBAR`, `RAPYD_LOGO_LOGIN`, `RAPYD_FAVICON`, `RAPYD_CUSTOM_CSS`.
+`RAPYD_THEME=<name>` activates an installed theme, `RAPYD_THEME_SWITCH=true` lets each visitor pick one from the navbar (see `docs/THEMES.md`).
 `RAPYD_AUTH_LINKS=false` hides the Login / Register links of the frontend navbar (the routes stay, e.g. a public site whose login is reached from `/login`).
 
 **A different look**: the admin shell is a theme, a folder of Blade layouts plus compiled assets activated with

@@ -77,6 +77,38 @@ class ThemeTest extends TestCase
         $this->assertSame('/img/legacy.png', config('rapyd.layout.logo_sidebar'));
     }
 
+    public function test_a_visitor_can_switch_theme_when_the_switch_is_enabled()
+    {
+        config(['rapyd.theme_switch' => true]);
+        $this->app->register(DemoThemeServiceProvider::class);
+        $this->loginAsAdmin();
+
+        // picker in the navbar, bundled look active
+        $this->get(route('auth.users'))->assertOk()->assertDontSee('DEMO THEME')->assertSee('rapyd_theme=demo');
+
+        // the choice is stored in the session and the query string dropped
+        $this->get(route('auth.users', ['rapyd_theme' => 'demo']))->assertRedirect(route('auth.users'));
+        $this->get(route('auth.users'))->assertOk()->assertSee('DEMO THEME');
+        $this->assertStringContainsString('vendor/themes/demo/rapyd.css', Blade::render('@rapydStyles'));
+
+        // back to the bundled look
+        $this->get(route('auth.users', ['rapyd_theme' => 'default']))->assertRedirect(route('auth.users'));
+        $this->get(route('auth.users'))->assertOk()->assertDontSee('DEMO THEME');
+        $this->assertStringContainsString('vendor/rapyd/rapyd.css', Blade::render('@rapydStyles'));
+
+        // unknown names are ignored
+        $this->get(route('auth.users', ['rapyd_theme' => 'nope']))->assertOk()->assertDontSee('DEMO THEME');
+    }
+
+    public function test_the_theme_switch_is_off_by_default()
+    {
+        $this->app->register(DemoThemeServiceProvider::class);
+        $this->loginAsAdmin();
+
+        $this->get(route('auth.users', ['rapyd_theme' => 'demo']))->assertOk()->assertDontSee('DEMO THEME')->assertDontSee('rapyd_theme=');
+        $this->get(route('auth.users'))->assertDontSee('DEMO THEME');
+    }
+
     public function test_layout_keys_missing_from_a_published_config_get_the_package_defaults()
     {
         config(['rapyd.layout' => ['brand' => 'Mine']]);

@@ -51,6 +51,7 @@
                 @endauth
 
                 @include('layout::includes.theme_switcher')
+                @include('layout::includes.theme_picker')
             </ul>
 
         </div>

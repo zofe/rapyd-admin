@@ -17,6 +17,11 @@ This document is the contract. It is written for developers and for AI agents al
 3. `@rapydStyles` / `@rapydScripts` emit `public/vendor/themes/{name}/rapyd.css` and `rapyd.js`, published from
    the theme's `public/` folder by `vendor:publish` (tag `laravel-assets` or `rapyd-theme-{name}`).
 4. One theme at a time. A registered but inactive theme changes nothing.
+   With `RAPYD_THEME_SWITCH=true` (config `rapyd.theme_switch`) each visitor can pick one: a palette icon in the navbar
+   lists the bundled look (`default`) and every registered theme, `?rapyd_theme=<name>` stores the choice in the session
+   and the following requests render with it. Publish the assets of every theme you offer. Meant for demos and for
+   trying themes side by side; a theme's own navbar should `@include('layout::includes.theme_picker')` (or its own
+   markup built on `Zofe\Rapyd\Themes\ThemeManager`: `names()`, `active()`, `ThemeManager::QUERY`).
 5. An application can still override single views in `resources/views/vendor/layout/`: that layer wins over the theme.
 
 ## Folder layout of a theme

@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.13.0] - 2026-09-15
+
+### Added
+
+- Per-visitor theme switch (`RAPYD_THEME_SWITCH=true`): a palette icon in the navbar lists the bundled look and the registered themes; `?rapyd_theme=<name>` keeps the choice in the session (`Zofe\Rapyd\Themes\ThemeManager`, `ThemeBySession` middleware on the `web` group, `layout::includes.theme_picker`).
+
 ## [9.12.1] - 2026-09-14
 
 ### Changed
