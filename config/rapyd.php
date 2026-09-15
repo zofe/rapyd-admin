@@ -25,6 +25,8 @@ return [
     // Per-visitor theme: a picker in the navbar and ?rapyd_theme=<name> (kept in the session)
     // switch between the bundled look and the registered themes. For demos and for trying themes side by side.
     'theme_switch' => env('RAPYD_THEME_SWITCH', false),
+    // false: no palette icon in the navbars; the switch still works through links (?rapyd_theme=<name>).
+    'theme_picker' => env('RAPYD_THEME_PICKER', true),
 
     'layout' => [
         'brand'        => env('RAPYD_BRAND'),          // null → app.name

@@ -19,7 +19,8 @@ This document is the contract. It is written for developers and for AI agents al
 4. One theme at a time. A registered but inactive theme changes nothing.
    With `RAPYD_THEME_SWITCH=true` (config `rapyd.theme_switch`) each visitor can pick one: a palette icon in the navbar
    lists the bundled look (`default`) and every registered theme, `?rapyd_theme=<name>` stores the choice in the session
-   and the following requests render with it. Publish the assets of every theme you offer. Meant for demos and for
+   and the following requests render with it (`RAPYD_THEME_PICKER=false` keeps the links working without the icon).
+   Publish the assets of every theme you offer. Meant for demos and for
    trying themes side by side; a theme's own navbar should `@include('layout::includes.theme_picker')` (or its own
    markup built on `Zofe\Rapyd\Themes\ThemeManager`: `names()`, `active()`, `ThemeManager::QUERY`).
 5. An application can still override single views in `resources/views/vendor/layout/`: that layer wins over the theme.

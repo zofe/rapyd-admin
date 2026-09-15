@@ -1,5 +1,5 @@
 {{-- Theme picker (config rapyd.theme_switch): the bundled look and every registered theme, kept per visitor in the session. --}}
-@if(config('rapyd.theme_switch') && config('rapyd.themes'))
+@if(config('rapyd.theme_switch') && config('rapyd.theme_picker', true) && config('rapyd.themes'))
     @php($themes = app(\Zofe\Rapyd\Themes\ThemeManager::class))
     <li class="nav-item dropdown">
         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" title="Theme" aria-label="Choose theme">

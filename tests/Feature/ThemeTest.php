@@ -100,6 +100,17 @@ class ThemeTest extends TestCase
         $this->get(route('auth.users', ['rapyd_theme' => 'nope']))->assertOk()->assertDontSee('DEMO THEME');
     }
 
+    public function test_the_picker_can_be_hidden_while_links_still_switch()
+    {
+        config(['rapyd.theme_switch' => true, 'rapyd.theme_picker' => false]);
+        $this->app->register(DemoThemeServiceProvider::class);
+        $this->loginAsAdmin();
+
+        $this->get(route('auth.users'))->assertOk()->assertDontSee('rapyd_theme=');
+        $this->get(route('auth.users', ['rapyd_theme' => 'demo']))->assertRedirect(route('auth.users'));
+        $this->get(route('auth.users'))->assertSee('DEMO THEME');
+    }
+
     public function test_the_theme_switch_is_off_by_default()
     {
         $this->app->register(DemoThemeServiceProvider::class);

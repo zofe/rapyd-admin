@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.13.1] - 2026-09-15
+
+### Added
+
+- `rapyd.theme_picker` (`RAPYD_THEME_PICKER`, default `true`): `false` hides the palette icon in the navbars; `?rapyd_theme=<name>` links keep switching.
+
 ## [9.13.0] - 2026-09-15
 
 ### Added
