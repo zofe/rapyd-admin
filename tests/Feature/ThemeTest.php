@@ -141,5 +141,7 @@ class ThemeTest extends TestCase
         $html = view('layout::frontend')->render();
         $this->assertStringContainsString('Toggle dark mode', $html);
         $this->assertStringNotContainsString(route('login'), $html);
+        // the admin navbar seen by a guest (public demo pages) follows the same flag
+        $this->assertStringNotContainsString(route('login'), view('layout::admin')->render());
     }
 }

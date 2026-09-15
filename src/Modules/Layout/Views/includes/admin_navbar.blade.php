@@ -39,7 +39,7 @@
                 @stack('navbar_right')
 
                 @guest
-                    @if(Route::has('login'))
+                    @if(Route::has('login') && config('rapyd.layout.auth_links', true))
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                         </li>

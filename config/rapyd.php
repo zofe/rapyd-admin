@@ -34,7 +34,7 @@ return [
         'logo_login'   => env('RAPYD_LOGO_LOGIN'),     // url of the login logo, null → brand text
         'favicon'      => env('RAPYD_FAVICON', 'img/favicon.png'),
         'custom_css'   => env('RAPYD_CUSTOM_CSS'),     // extra stylesheet url loaded after the theme
-        'auth_links'   => env('RAPYD_AUTH_LINKS', true), // Login / Register links in the frontend navbar (the routes stay)
+        'auth_links'   => env('RAPYD_AUTH_LINKS', true), // Login / Register links in the navbars (the routes stay)
 
         // Runtime palette: any CSS colour, applied without recompiling the theme
         // (see docs/THEMES.md, "Design tokens"). Null = the theme's own colour.

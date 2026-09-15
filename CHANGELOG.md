@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.13.2] - 2026-09-15
+
+### Changed
+
+- `RAPYD_AUTH_LINKS=false` also hides the Login link a guest sees in the admin navbar (public demo pages).
+
 ## [9.13.1] - 2026-09-15
 
 ### Added
