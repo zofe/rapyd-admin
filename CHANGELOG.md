@@ -2,6 +2,13 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.13.3] - 2026-09-16
+
+### Fixed
+
+- `x-rpd::metadata` rendered with Tailwind classes: Bootstrap input groups now, key / value bound to an array property.
+- The utilities the module views rely on (`border-bottom-except-last`, `flex-center-end`, `text-gray-*`) moved into `rapyd-base`, so external themes get them too (the price list rows had no separators in Tabler / Sneat).
+
 ## [9.13.2] - 2026-09-15
 
 ### Changed

@@ -12,3 +12,12 @@
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+// ── Utilities the module views rely on (every theme imports rapyd-base, so they hold everywhere) ──
+.flex-center-end { display: flex; align-items: center; justify-content: end; }
+.border-bottom-except-last > *:not(:last-child) { border-bottom: 1px solid var(--bs-border-color); }
+// muted text steps: theme-aware (the bundled look overrides them with its own greys)
+.text-gray-400 { color: var(--bs-tertiary-color, #adb5bd) !important; }
+.text-gray-500 { color: var(--bs-secondary-color, #6c757d) !important; }
+.text-gray-600 { color: var(--bs-secondary-color, #6c757d) !important; }
+.text-gray-900 { color: var(--bs-emphasis-color, #212529) !important; }
