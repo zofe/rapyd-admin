@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.13.4] - 2026-09-17
+
+### Added
+
+- `x-rpd::modal`: `actionLabel` prop for the submit button (default "Confirm").
+
 ## [9.13.3] - 2026-09-16
 
 ### Fixed

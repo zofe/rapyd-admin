@@ -10,6 +10,7 @@
 'size'   => 'sm',
 'onclick' => null,
 'nobuttons' => false,
+'actionLabel' => 'Confirm',
 ])
 @php
     $attributes = $attributes->class([
@@ -42,8 +43,8 @@
                 {{ $buttons }}
                 @if(!$nobuttons)
                 <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">{{ $action ? 'Cancel' : 'Close' }}</button>
-                @if($action)<input type="submit" class="btn btn-primary" role="button" value="Confirm">@endif
-                @if($onclick)<input onclick="{{$onclick}}" type="button" class="btn btn-primary" role="button" value="Confirm">@endif
+                @if($action)<input type="submit" class="btn btn-primary" role="button" value="{{ __($actionLabel) }}">@endif
+                @if($onclick)<input onclick="{{$onclick}}" type="button" class="btn btn-primary" role="button" value="{{ __($actionLabel) }}">@endif
                 @endif
             </div>
 
