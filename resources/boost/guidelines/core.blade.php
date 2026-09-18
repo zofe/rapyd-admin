@@ -1,3 +1,4 @@
+@verbatim
 ## Rapyd Admin
 
 This application is built on Rapyd Admin (`zofe/rapyd-admin`): a modular admin panel on Laravel + Livewire 4 + Bootstrap 5.3.
@@ -36,3 +37,4 @@ learning anything new: no DSL, no magic, no Filament / Nova patterns.
 
 Load the `rapyd-module` skill to create or extend a module, `rapyd-workflow` to design or implement a state machine.
 `php artisan rpd:context --format=text` prints the modules, routes and models of this application.
+@endverbatim

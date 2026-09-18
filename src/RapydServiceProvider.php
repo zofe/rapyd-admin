@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsServiceProvider;
 use Zofe\Rapyd\Commands\EjectCommand;
 use Zofe\Rapyd\Commands\InstallCommand;
+use Zofe\Rapyd\Commands\RapydAiCommand;
 use Zofe\Rapyd\Commands\RapydContextCommand;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
 use Zofe\Rapyd\Commands\RapydMakeEditCommand;
@@ -74,6 +75,7 @@ class RapydServiceProvider extends ServiceProvider
                 RapydMakeViewCommand::class,
                 RapydMakeEditCommand::class,
                 RapydMakeModelCommand::class,
+                RapydAiCommand::class,
             ]);
         }
 
