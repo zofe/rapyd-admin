@@ -50,6 +50,7 @@ class RapydAiCommand extends Command
             $target = "{$to}/{$name}";
             if (File::isDirectory($target) && ! $this->option('force') && $this->differs($dir, $target)) {
                 $this->warn("skill {$name}: modified in the application, kept (use --force to overwrite)");
+
                 continue;
             }
             File::ensureDirectoryExists($to);
