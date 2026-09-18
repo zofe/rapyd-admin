@@ -2,6 +2,21 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.14.0] - 2026-09-18
+
+### Added
+
+- For the agents of an application: a Laravel Boost guideline (`resources/boost/guidelines/core.blade.php`) and two
+  skills, `rapyd-module` and `rapyd-workflow` (`resources/boost/skills`), picked up by `boost:install` / `boost:update`;
+  `php artisan rpd:ai` installs them without Boost (`.claude/skills`, `AGENTS.md` between markers, `@AGENTS.md` in `CLAUDE.md`).
+- `docs/MODULES.md`: a Workflows section (the workflow name is the model's morph alias); `docs/AI.md`: guideline and skills.
+
+### Fixed
+
+- Docs and README taught `rpd:make all Model`, which generates an `AllTable` component: the syntax is
+  `rpd:make Articles Article --module=Blog`. `rpd:context` extension patterns updated (modules are discovered, scoping
+  is `$this->limit()`, workflows); the bundled modules list was three of seven.
+
 ## [9.13.4] - 2026-09-17
 
 ### Added

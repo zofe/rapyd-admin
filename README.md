@@ -55,7 +55,7 @@ Details in [docs/MODULES.md](docs/MODULES.md).
 ## Your first module in two minutes
 
 ```bash
-php artisan rpd:make all Article --module=Blog
+php artisan rpd:make Articles Article --module=Blog
 ```
 
 creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry
@@ -126,13 +126,11 @@ php artisan rpd:context            # JSON brief: modules, routes, models, config
 php artisan rpd:context --format=text --no-routes
 ```
 
-Paste it at the start of a session, or add to your `CLAUDE.md` / `AGENTS.md`:
-
-```
-Rapyd Admin app. Run `php artisan rpd:context --format=text` before changing modules.
-New modules: `php artisan rpd:make all Model --module=Name`; follow the structure of app/Modules/*.
-Verify with `vendor/bin/phpunit` and a browser check of the page you touched.
-```
+Better: give your agents the package's own guideline and skills. With [Laravel Boost](https://laravel.com/docs/boost)
+`php artisan boost:install` picks them up from the package; without Boost, `php artisan rpd:ai` writes them into
+`AGENTS.md` / `CLAUDE.md` and `.claude/skills`. The guideline says how modules, `x-rpd::` components and workflows are
+meant to be used; the `rapyd-module` and `rapyd-workflow` skills are the procedures an agent follows to create a
+module or a state machine.
 
 The package itself is developed this way: see [docs/AI.md](docs/AI.md) for the agent brief, the AI error analysis in
 the log viewer and the browser verification loop.

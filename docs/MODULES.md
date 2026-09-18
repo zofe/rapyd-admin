@@ -69,12 +69,17 @@ Route::get('blog/articles', ArticlesTable::class)->middleware(['web'])->name('bl
 ## Generating a module
 
 ```bash
-php artisan rpd:make all Article --module=Blog        # table + view + edit
-php artisan rpd:make datatable Article --module=Blog  # one component only: datatable | dataview | dataedit
-php artisan rpd:make:home                             # the landing / dashboard page
+php artisan rpd:make Articles Article --module=Blog        # ArticlesTable + ArticlesView + ArticlesEdit, views, routes, menu entry
+php artisan rpd:make ArticlesTable Article --module=Blog   # one component: a name ending with Table, View or Edit
+php artisan rpd:make:home                                  # the landing / dashboard page
 ```
 
-If the model does not exist, the command asks for its fields and creates model and migration first.
+The first argument is the **component name** (a plural, or a full name ending with `Table`, `View` or `Edit`), the
+second the model. If the model does not exist, `rpd:make:model` runs first and asks for its fields interactively:
+create model and migration beforehand when you script the generation (or let an agent run it).
+
+The generated components are a starting point: add `Authorize` / `Limit` with `authorize()` and `limit()` in
+`booted()`, the `->layout('layout::admin')` on `render()`, the permissions in `config.php`, then a test.
 
 ## Config: layout, menu, permissions
 
@@ -109,7 +114,7 @@ Permissions and roles are declared in `config/permission.php` (published by `rpd
 | Auth | `auth::` | users, roles & permissions pages, Fortify views, Google sign-in |
 | Companies | `companies::` | `Company` model, `HasCompanies` user trait, `CompanyLimit` / `CompanyAuth` scopes |
 | Addresses | `addresses::` | `HasAddresses` trait, `<livewire:addresses::addresses-table-embed :addressableType="'company'" :addressableId="$company->id" :editable="true" />` |
-| Workflow | `workflow::` | `WorkflowTrait` on a model + a state machine in `config/workflow.php`; `<livewire:workflow::workflow-table-embed workfloableType="order" :workfloableId="$order->id" :editable="true" />` |
+| Workflow | `workflow::` | `WorkflowTrait` on a model + a state machine in the module's `workflow.php` (see [Workflows](#workflows)); `<livewire:workflow::workflow-table-embed workfloableType="order" :workfloableId="$order->id" :editable="true" />` |
 | Log | `log::` | `/log/app` viewer with AI analysis, `/log/activity`; `log_activity('orders', $order, ['total' => 99])` helper |
 | Search | `search::` | navbar search over the models listed in `config/search.php`; models use the `SSearch` trait |
 | Layout | `layout::` | the admin, frontend and auth layouts, i.e. the reference theme ([THEMES.md](THEMES.md)) |
@@ -191,6 +196,37 @@ gcloud services api-keys create --display-name="rapyd-admin" \
 
 The last command prints `keyString`: that is `GOOGLE_MAPS_KEY`. The key is restricted to the two APIs (and to your
 server's IP when you pass it), so it is safe in the `.env` of the server.
+
+## Workflows
+
+A model with a lifecycle (an order, a ticket, a request) gets the `Zofe\Rapyd\Modules\Workflow\Traits\WorkflowTrait`
+and a state machine declared in the module's `workflow.php` (`app/Modules/{Name}/workflow.php`, or the root of a
+package module): places, transitions and their metadata (`label`, `class` for the button colour, `final` on terminal
+places, `action` for a transition that opens a modal). The definitions of every module are merged into
+`config('workflow')`, read by `zerodahero/laravel-workflow`.
+
+**The name of the workflow must be the morph alias of its model** (`Relation::morphMap(['order' => Order::class])`):
+the embed takes one value, `workfloableType`, and uses it both to find the model and to pick the workflow.
+
+```php
+// app/Modules/Support/workflow.php
+return [
+    'ticket' => [
+        'type' => 'state_machine',
+        'marking_store' => ['type' => 'single_state', 'property' => 'status'],
+        'initial_marking' => 'open',
+        'supports' => [Ticket::class],
+        'places' => ['open' => ['metadata' => ['label' => 'open']], 'closed' => ['metadata' => ['label' => 'closed', 'final' => true]]],
+        'transitions' => ['close' => ['from' => ['open'], 'to' => 'closed', 'metadata' => ['label' => 'close ticket']]],
+    ],
+];
+```
+
+Rules and effects are listeners of the workflow events (`workflow.ticket.guard.close` → `$event->setBlocked(true,
+'why')`, `workflow.ticket.completed.close` → side effects), grouped in a subscriber registered with
+`Event::subscribe()`. The page shows the transitions and the history with the embed; a transition applied by code is
+`$ticket->workflow_apply('close', 'ticket'); $ticket->save();`. The embed asks for the `view workflow` / `edit workflow`
+permissions (admins have everything). The `rapyd-workflow` agent skill ([AI.md](AI.md)) is the long version.
 
 ## Writing a module as a package
 

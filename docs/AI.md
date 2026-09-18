@@ -17,10 +17,45 @@ A minimal `CLAUDE.md` / `AGENTS.md` for an app built on Rapyd Admin:
 
 ```
 Rapyd Admin app (Laravel + Livewire 4 + Bootstrap 5). Read `php artisan rpd:context --format=text` before changing modules.
-New modules: `php artisan rpd:make all Model --module=Name`; follow the structure of the existing app/Modules/*.
+New modules: `php artisan rpd:make Things Thing --module=Name`; follow the structure of the existing app/Modules/*.
 Fields and pages use the x-rpd:: components (docs/COMPONENTS.md). Look changes: docs/THEMES.md.
 Verify: `vendor/bin/phpunit`, then open the page you touched in the browser and take a screenshot.
 ```
+
+## Guideline and skills for the agents of your application
+
+An agent working in an application built on Rapyd Admin gets the framework's conventions from two things shipped
+with the package, in `resources/boost/`:
+
+- **the guideline** (`guidelines/core.blade.php`): short rules, always loaded (modules, `x-rpd::` components, workflows
+  instead of a hand-written `status`, Livewire 4, how to verify);
+- **the skills** (`skills/rapyd-module`, `skills/rapyd-workflow`): the procedures, loaded when the task needs them:
+  creating or extending a module around `rpd:make`, designing and implementing a state machine (with reference files).
+
+With [Laravel Boost](https://laravel.com/docs/boost) they reach your application by themselves:
+
+```bash
+composer require laravel/boost --dev
+php artisan boost:install          # picks the guideline and the skills of every installed package, rapyd-admin included
+php artisan boost:update           # after a package update; --discover looks for packages added since
+```
+
+Boost writes the guideline into `AGENTS.md` / `CLAUDE.md` (and the files of the agents you chose) and the skills into
+`.claude/skills` or the equivalent. In CI, in non-interactive mode, `boost:update --discover` may skip a package: add
+`zofe/rapyd-admin` to the packages of `boost.json` by hand in that case.
+
+Without Boost:
+
+```bash
+php artisan rpd:ai                 # skills → .claude/skills, guideline → AGENTS.md (between markers), @AGENTS.md in CLAUDE.md
+php artisan rpd:ai --force         # overwrite a skill your application has modified
+```
+
+`rpd:ai` refreshes the guideline block on every run and keeps the rest of `AGENTS.md`; a skill you edited in
+`.claude/skills` is left alone unless `--force`. Run it again after updating the package.
+
+The same skills are used to develop the package itself (`.claude/skills` of the repository links to them): one source,
+no copies to keep in sync.
 
 ## The verification loop
 

@@ -72,7 +72,7 @@ class RapydContextCommand extends Command
         }
 
         return [
-            'bundled' => ['Layout', 'Auth', 'Companies'],
+            'bundled' => ['Auth', 'Companies', 'Addresses', 'Workflow', 'Log', 'Search', 'Layout'],
             'app' => $app,
         ];
     }
@@ -149,18 +149,21 @@ class RapydContextCommand extends Command
 
     private function getExtensionGuide(): array
     {
+        // What an agent must know to extend this application. Kept in step with docs/MODULES.md and the
+        // guideline in resources/boost/guidelines/core.blade.php: change one, change the others.
         return [
-            'generate_module' => 'php artisan rpd:make ModelName --module=ModuleName',
-            'generate_component' => 'php artisan rpd:make ModelName Model',
-            'module_structure' => 'app/Modules/{Name}/{Livewire/,Views/,Models/,routes.php,config.php}',
-            'blade_components' => 'x-rpd::{table,edit,view,input,select,select-list,date,datetime,checkbox,radiogroup,rich-text,upload,sort,button,nav-link,nav-dropdown}',
-            'livewire_pattern' => 'extends Component; use WithDataTable; render() returns view()->layout("layout::admin")',
-            'field_binding' => 'x-rpd:: use model= prop (wire:model.live.debounce.150ms by default; :lazy="true" for blur)',
-            'authorization' => 'use Authorize trait; call $this->authorize("role") in booted()',
-            'company_scoping' => 'add HasCompanyScope global scope on models when config rapyd.companies.tiers > 1',
-            'add_menu_item' => 'set menu_admin and menu_admin_position keys in module config.php',
-            'register_module' => 'add ServiceProvider to config/app.php providers array',
-            'livewire_namespace' => 'call Livewire::addNamespace("ns", __DIR__ . "/Livewire") in ServiceProvider::boot()',
+            'generate_module' => 'php artisan rpd:make Articles Article --module=Blog (component name, model, module: ArticlesTable + ArticlesView + ArticlesEdit, views, routes, menu entry)',
+            'generate_component' => 'php artisan rpd:make ArticlesTable Article --module=Blog (a name ending with Table, View or Edit generates that one)',
+            'model_first' => 'rpd:make:model asks for the fields interactively: create the model and its migration before generating',
+            'module_structure' => 'app/Modules/{Name}/{Livewire/,Views/,Models/,Database/Migrations/,routes.php,config.php,workflow.php}: discovered automatically, no service provider, no config/app.php entry, no Livewire namespace to register',
+            'blade_components' => 'x-rpd::{table,edit,view,input,textarea,select,select-list,date,datetime,checkbox,radiogroup,rich-text,upload,metadata,modal,sort,button,icon,nav-link,nav-item,nav-dropdown,card}',
+            'livewire_pattern' => 'extends Component; use WithDataTable, Authorize, Limit; authorize() and limit() in booted(); render() returns view("module::view")->layout("layout::admin")',
+            'field_binding' => 'x-rpd:: fields use the model= prop (wire:model.live.debounce.150ms by default; :lazy="true" for blur); on an unsaved model only the attributes in $rules survive a request',
+            'authorization' => 'use Authorize; $this->authorize("admin|view things") in booted() ("|" = any of these roles or permissions); permissions are declared in the module config.php',
+            'data_scoping' => 'use Limit; $this->limit() in booted() applies the registered scopes (CompanyLimit: admins see everything, others their company and its children)',
+            'workflows' => 'a model with a lifecycle: WorkflowTrait + a state machine in the module workflow.php named as the model morph alias; <livewire:workflow::workflow-table-embed> on the page; never set status by hand',
+            'add_menu_item' => 'menu_admin (a Blade partial with x-rpd::nav-dropdown / nav-link) and menu_admin_position in the module config.php',
+            'agent_skills' => 'php artisan rpd:ai (or Laravel Boost) installs the rapyd-module and rapyd-workflow skills and the guideline',
         ];
     }
 
