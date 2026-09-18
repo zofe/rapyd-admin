@@ -14,8 +14,20 @@ All notable changes to `rapyd-admin` will be documented in this file.
   non-interactively, `boost.json` pre-seeded with `"packages": ["zofe/rapyd-admin"]` so the guideline and skills land.
 - `docs/MODULES.md`: a Workflows section (the workflow name is the model's morph alias); `docs/AI.md`: guideline and skills.
 
+### Changed
+
+- Generators without prompts, for agents and scripts: `rpd:make` and `rpd:make:model` take `--fields="name:type,…"`
+  (type defaults to `string`); without `--fields` the columns are asked only when a terminal is attached. `rpd:make`
+  also accepts `all|table|view|edit` as component, resolved from the model's plural; `rpd:make:model` returns instead
+  of calling `exit`, so the components are generated in the same run.
+- Generated components call `->layout()` explicitly (the module's `config.php` layout, `layout::admin`): Livewire 4
+  reads `livewire.component_layout`, so the published `config/livewire.php` and the `layout.config` middleware set it.
+
 ### Fixed
 
+- `rpd:make` with a missing model failed (`RapydMakeBaseCommand::createModel()` had a half-written statement and
+  Composer caches the miss of the class); module config, menu, views and routes were written relative to the current
+  directory instead of `base_path()`.
 - Docs and README taught `rpd:make all Model`, which generates an `AllTable` component: the syntax is
   `rpd:make Articles Article --module=Blog`. `rpd:context` extension patterns updated (modules are discovered, scoping
   is `$this->limit()`, workflows); the bundled modules list was three of seven.

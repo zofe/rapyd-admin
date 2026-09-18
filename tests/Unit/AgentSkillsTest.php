@@ -9,8 +9,8 @@ use Zofe\Rapyd\Tests\TestCase;
 
 /**
  * The guideline and the skills shipped for AI agents (resources/boost) stay correct: they exist,
- * carry the required frontmatter, mention only commands that exist and never teach the wrong
- * `rpd:make all` syntax.
+ * carry the required frontmatter, mention only commands that exist and teach the non-interactive
+ * generation (--fields).
  */
 class AgentSkillsTest extends TestCase
 {
@@ -72,15 +72,17 @@ class AgentSkillsTest extends TestCase
         }
     }
 
-    public function test_no_text_teaches_the_rpd_make_all_syntax()
+    public function test_the_texts_teach_the_non_interactive_generation()
     {
+        // an agent must never run into the interactive rpd:make:model prompt: every example that creates
+        // a model shows --fields, and the old keyword forms are not what is taught
         foreach ($this->agentTexts() as $file => $text) {
-            // the only allowed mention is the warning not to use it
-            $lines = collect(explode("\n", $text))->filter(fn ($l) => preg_match('/rpd:make (all|datatable|dataview|dataedit)\b/', $l));
-            foreach ($lines as $line) {
-                $this->assertMatchesRegularExpression('/[Dd]o not|never|not a type/', $line, "{$file}: `{$line}`");
-            }
+            $lines = collect(explode("\n", $text))->filter(fn ($l) => preg_match('/rpd:make (datatable|dataview|dataedit)\b/', $l));
+            $this->assertCount(0, $lines, "{$file}: old keyword form");
         }
+        $skill = File::get("{$this->boost}/skills/rapyd-module/SKILL.md");
+        $this->assertStringContainsString('--fields=', $skill, 'the module skill shows --fields');
+        $this->assertStringNotContainsString('asks for the fields interactively', $skill);
     }
 
     public function test_the_guideline_renders_as_blade_and_names_the_skills()

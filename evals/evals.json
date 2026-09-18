@@ -6,8 +6,8 @@
       "id": "module-crud",
       "request": "Add a Suppliers section to the admin: a list, a detail page and a form for suppliers (name, vat number, email, phone, active). Operators can manage them.",
       "expect": [
-        "creates app/Modules/Suppliers (or asks which module) and uses `php artisan rpd:make Suppliers Supplier --module=Suppliers`, never `rpd:make all`",
-        "creates the model and the migration before generating, without interactive prompts",
+        "creates app/Modules/Suppliers (or asks which module) and uses `php artisan rpd:make Suppliers Supplier --module=Suppliers --fields=...` in one run, no prompts",
+        "the columns come from --fields (name:string, vat_number, email, phone, active:boolean); the migration runs",
         "the Livewire components use Authorize (+ Limit) in booted() and ->layout('layout::admin')",
         "the views use x-rpd::table / view / edit and x-rpd:: fields, no hand-written Bootstrap forms",
         "config.php declares view suppliers / edit suppliers and gives them to operator; menu.blade.php checks them",

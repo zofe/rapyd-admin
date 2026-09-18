@@ -55,11 +55,11 @@ Details in [docs/MODULES.md](docs/MODULES.md).
 ## Your first module in two minutes
 
 ```bash
-php artisan rpd:make Articles Article --module=Blog
+php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime"
 ```
 
-creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry
-(if the model does not exist yet, the command asks for its fields and creates it):
+creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry;
+when the model does not exist yet it is created with its migration from `--fields`, and migrated. No prompts:
 
 ```
 app/Modules/Blog/

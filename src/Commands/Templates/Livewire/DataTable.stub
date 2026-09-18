@@ -28,6 +28,6 @@ class {{class}} extends {{baseClassName}}
     {
 
         $items = $this->getDataSet();
-        return view('{{view}}', compact('items'));
+        return view('{{view}}', compact('items'))->layout('{{layout}}');
     }
 }

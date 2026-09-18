@@ -43,18 +43,21 @@ not forked; `php artisan rpd:eject Name` copies one into the app when you really
 ### 2. Generate
 
 ```bash
-php artisan rpd:make Articles Article --module=Blog     # ArticlesTable + ArticlesView + ArticlesEdit, views, routes, menu entry
+php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime"
+# ArticlesTable + ArticlesView + ArticlesEdit, views, routes, menu entry; the model and its migration
+# when the model does not exist (columns from --fields, type defaults to string), then migrate
 php artisan rpd:make ArticlesTable Article --module=Blog   # one component: the name ends with Table, View or Edit
+php artisan rpd:make all Article --module=Blog             # same as the first form: the name comes from the model
 php artisan rpd:make:home                                  # the dashboard page of the app
 ```
 
-The first argument is the **component name** (plural for a group), the second the **model**, `--module` the module
-folder (created with its `config.php` and `menu.blade.php` when missing). The generated code reads the table columns to
-build the list, the detail and the form.
+The first argument is the **component name** (plural for a group, or `all` / `table` / `view` / `edit`), the second the
+**model**, `--module` the module folder (created with its `config.php` and `menu.blade.php` when missing). The generated
+code reads the table columns to build the list, the detail and the form.
 
-If the model does not exist, `rpd:make:model` runs first and **asks for the fields interactively**: create the model
-and the migration yourself beforehand (`php artisan make:model Article -m`, write the columns, `php artisan migrate`)
-so the generation runs without prompts.
+`--fields` takes `name:type` pairs (`string` `text` `integer` `boolean` `date` `datetime` `float` `decimal` `json`
+`timestamp`). Without it, and without a terminal, a new model gets only `id` and timestamps: always pass `--fields`
+when the model is new. An existing model is never touched: write its migration first, then generate.
 
 ### 3. Finish what the stub leaves out
 
@@ -190,4 +193,4 @@ New permissions exist once `php artisan db:seed --class="Zofe\Rapyd\Modules\Auth
 - Do not add a service provider, a `Livewire::component()` call or a `config/app.php` entry for an app module.
 - Do not put a `status` column and update it by hand: that is a workflow.
 - Do not scope queries by company in every component: `$this->limit()` applies the registered scopes.
-- Do not use `rpd:make all …` / `rpd:make datatable …`: the first argument is the component name, not a type.
+- Do not generate a new model without `--fields`: the table would have no columns and the form no fields.

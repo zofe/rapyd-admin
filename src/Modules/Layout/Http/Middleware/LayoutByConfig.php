@@ -20,7 +20,8 @@ class LayoutByConfig
             if (preg_match('/App\\\\Modules\\\\([A-Za-z]+)\\\\/', $controller, $matches)) {
                 $moduleName = strtolower($matches[1]);
                 if (config($moduleName . '.layout')) {
-                    config(['livewire.layout' => config($moduleName . '.layout')]);
+                    // Livewire 4 reads component_layout; livewire.layout is the old key
+                    config(['livewire.component_layout' => config($moduleName . '.layout'), 'livewire.layout' => config($moduleName . '.layout')]);
                 }
             }
         }

@@ -29,8 +29,9 @@ learning anything new: no DSL, no magic, no Filament / Nova patterns.
   `authorize('admin|edit things')`; the sidebar entry (`Views/menu.blade.php`) checks them too.
 - Livewire 4: `#[On('event')]` not `$listeners`, `$this->dispatch()` not `emit()`; fields bind
   `wire:model.live.debounce.150ms` by default; on an unsaved model only the attributes in `$rules` survive a request.
-- Generate, then finish: `php artisan rpd:make Things Thing --module=Name` writes the table / view / edit components,
-  views, routes and the menu entry; then add authorization, scoping and the layout the stub leaves out.
+- Generate, then finish: `php artisan rpd:make Things Thing --module=Name --fields="name,active:boolean"` writes the
+  model and migration (when missing), the table / view / edit components, views, routes and the menu entry, without
+  prompts; then add the authorization and scoping the stub leaves out.
 - Verify like a developer: `vendor/bin/phpunit` (or `composer test`), then open the page you touched. Take a screenshot.
 
 ### Skills

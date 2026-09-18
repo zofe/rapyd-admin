@@ -69,17 +69,23 @@ Route::get('blog/articles', ArticlesTable::class)->middleware(['web'])->name('bl
 ## Generating a module
 
 ```bash
-php artisan rpd:make Articles Article --module=Blog        # ArticlesTable + ArticlesView + ArticlesEdit, views, routes, menu entry
+php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime"
+# ArticlesTable + ArticlesView + ArticlesEdit, views, routes, menu entry; when the model does not exist,
+# the model and its migration (columns from --fields, type defaults to string) and the migration runs
 php artisan rpd:make ArticlesTable Article --module=Blog   # one component: a name ending with Table, View or Edit
+php artisan rpd:make all Article --module=Blog             # all|table|view|edit: the name comes from the model
 php artisan rpd:make:home                                  # the landing / dashboard page
 ```
 
-The first argument is the **component name** (a plural, or a full name ending with `Table`, `View` or `Edit`), the
-second the model. If the model does not exist, `rpd:make:model` runs first and asks for its fields interactively:
-create model and migration beforehand when you script the generation (or let an agent run it).
+The first argument is the **component name** (a plural, a full name ending with `Table`, `View` or `Edit`, or one of
+`all` `table` `view` `edit`), the second the model. A new model needs `--fields` (`name:type` pairs, types: `string`
+`text` `integer` `boolean` `date` `datetime` `float` `decimal` `json` `timestamp`): without it the command asks for the
+columns only when a terminal is attached, otherwise the table gets just `id` and timestamps. An existing model is never
+touched. Nothing is interactive, so an agent or a script can run the whole generation in one command.
 
 The generated components are a starting point: add `Authorize` / `Limit` with `authorize()` and `limit()` in
-`booted()`, the `->layout('layout::admin')` on `render()`, the permissions in `config.php`, then a test.
+`booted()`, the permissions in `config.php`, then a test. `render()` already uses the layout of the module's
+`config.php` (`layout::admin`).
 
 ## Config: layout, menu, permissions
 

@@ -81,6 +81,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'model' => $model,
                 'table' => $table,
                 'view' => $view,
+                'layout' => $this->getLayout(),
                 'modelNamespace' => $modelNamespace,
                 'baseClass' => 'Livewire\\Component',
                 'baseClassName' => 'Component',
@@ -134,7 +135,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/edit.stub'));
         if ($this->module) {
             if (! File::exists(base_path($routePath))) {
-                File::ensureDirectoryExists(dirname($routePath));
+                File::ensureDirectoryExists(dirname(base_path($routePath)));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
             }
         }
@@ -145,14 +146,14 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $table_view = $viewPath.'/'.str_replace('edit', 'table', $component_name).'.blade.php';
         $edit_class = $classPath.'/'.$componentName.'.php';
 
-        $this->buildLinkToEdit($edit_view, $routename);
-        $this->buildLinkToAdd($table_view, $routename);
+        $this->buildLinkToEdit(base_path($edit_view), $routename);
+        $this->buildLinkToAdd(base_path($table_view), $routename);
 
 
         if ($routeparent_view) {
-            $this->buildRedirect($edit_class, $routeparent_view, $routeparent_view_parameter);
+            $this->buildRedirect(base_path($edit_class), $routeparent_view, $routeparent_view_parameter);
         } elseif ($routeparent_table) {
-            $this->buildRedirect($edit_class, $routeparent_table);
+            $this->buildRedirect(base_path($edit_class), $routeparent_table);
         }
         $this->comment("component url: $routeuri ".$routename);
     }

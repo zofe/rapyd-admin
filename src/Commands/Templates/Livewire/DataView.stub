@@ -18,6 +18,6 @@ class {{class}} extends {{baseClassName}}
     public function render()
     {
         ${{ item }} = $this->{{ item }};
-        return view('{{view}}', compact('{{ item }}'));
+        return view('{{view}}', compact('{{ item }}'))->layout('{{layout}}');
     }
 }

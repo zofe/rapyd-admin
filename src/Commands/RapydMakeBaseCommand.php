@@ -28,11 +28,11 @@ class RapydMakeBaseCommand extends Command
     protected function createModuleConfig()
     {
         $module = $this->option('module');
-        if ($module && ! file_exists(path_module("app/config.php", $module))) {
+        if ($module && ! file_exists(base_path(path_module("app/config.php", $module)))) {
 
             //config
             StubGenerator::from(__DIR__.'/Templates/config.stub', true)
-                ->to(path_module("app/", $module), true, true)
+                ->to(base_path(path_module("app/", $module)), true, true)
                 ->as('config')
                 ->withReplacers([
                     'view' => $this->getViewPath('menu'),
@@ -42,11 +42,11 @@ class RapydMakeBaseCommand extends Command
 
         }
 
-        if ($module && ! file_exists(path_module("app/Views/menu.blade.php", $module))) {
+        if ($module && ! file_exists(base_path(path_module("app/Views/menu.blade.php", $module)))) {
 
             //menu
             StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
-                ->to(path_module("app/Views", $module), true, true)
+                ->to(base_path(path_module("app/Views", $module)), true, true)
                 ->as('menu.blade')
                 ->save();
 
@@ -55,17 +55,35 @@ class RapydMakeBaseCommand extends Command
     }
 
 
+    /**
+     * When the model does not exist yet it is created with rpd:make:model (columns from --fields,
+     * no prompt without a terminal) and its migration is run, since the generators read the table schema.
+     * A new module's migrations are not registered in this process, hence the explicit path.
+     */
     protected function createModel($model)
     {
         $module = $this->option('module');
         $modelClass = $this->getModelNamespace(true, false);
 
         if (! $modelClass) {
+            $this->call('rpd:make:model', [
+                'model' => $model,
+                '--module' => $module,
+                '--fields' => $this->option('fields'),
+                '--no-interaction' => ! $this->input->isInteractive(),
+            ]);
 
-            $this->call('rpd:make:model', ['model' => $model, '--module' => $module]);
+            // Composer caches the miss of the class_exists() above: load the new file explicitly
+            $file = base_path(path_module("app/Models/{$model}.php", $module));
+            if (is_file($file) && ! class_exists(namespace_module('App\\Models', $module) . "\\{$model}", false)) {
+                require_once $file;
+            }
 
-            $this->
-            $this->call('migrate');
+            $options = ['--force' => true];
+            if ($module) {
+                $options['--path'] = path_module('app/Database/Migrations', $module);
+            }
+            $this->call('migrate', $options);
         }
     }
 
@@ -163,6 +181,18 @@ class RapydMakeBaseCommand extends Command
         return $fields;
     }
 
+    /**
+     * The layout written in the generated render(): the one of the module's config.php
+     * (created with the module, layout::admin) or layout::admin outside a module.
+     */
+    protected function getLayout(): string
+    {
+        $config = $this->module ? base_path(path_module('app/config.php', $this->module)) : null;
+        $layout = $config && is_file($config) ? ((require $config)['layout'] ?? null) : null;
+
+        return $layout ?: 'layout::admin';
+    }
+
     protected function getViewPath($component_name)
     {
         $viewPrefix = $this->module? Str::lower($this->module).'::' : "";
@@ -196,7 +226,7 @@ class RapydMakeBaseCommand extends Command
      */
     protected function addNavItemIfNotExists($navItems)
     {
-        $filePath = $this->module ? path_module("app/Views/menu.blade.php", $this->module) : base_path('resources/views/menu.blade.php');
+        $filePath = base_path($this->module ? path_module("app/Views/menu.blade.php", $this->module) : "resources/views/menu.blade.php");
         $content = file_exists($filePath) ? file_get_contents($filePath) : '';
 
         preg_match_all('/<x-rpd::nav-item[^>]*route="([^"]*)"/', $content, $matches);

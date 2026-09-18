@@ -66,6 +66,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
                 'model' => $model,
                 'table' => $table,
                 'view' => $view,
+                'layout' => $this->getLayout(),
                 'modelNamespace' => $modelNamespace,
                 'baseClass' => 'Livewire\\Component',
                 'baseClassName' => 'Component',
@@ -113,14 +114,14 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
 
         if ($this->module) {
             if (! File::exists(base_path($routePath))) {
-                File::ensureDirectoryExists(dirname($routePath));
+                File::ensureDirectoryExists(dirname(base_path($routePath)));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
             }
         }
         File::append(base_path($routePath), $substituted);
 
         $table_view = $viewPath.'/'.str_replace('view', 'table', $component_name).'.blade.php';
-        $this->buildLinkToView($table_view, $routename);
+        $this->buildLinkToView(base_path($table_view), $routename);
         $this->comment("component url: $routeuri ".$routename);
 
     }

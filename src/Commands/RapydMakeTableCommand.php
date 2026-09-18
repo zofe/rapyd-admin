@@ -58,6 +58,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
                 'model' => $model,
                 'table' => $table,
                 'view' => $view,
+                'layout' => $this->getLayout(),
                 'whereSearch' => $whereSearch ?: 'query()',
                 'modelNamespace' => $modelNamespace,
                 'traitNamespace' => 'Zofe\\Rapyd\\Traits',
@@ -107,7 +108,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
 
         if ($this->module) {
             if (! File::exists(base_path($routePath))) {
-                File::ensureDirectoryExists(dirname($routePath));
+                File::ensureDirectoryExists(dirname(base_path($routePath)));
                 File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
             }
         }

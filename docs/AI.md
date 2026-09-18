@@ -17,7 +17,7 @@ A minimal `CLAUDE.md` / `AGENTS.md` for an app built on Rapyd Admin:
 
 ```
 Rapyd Admin app (Laravel + Livewire 4 + Bootstrap 5). Read `php artisan rpd:context --format=text` before changing modules.
-New modules: `php artisan rpd:make Things Thing --module=Name`; follow the structure of the existing app/Modules/*.
+New modules: `php artisan rpd:make Things Thing --module=Name --fields="name,active:boolean"` (no prompts); follow the structure of the existing app/Modules/*.
 Fields and pages use the x-rpd:: components (docs/COMPONENTS.md). Look changes: docs/THEMES.md.
 Verify: `vendor/bin/phpunit`, then open the page you touched in the browser and take a screenshot.
 ```
