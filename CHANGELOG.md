@@ -8,7 +8,10 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 - For the agents of an application: a Laravel Boost guideline (`resources/boost/guidelines/core.blade.php`) and two
   skills, `rapyd-module` and `rapyd-workflow` (`resources/boost/skills`), picked up by `boost:install` / `boost:update`;
-  `php artisan rpd:ai` installs them without Boost (`.claude/skills`, `AGENTS.md` between markers, `@AGENTS.md` in `CLAUDE.md`).
+  `php artisan rpd:ai` installs them without Boost (`.claude/skills`, `AGENTS.md` between markers, `@AGENTS.md` in `CLAUDE.md`);
+  when Boost already wrote the guideline, `rpd:ai` installs only the skills.
+- `scripts/sandbox.sh` (dev only): a throwaway Laravel app with rapyd-admin as path repository and Boost installed
+  non-interactively, `boost.json` pre-seeded with `"packages": ["zofe/rapyd-admin"]` so the guideline and skills land.
 - `docs/MODULES.md`: a Workflows section (the workflow name is the model's morph alias); `docs/AI.md`: guideline and skills.
 
 ### Fixed

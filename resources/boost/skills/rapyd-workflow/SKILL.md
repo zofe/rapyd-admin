@@ -1,6 +1,6 @@
 ---
 name: rapyd-workflow
-description: Design and implement a state machine (workflow) on a Rapyd Admin model: places, transitions, guards and effects as listeners, transitions with a modal, the workflow embed on the page, tests. Use it whenever a model has a lifecycle (orders, tickets, requests, approvals).
+description: "Design and implement a state machine (workflow) on a Rapyd Admin model: places, transitions, guards and effects as listeners, transitions with a modal, the workflow embed on the page, tests. Use it whenever a model has a lifecycle (orders, tickets, requests, approvals)."
 ---
 
 # Rapyd Admin workflows

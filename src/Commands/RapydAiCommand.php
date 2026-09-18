@@ -24,6 +24,9 @@ class RapydAiCommand extends Command
 
     public const END = '<!-- rapyd-admin:guideline:end -->';
 
+    /** The heading Laravel Boost gives to the guideline of this package in AGENTS.md. */
+    public const BOOST_MARK = '=== zofe/rapyd-admin/core rules ===';
+
     public function handle(): int
     {
         $root = rtrim($this->option('path') ?: base_path(), '/');
@@ -107,6 +110,12 @@ class RapydAiCommand extends Command
         $block = self::START . "\n" . $rendered . "\n" . self::END;
 
         $content = File::exists($agentsMd) ? File::get($agentsMd) : '';
+        if (str_contains($content, self::BOOST_MARK) && ! str_contains($content, self::START)) {
+            // Laravel Boost already wrote the guideline (from resources/boost of the package): keep one copy
+            $this->warn('guideline already installed by Laravel Boost, kept (refresh it with boost:update)');
+
+            return;
+        }
         if (str_contains($content, self::START) && str_contains($content, self::END)) {
             $content = preg_replace('/' . preg_quote(self::START, '/') . '.*?' . preg_quote(self::END, '/') . '/s', $block, $content);
             $this->line('guideline refreshed in AGENTS.md');
@@ -121,8 +130,8 @@ class RapydAiCommand extends Command
     protected function importInClaudeMd(string $claudeMd): void
     {
         $content = File::exists($claudeMd) ? File::get($claudeMd) : '';
-        if (preg_match('/^@AGENTS\.md\s*$/m', $content)) {
-            return;
+        if (preg_match('/^@AGENTS\.md\s*$/m', $content) || str_contains($content, self::BOOST_MARK)) {
+            return; // already imported, or Boost wrote the guideline directly in CLAUDE.md
         }
         File::put($claudeMd, rtrim($content) . ($content ? "\n\n" : '') . "@AGENTS.md\n");
         $this->line('@AGENTS.md imported in CLAUDE.md');

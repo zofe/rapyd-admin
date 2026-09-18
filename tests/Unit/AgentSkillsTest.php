@@ -4,6 +4,7 @@ namespace Zofe\Rapyd\Tests\Unit;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Yaml\Yaml;
 use Zofe\Rapyd\Tests\TestCase;
 
 /**
@@ -52,8 +53,11 @@ class AgentSkillsTest extends TestCase
             $content = File::get($file);
             $this->assertMatchesRegularExpression('/\A---\n.*?\n---\n/s', $content, "{$name}: frontmatter");
             preg_match('/\A---\n(.*?)\n---\n/s', $content, $m);
-            $this->assertMatchesRegularExpression('/^name:\s*' . preg_quote($name, '/') . '\s*$/m', $m[1], "{$name}: name must match the folder");
-            $this->assertMatchesRegularExpression('/^description:\s*\S.{20,}$/m', $m[1], "{$name}: a description");
+            // Boost parses the frontmatter with symfony/yaml and skips the skill when it is invalid
+            // (e.g. an unquoted ':' inside the description), so we parse it the same way.
+            $front = Yaml::parse($m[1]);
+            $this->assertSame($name, $front['name'] ?? null, "{$name}: name must match the folder");
+            $this->assertGreaterThan(20, strlen($front['description'] ?? ''), "{$name}: a description");
         }
     }
 

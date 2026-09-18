@@ -57,6 +57,19 @@ class RapydAiCommandTest extends TestCase
         $this->assertSame(1, substr_count(File::get("{$this->appDir}/CLAUDE.md"), '@AGENTS.md'), 'imported once');
     }
 
+    public function test_the_guideline_written_by_laravel_boost_is_not_duplicated()
+    {
+        $boost = "<laravel-boost-guidelines>\n" . RapydAiCommand::BOOST_MARK . "\n\n## Rapyd Admin\n...\n</laravel-boost-guidelines>\n";
+        File::put("{$this->appDir}/AGENTS.md", $boost);
+        File::put("{$this->appDir}/CLAUDE.md", $boost);
+
+        $this->artisan('rpd:ai', ['--path' => $this->appDir])->assertSuccessful();
+
+        $this->assertSame($boost, File::get("{$this->appDir}/AGENTS.md"), 'AGENTS.md untouched');
+        $this->assertSame($boost, File::get("{$this->appDir}/CLAUDE.md"), 'CLAUDE.md untouched: no @AGENTS.md import');
+        $this->assertFileExists("{$this->appDir}/.claude/skills/rapyd-module/SKILL.md", 'skills still installed');
+    }
+
     public function test_a_skill_modified_by_the_application_is_kept_unless_forced()
     {
         $this->artisan('rpd:ai', ['--path' => $this->appDir]);

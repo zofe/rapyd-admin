@@ -1,6 +1,6 @@
 ---
 name: rapyd-module
-description: Create or extend a Rapyd Admin module (Laravel + Livewire 4): generate the table / view / edit components with rpd:make, then add authorization, data scoping, permissions, menu entry, tests and a browser check.
+description: "Create or extend a Rapyd Admin module (Laravel + Livewire 4): generate the table / view / edit components with rpd:make, then add authorization, data scoping, permissions, menu entry, tests and a browser check."
 ---
 
 # Rapyd Admin modules

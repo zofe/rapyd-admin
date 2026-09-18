@@ -29,7 +29,14 @@ if [[ ! -d "$APP" ]]; then
 
     echo "▶ laravel/boost"
     composer require laravel/boost --dev --no-interaction --quiet
-    # boost:install is interactive (agents, features); in a sandbox we take the defaults for Claude Code
+    # boost:install is interactive (agents, features, third-party packages). With --no-interaction the
+    # third-party packages come from the "packages" key of boost.json, so we pre-seed it: without this
+    # Boost installs only the Laravel guidelines and skips rapyd-admin's guideline and skills.
+    if [ ! -f boost.json ]; then
+        printf '{\n    "packages": ["zofe/rapyd-admin"]\n}\n' > boost.json
+    else
+        php -r '$f="boost.json"; $c=json_decode(file_get_contents($f), true) ?: []; $c["packages"]=array_values(array_unique(array_merge($c["packages"] ?? [], ["zofe/rapyd-admin"]))); file_put_contents($f, json_encode($c, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)."\n");'
+    fi
     php artisan boost:install --no-interaction || echo "boost:install needs a terminal: run it in $APP"
 
     echo
