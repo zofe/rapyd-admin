@@ -18,3 +18,8 @@ PROJECT_CONTEXT.md
 # tooling output
 graphify-out/
 test-results/
+
+# the try-out app of scripts/sandbox.sh
+/.sandbox
+
+.claude/settings.local.json

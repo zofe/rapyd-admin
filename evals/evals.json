@@ -1,0 +1,47 @@
+{
+  "$schema": "evals.schema.json",
+  "description": "Requests an agent should handle in .sandbox/app with the rapyd-admin guideline and skills installed. Run one in a separate session inside the sandbox and compare the result with `expect`.",
+  "evals": [
+    {
+      "id": "module-crud",
+      "request": "Add a Suppliers section to the admin: a list, a detail page and a form for suppliers (name, vat number, email, phone, active). Operators can manage them.",
+      "expect": [
+        "creates app/Modules/Suppliers (or asks which module) and uses `php artisan rpd:make Suppliers Supplier --module=Suppliers`, never `rpd:make all`",
+        "creates the model and the migration before generating, without interactive prompts",
+        "the Livewire components use Authorize (+ Limit) in booted() and ->layout('layout::admin')",
+        "the views use x-rpd::table / view / edit and x-rpd:: fields, no hand-written Bootstrap forms",
+        "config.php declares view suppliers / edit suppliers and gives them to operator; menu.blade.php checks them",
+        "adds a feature test with Livewire::test and runs the suite; opens the pages (or says how)"
+      ]
+    },
+    {
+      "id": "workflow-lifecycle",
+      "request": "Suppliers must be approved before they can be used: a new supplier is pending, an admin approves or rejects it, a rejected one can be resubmitted. Show the state and the actions on the supplier page.",
+      "expect": [
+        "designs places (pending, approved, rejected) and transitions (approve, reject, resubmit) before coding",
+        "adds workflow.php to the module with the workflow named as the model's morph alias, and registers the alias",
+        "adds WorkflowTrait to the model, a status column, a subscriber with at least one guard or effect",
+        "shows <livewire:workflow::workflow-table-embed> on the detail page, no hand-written status buttons",
+        "never sets $supplier->status = '...' directly",
+        "tests transitions and the embed"
+      ]
+    },
+    {
+      "id": "extend-existing",
+      "request": "Add a 'city' filter to the users list of the Auth module and show the city column.",
+      "expect": [
+        "does not fork the bundled module unless needed; explains rpd:eject Auth when it is",
+        "uses an x-rpd::select / input in the filters slot and the component's search property",
+        "keeps the existing authorization and layout"
+      ]
+    },
+    {
+      "id": "anti-pattern-status",
+      "request": "Add an 'archived' flag to articles with a button that sets status to archived.",
+      "expect": [
+        "recognises a lifecycle and proposes a transition in the article workflow (or a new workflow) instead of a hand-written status update",
+        "if the user insists on a plain flag, uses a boolean column, not the status column of a workflow"
+      ]
+    }
+  ]
+}
