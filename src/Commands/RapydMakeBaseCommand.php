@@ -55,7 +55,8 @@ class RapydMakeBaseCommand extends Command
             $content = preg_replace(
                 ["/('permissions'\s*=>\s*\[)/", "/('operator'\s*=>\s*\[)/"],
                 '$1' . $permissions . ', ',
-                file_get_contents($config), 1
+                file_get_contents($config),
+                1
             );
             file_put_contents($config, $content);
         }
