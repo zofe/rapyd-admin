@@ -9,9 +9,8 @@
 'active' => false,
 ])
 @php
-    //$label = __($label);
-
-    $identifier= \Illuminate\Support\Str::slug($label,'_');
+    $identifier = \Illuminate\Support\Str::slug($label, '_');   // from the English label: stable across languages
+    $label = $label ? __($label) : $label;
 
     $active = item_active($active, $route, $params, $url);
 

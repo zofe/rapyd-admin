@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Zofe\Rapyd\Commands\ModuleCommand;
+use Zofe\Rapyd\Localization\Locales;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -101,6 +102,7 @@ class ModuleServiceProvider extends ServiceProvider
                 $this->loadViewsFrom($modulePath . 'Components', $moduleName);
                 $this->loadMigrationsFrom($modulePath . 'Database/Migrations');
                 $this->loadTranslationsFrom($modulePath . 'Lang', $moduleName);
+                $this->loadJsonTranslationsFrom($modulePath . 'Lang');   // Lang/{locale}.json: English phrase => translation
 
 
                 if ($this->app->runningInConsole()) {
@@ -155,21 +157,10 @@ class ModuleServiceProvider extends ServiceProvider
     }
 
 
-    public function detectLocaleByPrefix()
+    /** The URL prefix of the current request's language (see Locales::routePrefix()). */
+    public function detectLocaleByPrefix(): string
     {
-        $lang_prefix = '';
-        $locale = request()->segment(1);
-
-        if (in_array($locale, config('app.locales', ['en']))) {
-            $lang_prefix = ($locale !== config('app.fallback_locale')) ? $locale : '';
-
-            if ($lang_prefix) {
-                session(['lang_prefix' => $lang_prefix]);
-            }
-            app()->setlocale($locale);
-        }
-
-        return $lang_prefix;
+        return app(Locales::class)->routePrefix();
     }
 
     public function configMenus()

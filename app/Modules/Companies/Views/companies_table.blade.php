@@ -6,18 +6,18 @@
         </x-slot>
 
         <x-slot name="buttons">
-            <a href="{{ route_lang('companies.table') }}" class="btn btn-outline-dark">Reset</a>
-            <a href="{{ route_lang('companies.edit') }}" class="btn btn-outline-primary">Add</a>
+            <a href="{{ route_lang('companies.table') }}" class="btn btn-outline-dark">{{ __('Reset') }}</a>
+            <a href="{{ route_lang('companies.edit') }}" class="btn btn-outline-primary">{{ __('Add') }}</a>
         </x-slot>
 
         <table class="table">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    <th>{{ __('Id') }}</th>
                     <th><x-rpd::sort model="business_name" label="Business Name" /></th>
-                    <th>Email</th>
-                    <th>Tier</th>
-                    <th>Status</th>
+                    <th>{{ __('Email') }}</th>
+                    <th>{{ __('Tier') }}</th>
+                    <th>{{ __('Status') }}</th>
                     <th><x-rpd::sort model="created_at" label="Created" /></th>
                     <th></th>
                 </tr>

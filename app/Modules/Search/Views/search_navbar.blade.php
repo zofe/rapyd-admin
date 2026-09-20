@@ -37,7 +37,7 @@
         }
     })
 " style="min-width: 200px" class="position-relative">
-        <select x-ref="mySelect" placeholder="search..." ></select>
+        <select x-ref="mySelect" placeholder="{{ __('search...') }}" ></select>
         <button type="button" x-show="typing" x-cloak
                 @click="ts.setTextboxValue(''); ts.clearOptions(); ts.close(); typing = false"
                 class="btn btn-link btn-sm text-muted position-absolute top-50 translate-middle-y" style="right: 28px; padding: 0 4px; z-index: 5;" aria-label="clear search">

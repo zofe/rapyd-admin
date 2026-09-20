@@ -2,6 +2,28 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.17.0] - 2026-09-21
+
+### Added
+
+- Languages, in one place (`docs/LOCALIZATION.md`): `RAPYD_LOCALES=en,it` enables them, `rapyd.locale`
+  (`APP_LOCALE`) is the default one without URL prefix, `Zofe\Rapyd\Localization\Locales` knows them and
+  `SetLocale` (in the `web` group) sets the language from the URL prefix, the session, the user's `users.locale`
+  (new column) or the browser, redirecting a default-language page to the visitor's choice; the switcher
+  (`?clang=1`) remembers it. Codes and native names instead of flags, in both navbars.
+- Translations as JSON catalogues, English phrase => translation: `resources/lang/{locale}.json` of the package
+  (`it` reviewed; `es`, `fr`, `de`, `pt_BR` machine-translated, listed for review in `.rpd-lang.json`),
+  `Lang/{locale}.json` in every module, of the application or a package. The `x-rpd::` components translate
+  `label`, `title`, `placeholder`, `actionLabel`; bundled views and generated code use `__()` on every text.
+- `php artisan rpd:lang`: collects the phrases of the views into the catalogues (pending until translated,
+  `--check` for CI, `--prune`, `--literals` for raw texts, a warning for phrases named like a PHP language file),
+  `--translate` fills them with the AI of ai-module.
+
+### Fixed
+
+- Module packages (`RapydModuleServiceProvider::bootAppModule()`) registered their routes without the language
+  prefix: `/it/shop` was a 404. The three copies of the prefix detection are one.
+
 ## [9.16.0] - 2026-09-20
 
 ### Changed

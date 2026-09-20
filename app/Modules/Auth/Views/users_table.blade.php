@@ -8,14 +8,14 @@
         </x-slot>
 
         <x-slot name="buttons">
-            <a href="{{ route_lang('auth.users') }}" class="btn btn-outline-dark">Reset</a>
+            <a href="{{ route_lang('auth.users') }}" class="btn btn-outline-dark">{{ __('Reset') }}</a>
             <a href="{{ route_lang('auth.users.edit') }}" class="btn btn-outline-primary">{{ __('auth::global.add') }}</a>
         </x-slot>
 
         <table class="table">
             <thead>
             <tr>
-                <th>Id</th>
+                <th>{{ __('Id') }}</th>
                 <th>{{__('auth::user.firstname')}}</th>
                 <th>{{__('auth::user.email')}}</th>
                 <th>{{__('auth::user.roles')}}</th>
@@ -50,7 +50,7 @@
                         @if($user->company)
                             <x-rpd::nav-link :label="$user->company->business_name" route="companies.view" :params="$user->company_id" />
                             @if($user->company_role === 'owner')
-                                <span class="badge bg-primary ms-1">Owner</span>
+                                <span class="badge bg-primary ms-1">{{ __('Owner') }}</span>
                             @endif
                         @endif
                     </td>

@@ -43,7 +43,7 @@
         <x-rpd::input-addon :icon="$icon" :label="$prepend"/>
 
         <select {{ $attributes }}>
-            <option value="">{{ $placeholder }}</option>
+            <option value="">{{ $placeholder ? __($placeholder) : '' }}</option>
 
             @foreach($options as $optionValue => $optionLabel)
                 <option value="{{ $optionValue }}">{{ $optionLabel }}</option>

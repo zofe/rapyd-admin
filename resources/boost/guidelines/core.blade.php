@@ -33,6 +33,8 @@ learning anything new: no DSL, no magic, no Filament / Nova patterns.
   model and migration (when missing, uuid keys), the table / view / edit components with authorization, the
   permissions, the `Authorizations/` and `Limits/` classes, views, routes behind `auth` and the menu entry, without
   prompts; then restrict the Limit / Authorization when the data belongs to a company or a user.
+- Texts are English phrases in the views (`label="Business name"`, `{{ __('Back') }}`), never keys or another
+  language: `rpd:lang` collects them into `Lang/{locale}.json` per module, links use `route_lang()`.
 - Verify like a developer: `vendor/bin/phpunit` (or `composer test`), then open the page you touched. Take a screenshot.
 
 ### Skills

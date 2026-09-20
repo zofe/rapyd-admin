@@ -12,25 +12,11 @@
             @endif
 
             <ul class="navbar-nav">
-                @if(config('app.locales'))
-                    <li class="nav-item dropdown no-arrow">
-                        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="{{ asset('vendor/rapyd/img/'.app()->getLocale().'.svg') }}" width="15" alt="{{ app()->getLocale() }}">
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                            @foreach(config('app.locales') as $locale)
-                                <a class="dropdown-item" href="{{ url_lang($locale) }}">
-                                    <img src="{{ asset("vendor/rapyd/img/{$locale}.svg") }}" width="10" alt="{{ $locale }}">
-                                    {{ $locale }}
-                                </a>
-                            @endforeach
-                        </div>
-                    </li>
-                @endif
+                @include('layout::includes.locale_switcher')
 
                 @if(Route::has('admin.home') && Route::has('home'))
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link" href="{{ route('home') }}">{{ __('Home') }}</a>
                     </li>
                 @endif
             </ul>

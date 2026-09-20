@@ -85,11 +85,8 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
                 'routename' => $routename,
                 'modelname' => $item,
                 'title' => $routetitle,
-                'fieldNames' => Blade::render('
-            @foreach($fields as $field)
-            <th>{{$field}}</th>
-            @endforeach
-        ', compact('fields')),
+                // column headings as phrases ("Vat number"), translated by Lang/{locale}.json
+                'fieldNames' => implode("\n", array_map(fn ($field) => "                <th>{{ __('" . \Illuminate\Support\Str::headline($field) . "') }}</th>", $fields)),
                 'fieldValues' => $items,
             ])
             ->save();

@@ -6,12 +6,12 @@
     >
         <x-slot name="filters">
             <div class="col">
-                <x-rpd::input debounce="350" model="search"  placeholder="search..." />
+                <x-rpd::input debounce="350" model="search"  placeholder="Search..." />
             </div>
         </x-slot>
 
         <x-slot name="buttons">
-                <a href="{{ route('{{routename}}') }}" class="btn btn-outline-dark">Reset</a>
+                <a href="{{ route('{{routename}}') }}" class="btn btn-outline-dark">{{ __('Reset') }}</a>
                 <a data-ref="link-add" href="#"></a>
         </x-slot>
 
@@ -20,7 +20,7 @@
             <thead>
             <tr>
                 <th>
-                    <x-rpd::sort model="id" label="id" />
+                    <x-rpd::sort model="id" label="Id" />
                 </th>
                 {{fieldNames}}
             </tr>

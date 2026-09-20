@@ -82,7 +82,7 @@
 
                                 <hr>
 
-                                <div class="text-center mb-2">Login or Signup with</div>
+                                <div class="text-center mb-2">{{ __('Login or Signup with') }}</div>
                                 <div class="row g-1">
                                     <div class="col-12">
                                         <a style="border-color: #000; color: #000" class="w-100 small btn" href="{{ route_lang('google.redirect') }}"><i class="fab fa-google"></i> Google</a>

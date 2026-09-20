@@ -20,6 +20,9 @@
     $key = $attributes->get('name', $model ?? $wireModel);
     $id = $attributes->get('id', $model ?? $wireModel);
     $prefix = null;
+    if ($attributes->has('placeholder')) {   // a phrase, translated by Lang/{locale}.json
+        $attributes = $attributes->except('placeholder')->merge(['placeholder' => __($attributes->get('placeholder'))]);
+    }
     $attributes = $attributes->class([
         'form-control',
         'form-control-' . $size => $size,

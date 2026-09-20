@@ -6,9 +6,9 @@ $title = ${{ modelname }}->exists ? '{{ title_update }}' : '{{ title_create }}';
 
         <x-slot name="buttons">
             @if(${{ modelname }}->id)
-                <a href="{{ route('{{ routeparent_view }}', {{ routeparent_view_parameter }}) }}" class="btn btn-outline-dark">Back</a>
+                <a href="{{ route('{{ routeparent_view }}', {{ routeparent_view_parameter }}) }}" class="btn btn-outline-dark">{{ __('Back') }}</a>
             @else
-               <a href="{{ route('{{ routeparent_table }}') }}" class="btn btn-outline-dark">Back</a>
+               <a href="{{ route('{{ routeparent_table }}') }}" class="btn btn-outline-dark">{{ __('Back') }}</a>
             @endif
         </x-slot>
 
@@ -17,7 +17,7 @@ $title = ${{ modelname }}->exists ? '{{ title_update }}' : '{{ title_create }}';
         </div>
 
         <x-slot name="actions">
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
         </x-slot>
 
     </x-rpd::edit>

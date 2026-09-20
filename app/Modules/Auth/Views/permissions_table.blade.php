@@ -15,7 +15,7 @@
                 <th>
                     <x-rpd::sort model="role_id" label="role" />
                 </th>
-                <th>permissions</th>
+                <th>{{ __('permissions') }}</th>
             </tr>
             </thead>
             <tbody>

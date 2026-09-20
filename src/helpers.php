@@ -101,7 +101,7 @@ if (! function_exists('route_lang')) {
     function route_lang($name, $parameters = null, $absolute = true, $lang = null)
     {
         $current_lang = $lang ? $lang : app()->getLocale();
-        $default_lang = config('app.fallback_locale');
+        $default_lang = app(\Zofe\Rapyd\Localization\Locales::class)->default();
         $current_lang_slug = ($current_lang === $default_lang) ? '' : $current_lang;
 
         $link = route($name, $parameters, $absolute);
@@ -125,24 +125,26 @@ if (! function_exists('route_lang')) {
 if (! function_exists('url_lang')) {
     function url_lang($lang, $change = false)
     {
-        $default = config('app.fallback_locale');
+        $locales = app(\Zofe\Rapyd\Localization\Locales::class);
         $segments = request()->segments();
-        $firtsegment = request()->segment(1);
+        $firstSegment = request()->segment(1);
 
-        //first segment already contain $lang
-        if ($firtsegment === $lang) {
-            return url()->full();
-        }
-        //first segment is different lang, so remove it
-        if (in_array($firtsegment, config('app.locales'))) {
+        // the first segment is a language: drop it
+        if ($firstSegment && $locales->has($firstSegment)) {
             array_shift($segments);
         }
-        //requested $lang is not the default one, prepend $lang segment
-        if ($lang !== $default) {
+        // a language other than the default one is a first segment
+        if ($lang !== $locales->default()) {
             array_unshift($segments, $lang);
         }
 
-        return "/" . implode('/', $segments).($change?'?clang=1':'');
+        $query = request()->query();
+        unset($query[\Zofe\Rapyd\Localization\Locales::CHANGE_FLAG]);
+        if ($change) {
+            $query[\Zofe\Rapyd\Localization\Locales::CHANGE_FLAG] = 1;
+        }
+
+        return '/' . implode('/', $segments) . ($query ? '?' . http_build_query($query) : '');
     }
 }
 

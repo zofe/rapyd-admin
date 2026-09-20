@@ -23,6 +23,6 @@
             @endforeach
         </ul>
     @else
-        <p class="text-muted small mb-0">No users yet.</p>
+        <p class="text-muted small mb-0">{{ __('No users yet.') }}</p>
     @endif
 </div>

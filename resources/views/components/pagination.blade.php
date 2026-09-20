@@ -23,7 +23,7 @@
 
             @if($count)
                 <div class="form-inline d-flex justify-content-end text-right text-muted">
-                    {{ $count }} {{ $items->total() }}
+                    {{ __($count) }} {{ $items->total() }}
                 </div>
             @endif
         </div>

@@ -97,7 +97,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $items = "\n";
 
         foreach ($fields as $field) {
-            $items .= "       <x-rpd::input col=\"col-12\" model=\"$item.$field\" label=\"$field\" />\n";
+            $items .= "       <x-rpd::input col=\"col-12\" model=\"$item.$field\" label=\"" . \Illuminate\Support\Str::headline($field) . "\" />\n";
         }
 
         StubGenerator::from(__DIR__.'/Templates/resources/livewire/edit.blade.stub', true)

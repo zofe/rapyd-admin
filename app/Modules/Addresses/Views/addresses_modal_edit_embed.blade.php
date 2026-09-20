@@ -7,7 +7,7 @@
             <div class="row">
                 @if($lookupEnabled)
                     <div class="col-md-12 mb-2 position-relative" x-data="{ open: false }" @click.outside="open = false">
-                        <label class="form-label" for="address-lookup">Search address</label>
+                        <label class="form-label" for="address-lookup">{{ __('Search address') }}</label>
                         <input type="search" id="address-lookup" class="form-control" autocomplete="off"
                                placeholder="Type a street and a city…"
                                wire:model.live.debounce.400ms="lookup" @focus="open = true" @input="open = true">

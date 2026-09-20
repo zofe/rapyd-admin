@@ -1,5 +1,5 @@
 @if(Auth::user() && Auth::user()->hasRoleOrPermission('admin|view everything|edit everything|view users|edit users|view companies|edit companies|view own business|edit own business'))
-<x-rpd::nav-dropdown icon="user" label="Auth" active="/auth|/companies">
+<x-rpd::nav-dropdown icon="user" label="Access" active="/auth|/companies">
     @if(Auth::user()->hasRoleOrPermission('admin|view everything|edit everything|view users|edit users'))
         <x-rpd::nav-link label="Users" route="auth.users" type="collapse-item" />
     @endif

@@ -49,6 +49,9 @@
         $unstyled = false;
     }
 
+    if ($attributes->has('placeholder')) {   // a phrase, translated by Lang/{locale}.json
+        $attributes = $attributes->except('placeholder')->merge(['placeholder' => __($attributes->get('placeholder'))]);
+    }
     $attributes = $attributes->class($classArr)->merge([
         'type' => $type,
         'inputmode' => $inputmode,

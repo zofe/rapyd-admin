@@ -5,9 +5,9 @@
 
         <x-slot name="buttons">
             @if($company->exists)
-                <a href="{{ route_lang('companies.view', $company->id) }}" class="btn btn-outline-dark btn-sm">Back</a>
+                <a href="{{ route_lang('companies.view', $company->id) }}" class="btn btn-outline-dark btn-sm">{{ __('Back') }}</a>
             @else
-                <a href="{{ route_lang('companies.table') }}" class="btn btn-outline-dark btn-sm">Back</a>
+                <a href="{{ route_lang('companies.table') }}" class="btn btn-outline-dark btn-sm">{{ __('Back') }}</a>
             @endif
         </x-slot>
 
@@ -23,7 +23,7 @@
         </div>
 
         <x-slot name="actions">
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
         </x-slot>
 
     </x-rpd::edit>

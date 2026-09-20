@@ -22,6 +22,19 @@ return [
     */
     'theme' => env('RAPYD_THEME'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Languages
+    |--------------------------------------------------------------------------
+    | The enabled locales (RAPYD_LOCALES=en,it). The default one (rapyd.locale, from
+    | APP_LOCALE) has no URL prefix; the others are a first segment (/it/companies). Texts are
+    | translated with Lang/{locale}.json in every module (English phrase => translation);
+    | `php artisan rpd:lang it` collects the phrases and fills the file.
+    | One locale: no switcher, no redirects. See docs/LOCALIZATION.md.
+    */
+    'locale' => env('RAPYD_LOCALE', env('APP_LOCALE', 'en')),   // the default language (no URL prefix)
+    'locales' => array_values(array_filter(array_map('trim', explode(',', env('RAPYD_LOCALES', 'en'))))),
+
     // Per-visitor theme: a picker in the navbar and ?rapyd_theme=<name> (kept in the session)
     // switch between the bundled look and the registered themes. For demos and for trying themes side by side.
     'theme_switch' => env('RAPYD_THEME_SWITCH', false),

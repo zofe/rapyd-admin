@@ -20,7 +20,7 @@ app/Modules/Blog/
 ├── Views/               articles_table.blade.php … and menu.blade.php (the sidebar entry)
 ├── Models/              optional: models that belong to the module
 ├── Database/Migrations/ optional
-├── Lang/en/             optional: `__('blog::articles.title')`
+├── Lang/                optional: `it.json` (English phrase => translation), `en/messages.php` for `__('blog::messages.sent')`
 ├── config.php           layout, menu, permissions
 └── routes.php           full-page Livewire routes
 ```
@@ -88,6 +88,14 @@ What is generated is secure by default: routes behind `auth`, `Authorize` / `Lim
 `Authorizations/<Model>Auth.php` and a `Limits/<Model>Limit.php` that allow every record and are the place to restrict
 by company or user, uuid keys with `HasUuids` + `ShortId` (`--increments` for an integer id), `render()` on the layout
 of the module's `config.php`. What is left to you: the fields of the views, the `Limit` / `Authorization` rules, a test.
+
+## Languages
+
+Write the texts of the module in English, as phrases: `label="Business name"`, `{{ __('No users yet.') }}`. With
+`RAPYD_LOCALES=en,it` the pages answer at `/it/...` too, and `php artisan rpd:lang --module=Blog` collects the phrases
+into `app/Modules/Blog/Lang/it.json`, where you (or `--translate`, with ai-module) put the translations. Links keep
+the language of the page through `route_lang()` and the navigation components. Details in
+[LOCALIZATION.md](LOCALIZATION.md).
 
 ## Config: layout, menu, permissions
 

@@ -156,6 +156,7 @@ vendor/bin/phpunit            # in the package: PHPUnit + Orchestra Testbench, t
 - [docs/MODULES.md](docs/MODULES.md) — module structure, generators, config and menu, eject, Companies, Livewire 4 notes
 - [docs/AUTH.md](docs/AUTH.md) — Fortify, Google sign-in, roles and permissions, impersonation
 - [docs/THEMES.md](docs/THEMES.md) — the layout contract, design tokens, building a theme
+- [docs/LOCALIZATION.md](docs/LOCALIZATION.md) — languages: `RAPYD_LOCALES`, URL prefixes, `Lang/{locale}.json`, `rpd:lang`
 - [docs/AI.md](docs/AI.md) — `rpd:context`, AI error analysis, verification loop
 - [CHANGELOG.md](CHANGELOG.md)
 

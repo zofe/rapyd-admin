@@ -4,33 +4,33 @@
 
         <x-rpd::card title="Company Detail">
             <x-slot name="buttons">
-                <a href="{{ route_lang('companies.table') }}" class="btn btn-outline-dark btn-sm">Back</a>
-                <a href="{{ route_lang('companies.edit', $company->id) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                <a href="{{ route_lang('companies.table') }}" class="btn btn-outline-dark btn-sm">{{ __('Back') }}</a>
+                <a href="{{ route_lang('companies.edit', $company->id) }}" class="btn btn-outline-primary btn-sm">{{ __('Edit') }}</a>
             </x-slot>
 
             <dl class="row">
-                <dt class="col-4">Business Name</dt>
+                <dt class="col-4">{{ __('Business Name') }}</dt>
                 <dd class="col-8">{{ $company->business_name }}</dd>
 
-                <dt class="col-4">Email</dt>
+                <dt class="col-4">{{ __('Email') }}</dt>
                 <dd class="col-8">{{ $company->email }}</dd>
 
                 @if($company->vat)
-                    <dt class="col-4">VAT</dt>
+                    <dt class="col-4">{{ __('VAT') }}</dt>
                     <dd class="col-8">{{ $company->vat }}</dd>
                 @endif
 
                 @if($company->phone)
-                    <dt class="col-4">Phone</dt>
+                    <dt class="col-4">{{ __('Phone') }}</dt>
                     <dd class="col-8">{{ $company->phone }}</dd>
                 @endif
 
                 @if($company->tier)
-                    <dt class="col-4">Tier</dt>
+                    <dt class="col-4">{{ __('Tier') }}</dt>
                     <dd class="col-8"><span class="badge bg-secondary">{{ $company->tier }}</span></dd>
                 @endif
 
-                <dt class="col-4">Status</dt>
+                <dt class="col-4">{{ __('Status') }}</dt>
                 <dd class="col-8">
                     <span class="badge bg-{{ $company->status === 'active' ? 'success' : 'secondary' }}">
                         {{ $company->status }}
@@ -38,7 +38,7 @@
                 </dd>
 
                 @if($company->parentCompany)
-                    <dt class="col-4">Parent</dt>
+                    <dt class="col-4">{{ __('Parent') }}</dt>
                     <dd class="col-8">
                         <x-rpd::nav-link :label="$company->parentCompany->business_name" route="companies.view" :params="$company->parent_id" />
                     </dd>
@@ -51,8 +51,8 @@
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Status</th>
+                            <th>{{ __('Name') }}</th>
+                            <th>{{ __('Status') }}</th>
                             <th></th>
                         </tr>
                     </thead>

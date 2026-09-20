@@ -10,6 +10,7 @@ use Zofe\Rapyd\Commands\EjectCommand;
 use Zofe\Rapyd\Commands\InstallCommand;
 use Zofe\Rapyd\Commands\RapydAiCommand;
 use Zofe\Rapyd\Commands\RapydAiDevelopCommand;
+use Zofe\Rapyd\Commands\RapydLangCommand;
 use Zofe\Rapyd\Commands\RapydContextCommand;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
 use Zofe\Rapyd\Commands\RapydMakeEditCommand;
@@ -38,6 +39,11 @@ class RapydServiceProvider extends ServiceProvider
         if (! isset(\Illuminate\Support\Facades\Blade::getCustomDirectives()['aiWidget'])) {
             \Illuminate\Support\Facades\Blade::directive('aiWidget', fn () => '');
         }
+
+        // languages: the catalogue of the package (resources/lang/{locale}.json) and the middleware
+        // that sets the locale from the URL prefix, the session, the user (docs/LOCALIZATION.md)
+        $this->loadJsonTranslationsFrom(__DIR__ . '/../resources/lang');
+        $this->app->make(\Illuminate\Contracts\Http\Kernel::class)->appendMiddlewareToGroup('web', \Zofe\Rapyd\Localization\SetLocale::class);
 
         \Livewire\Livewire::resolveMissingComponent(function ($name) {
             $class = collect(explode('.', $name))
@@ -78,6 +84,7 @@ class RapydServiceProvider extends ServiceProvider
                 RapydMakeModelCommand::class,
                 RapydAiCommand::class,
                 RapydAiDevelopCommand::class,
+                RapydLangCommand::class,
             ]);
         }
 

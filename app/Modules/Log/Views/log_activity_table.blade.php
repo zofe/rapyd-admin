@@ -9,18 +9,18 @@
                 <x-rpd::input col="col" debounce="300" model="search" label="Search" placeholder="text..." />
             </x-slot>
             <x-slot name="buttons">
-                <a href="{{ route_lang('log.activity') }}" class="btn btn-outline-dark">Reset</a>
+                <a href="{{ route_lang('log.activity') }}" class="btn btn-outline-dark">{{ __('Reset') }}</a>
             </x-slot>
 
             <table class="table table-sm">
                 <thead>
                 <tr>
                     <th><x-rpd::sort model="created_at" label="When" /></th>
-                    <th>Author</th>
+                    <th>{{ __('Author') }}</th>
                     <th><x-rpd::sort model="log_name" label="Event" /></th>
-                    <th>Description</th>
-                    <th>Subject</th>
-                    <th>Changes</th>
+                    <th>{{ __('Description') }}</th>
+                    <th>{{ __('Subject') }}</th>
+                    <th>{{ __('Changes') }}</th>
                 </tr>
                 </thead>
                 <tbody>

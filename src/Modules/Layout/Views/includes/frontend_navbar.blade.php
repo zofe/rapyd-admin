@@ -54,6 +54,7 @@
 
                 @include('layout::includes.theme_switcher')
                 @include('layout::includes.theme_picker')
+                @include('layout::includes.locale_switcher')
             </ul>
 
         </div>

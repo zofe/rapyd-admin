@@ -23,16 +23,16 @@
                 <x-rpd::input col="col" debounce="300" model="search" placeholder="search..." />
             </x-slot>
             <x-slot name="buttons">
-                <a href="{{ route_lang('log.app') }}" class="btn btn-outline-dark">Reset</a>
+                <a href="{{ route_lang('log.app') }}" class="btn btn-outline-dark">{{ __('Reset') }}</a>
             </x-slot>
 
             <table class="table table-sm">
                 <thead>
                 <tr>
-                    <th>Level</th>
-                    <th>Date</th>
-                    <th>Context</th>
-                    <th>Message</th>
+                    <th>{{ __('Level') }}</th>
+                    <th>{{ __('Date') }}</th>
+                    <th>{{ __('Context') }}</th>
+                    <th>{{ __('Message') }}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -64,7 +64,7 @@
             <p class="small fw-bold text-break">{{ $stack['text'] }}</p>
             <pre class="small" style="max-height: 55vh; overflow: auto; white-space: pre-wrap;">{{ $stack['stack'] }}</pre>
             <button type="button" class="btn btn-outline-secondary btn-sm"
-                    x-on:click="navigator.clipboard.writeText($el.parentElement.querySelector('pre').textContent).then(() => { $el.textContent = 'Copied'; setTimeout(() => $el.textContent = 'Copy', 1500); })">Copy</button>
+                    x-on:click="navigator.clipboard.writeText($el.parentElement.querySelector('pre').textContent).then(() => { $el.textContent = 'Copied'; setTimeout(() => $el.textContent = 'Copy', 1500); })">{{ __('Copy') }}</button>
         @endif
     </x-rpd::modal>
 </div>

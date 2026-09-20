@@ -25,5 +25,5 @@
             <button type="button" class="btn btn-outline-secondary" @click.prevent="remove(i)" aria-label="Remove"><i class="fas fa-times"></i></button>
         </div>
     </template>
-    <button type="button" class="btn btn-outline-primary btn-sm" @click.prevent="add()"><i class="fas fa-plus me-1"></i>Add</button>
+    <button type="button" class="btn btn-outline-primary btn-sm" @click.prevent="add()"><i class="fas fa-plus me-1"></i>{{ __('Add') }}</button>
 </div>

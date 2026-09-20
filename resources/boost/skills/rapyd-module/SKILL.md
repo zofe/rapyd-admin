@@ -24,7 +24,7 @@ app/Modules/Blog/
 ├── Authorizations/      ArticleAuth.php: record-level check, called by authorize('…', $article)
 ├── Limits/              ArticleLimit.php: data scoping (global scopes per user), called by limit()
 ├── Database/Migrations/ optional
-├── Lang/en/             optional, `__('blog::articles.title')`
+├── Lang/                optional: `it.json` (English phrase => translation, `rpd:lang --module=Blog` fills it), `en/messages.php` for `__('blog::messages.sent')`
 ├── config.php           layout, menu entry, permissions
 ├── routes.php           full-page routes with breadcrumbs
 └── workflow.php         optional, state machines (rapyd-workflow skill)
@@ -202,3 +202,5 @@ New permissions exist once `php artisan db:seed --class="Zofe\Rapyd\Modules\Auth
 - Do not put a `status` column and update it by hand: that is a workflow.
 - Do not scope queries by company in every component: `$this->limit()` applies the registered scopes.
 - Do not generate a new model without `--fields`: the table would have no columns and the form no fields.
+- Do not write texts in another language or as keys: English phrases in the views (`label="Business name"`,
+  `{{ __('No users yet.') }}`), then `php artisan rpd:lang --module=Name` and the translations in `Lang/{locale}.json`.

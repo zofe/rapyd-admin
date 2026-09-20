@@ -3,9 +3,11 @@
 namespace Zofe\Rapyd\Modules;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use Zofe\Rapyd\Localization\Locales;
 
 abstract class RapydModuleServiceProvider extends ServiceProvider
 {
@@ -102,9 +104,11 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
         }
         if (is_dir($this->appModulePath('Lang'))) {
             $this->loadTranslationsFrom($this->appModulePath('Lang'), $namespace);
+            $this->loadJsonTranslationsFrom($this->appModulePath('Lang'));   // Lang/{locale}.json
         }
         if (file_exists($this->appModulePath('routes.php'))) {
-            $this->loadRoutesFrom($this->appModulePath('routes.php'));
+            // the same language prefix app modules get (/it/...): route names stay the same in every language
+            Route::prefix(app(Locales::class)->routePrefix())->group($this->appModulePath('routes.php'));
         }
         if ($this->modulePath && file_exists($this->appModulePath('workflow.php'))) {
             $this->registerWorkflowDefinitions($this->appModulePath('workflow.php'));

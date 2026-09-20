@@ -2,7 +2,7 @@
 
     <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <div class="mr-2 d-none d-lg-inline">
-            <div class="px-2"><span class="small text-gray-500">logged as &nbsp;</span> {{ Auth::user()->name }}</div>
+            <div class="px-2"><span class="small text-gray-500">{{ __('logged as') }} &nbsp;</span> {{ Auth::user()->name }}</div>
             @if(Auth::user()->company ?? null)
                 <div class="text-center mt-n2"><small><em>{{ Auth::user()->company->business_name }}</em></small></div>
             @endif

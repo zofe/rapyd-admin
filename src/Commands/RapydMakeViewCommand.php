@@ -80,7 +80,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         //view
         $items = '';
         foreach ($fields as $field) {
-            $items .= "    <dt class=\"col-5\">$field</dt>\n";
+            $items .= "    <dt class=\"col-5\">{{ __('" . \Illuminate\Support\Str::headline($field) . "') }}</dt>\n";
             $items .= "               <dd class=\"col-7\">{{ \${$item}->{$field} }}</dd>\n";
         }
 

@@ -121,11 +121,6 @@ class AuthModuleServiceProvider extends RapydModuleServiceProvider
 
     protected function detectLangPrefix(): string
     {
-        $locale = request()->segment(1);
-        if (config('app.locales') && in_array($locale, config('app.locales', []))) {
-            return ($locale !== config('app.fallback_locale')) ? $locale : '';
-        }
-
-        return '';
+        return app(\Zofe\Rapyd\Localization\Locales::class)->routePrefix();
     }
 }

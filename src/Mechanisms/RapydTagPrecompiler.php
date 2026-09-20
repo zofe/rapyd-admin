@@ -60,7 +60,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
             $content = $matches[1];
             $viewId = $this->routeParameter($content);
             if (count($params) && isset($params['route'])) {
-                return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">Edit</a>';
+                return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">{{ __(\'Edit\') }}</a>';
             }
 
             return $matches[0];
@@ -71,7 +71,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
     {
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
             if (count($params) && isset($params['route'])) {
-                return '<a href="{{ route_lang(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">Add</a>';
+                return '<a href="{{ route_lang(\'' . $params['route'] . '\') }}" class="btn btn-outline-primary">{{ __(\'Add\') }}</a>';
             }
 
             return $matches[0];

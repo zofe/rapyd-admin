@@ -2,7 +2,7 @@
     <x-rpd::view title="{{ title_detail }}">
 
         <x-slot name="buttons">
-            <a href="{{ route('{{ routeparent }}') }}" class="btn btn-outline-dark">Back</a>
+            <a href="{{ route('{{ routeparent }}') }}" class="btn btn-outline-dark">{{ __('Back') }}</a>
 
             <a data-ref="link-edit" href="#">{{ ${{modelname}}->id }}</a>
         </x-slot>

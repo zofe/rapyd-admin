@@ -37,7 +37,7 @@
             </div>
             <x-slot name="actions">
 
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
             </x-slot>
         </x-rpd::edit>
 

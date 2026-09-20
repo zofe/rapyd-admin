@@ -35,19 +35,7 @@ class AuthServiceProvider extends ServiceProvider
 
         }
 
-        $lang_prefix = '';
-        $locale = request()->segment(1);
-
-        if (config('app.locales') && in_array($locale, config('app.locales'))) {
-            $lang_prefix = ($locale !== config('app.fallback_locale')) ? $locale : '';
-
-            if ($lang_prefix) {
-                session(['lang_prefix' => $lang_prefix]);
-            }
-            app()->setlocale($locale);
-        }
-
-
+        $lang_prefix = app(\Zofe\Rapyd\Localization\Locales::class)->routePrefix();
 
         Route::group([
             'namespace' => 'Laravel\Fortify\Http\Controllers',

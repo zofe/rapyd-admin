@@ -8,7 +8,7 @@
             <div>
                 <div class="row mb-1">
                     <div class="col-6">
-                        <label class="col-form-label">Role</label>
+                        <label class="col-form-label">{{ __('Role') }}</label>
                         <div class="text-dark text-ucfirst">{{ $role->name }}</div>
                     </div>
                 </div>
@@ -20,7 +20,7 @@
             </div>
             <x-slot name="actions">
 
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">{{ __('Save') }}</button>
             </x-slot>
         </x-rpd::edit>
 
