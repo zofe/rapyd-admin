@@ -18,7 +18,7 @@ class AiReadinessTest extends TestCase
     {
         parent::setUp();
         $this->appDir = sys_get_temp_dir() . '/rapyd-readiness-' . uniqid();
-        File::ensureDirectoryExists($this->appDir . '/app/Modules');
+        File::ensureDirectoryExists($this->appDir);   // no app/Modules yet, like a fresh application
     }
 
     protected function tearDown(): void

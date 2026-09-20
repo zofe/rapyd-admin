@@ -180,7 +180,8 @@ class AiReadiness
     public function modules(): array
     {
         $rows = [];
-        foreach (File::directories("{$this->root}/app/Modules") as $dir) {
+        $modules = is_dir("{$this->root}/app/Modules") ? File::directories("{$this->root}/app/Modules") : [];
+        foreach ($modules as $dir) {
             $name = basename($dir);
             $components = File::glob("{$dir}/Livewire/*.php");
             $fullPage = $unprotected = [];

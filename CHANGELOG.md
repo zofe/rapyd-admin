@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.15.1] - 2026-09-20
+
+### Fixed
+
+- `AiReadiness` (and `rpd:ai:status`) failed in an application without `app/Modules` yet.
+
 ## [9.15.0] - 2026-09-20
 
 ### Added
