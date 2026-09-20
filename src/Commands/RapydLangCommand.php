@@ -58,8 +58,10 @@ class RapydLangCommand extends Command
 
             foreach ($wanted as $locale) {
                 $catalogue = new Catalogue($langDir, $locale);
-                $added = $catalogue->add($scan['phrases']);
-                $stale = $catalogue->stale($scan['phrases']);
+                // phrases the package already translates (Back, Save, Status…) need no line in a module's file
+                $own = array_values(array_diff($scan['phrases'], $this->inherited($locale, $langDir)));
+                $added = $catalogue->add($own);
+                $stale = $catalogue->stale($own);
                 if ($stale && $this->option('prune')) {
                     $catalogue->remove($stale);
                 }
@@ -117,6 +119,24 @@ class RapydLangCommand extends Command
         $targets['application'] = [base_path(), base_path('lang'), ['app/Livewire', 'app/View', 'resources/views']];
 
         return $targets;
+    }
+
+    /**
+     * The phrases the package's own catalogue (resources/lang/{locale}.json) translates already:
+     * a module or an application does not repeat them. Nothing is inherited when the package
+     * catalogue itself is the target.
+     *
+     * @return list<string>
+     */
+    protected function inherited(string $locale, string $langDir): array
+    {
+        $own = dirname(__DIR__, 2) . '/resources/lang';
+        if (realpath($langDir) === realpath($own)) {
+            return [];
+        }
+        $file = "{$own}/{$locale}.json";
+
+        return is_file($file) ? array_keys(json_decode(File::get($file), true) ?: []) : [];
     }
 
     /** The pending phrases through the AI of the application (ai-module), in batches. */

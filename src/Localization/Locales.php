@@ -88,18 +88,17 @@ class Locales
         return $locale ? $this->prefix($locale) : '';
     }
 
-    /** The best match of the browser's Accept-Language among the enabled locales. */
+    /**
+     * The best match of the browser's Accept-Language among the enabled locales (quality
+     * order, regions such as pt-BR handled by Symfony); the default one when nothing
+     * matches, null when the browser sends no preference.
+     */
     public function fromBrowser(Request $request): ?string
     {
-        foreach ($request->getLanguages() as $language) {
-            $language = str_replace('-', '_', $language);
-            foreach ([$language, substr($language, 0, 2)] as $candidate) {
-                if ($this->has($candidate)) {
-                    return $candidate;
-                }
-            }
+        if (! $request->headers->has('Accept-Language')) {
+            return null;
         }
 
-        return null;
+        return $request->getPreferredLanguage($this->all());
     }
 }

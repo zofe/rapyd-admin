@@ -42,13 +42,13 @@ class RapydLangCommandTest extends TestCase
             ->expectsOutputToContain('4 phrases, 1 raw texts')
             ->expectsOutputToContain('Add')
             ->expectsOutputToContain('rename')   // "User" is also Lang/en/user.php
-            ->expectsOutputToContain('4 added, 4 pending')
+            ->expectsOutputToContain('3 added, 3 pending')   // "Reset" is translated by the package: inherited
             ->assertSuccessful();
 
         $json = json_decode(File::get("{$this->module}/Lang/it.json"), true);
-        $this->assertSame(['Articles' => 'Articles', 'Reset' => 'Reset', 'Title' => 'Title', 'User' => 'User'], $json);
+        $this->assertSame(['Articles' => 'Articles', 'Title' => 'Title', 'User' => 'User'], $json);
         $sidecar = json_decode(File::get("{$this->module}/Lang/" . Catalogue::SIDECAR), true);
-        $this->assertSame(['Articles', 'Reset', 'Title', 'User'], $sidecar['it']['pending']);
+        $this->assertSame(['Articles', 'Title', 'User'], $sidecar['it']['pending']);
     }
 
     public function test_check_fails_while_phrases_are_pending_and_passes_once_translated()
@@ -56,7 +56,7 @@ class RapydLangCommandTest extends TestCase
         $this->artisan('rpd:lang', ['locale' => ['it'], '--path' => $this->module, '--check' => true])->assertFailed();
 
         $catalogue = new Catalogue("{$this->module}/Lang", 'it');
-        $catalogue->fill(['Articles' => 'Articoli', 'Reset' => 'Azzera', 'Title' => 'Titolo', 'User' => 'Utente']);
+        $catalogue->fill(['Articles' => 'Articoli', 'Title' => 'Titolo', 'User' => 'Utente']);
         $catalogue->save();
         $this->assertFileDoesNotExist("{$this->module}/Lang/" . Catalogue::SIDECAR, 'nothing pending, no sidecar');
 

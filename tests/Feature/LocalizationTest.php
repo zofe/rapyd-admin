@@ -44,7 +44,11 @@ class LocalizationTest extends TestCase
         $this->assertNull($locales->fromRequest(Request::create('/de/companies')), 'not enabled');
         $this->assertSame('Italiano', $locales->name('it'));
         $this->assertSame('fr', $locales->fromBrowser(Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'fr-FR,fr;q=0.9,de;q=0.5'])));
-        $this->assertNull($locales->fromBrowser(Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'de-DE'])));
+        $this->assertSame('it', $locales->fromBrowser(Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'de-DE,it-IT;q=0.8,en;q=0.5'])), 'quality order');
+        $this->assertSame('en', $locales->fromBrowser(Request::create('/', 'GET', [], [], [], ['HTTP_ACCEPT_LANGUAGE' => 'de-DE'])), 'nothing enabled matches: the default');
+        $silent = Request::create('/');
+        $silent->headers->remove('Accept-Language');   // Request::create() sends en-us by default
+        $this->assertNull($locales->fromBrowser($silent), 'no preference sent');
     }
 
     public function test_one_locale_means_nothing_is_enabled()

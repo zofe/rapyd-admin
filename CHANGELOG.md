@@ -2,6 +2,15 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.17.2] - 2026-09-21
+
+### Changed
+
+- `rpd:lang` does not add to a module's catalogue the phrases the package already translates (Back, Save, Status…):
+  they are inherited from `resources/lang/{locale}.json`.
+- The browser's language is matched with Symfony's `getPreferredLanguage()` (quality order, regions such as
+  `pt-BR`); nothing enabled matching means the default language, no redirect.
+
 ## [9.17.1] - 2026-09-21
 
 ### Fixed
