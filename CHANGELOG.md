@@ -2,6 +2,14 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.17.1] - 2026-09-21
+
+### Fixed
+
+- `rpd:lang` reads a module's `routes.php` too (breadcrumb labels) and the static attributes of an `x-rpd::`
+  component placed after a bound one (`:params="$article->id"` ended the tag).
+- Menu entries are no longer forced to Title Case (`text-capitalize`): translated labels keep their own casing.
+
 ## [9.17.0] - 2026-09-21
 
 ### Added

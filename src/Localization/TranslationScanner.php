@@ -54,9 +54,10 @@ class TranslationScanner
                 $found[] = $phrase;
             }
         }
-        // static attributes of x-rpd:: components: label="…", title='…' (not :label="…")
+        // static attributes of x-rpd:: components: label="…", title='…' (not :label="…");
+        // the "->" of a bound attribute (:params="$article->id") must not end the tag
         $attrs = implode('|', self::ATTRIBUTES);
-        preg_match_all('/<x-rpd::[a-z\-]+\b[^>]*?>/s', $content, $tags);
+        preg_match_all('/<x-rpd::[a-z\-]+\b[^>]*?>/s', str_replace(['->', '=>'], '  ', $content), $tags);
         foreach ($tags[0] as $tag) {
             preg_match_all('/(?<![:\w\-])(' . $attrs . ')=(["\'])(.*?)\2/s', $tag, $a);
             foreach ($a[3] as $value) {
@@ -131,8 +132,11 @@ class TranslationScanner
     /** @return list<string> */
     protected function files(string $root, array $only): array
     {
-        $dirs = $only ?: ['Views', 'Livewire', 'Components', 'resources/views', 'app', 'src'];
+        $dirs = $only ?: ['Views', 'Livewire', 'Components', 'resources/views', 'app', 'src', 'routes'];
         $files = [];
+        if (! $only && is_file(rtrim($root, '/') . '/routes.php')) {   // a module's routes: breadcrumb labels
+            $files[rtrim($root, '/') . '/routes.php'] = true;
+        }
         foreach ($dirs as $dir) {
             $path = rtrim($root, '/') . '/' . $dir;
             if (! is_dir($path)) {

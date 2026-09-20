@@ -30,5 +30,5 @@
 @endphp
 <a {{ $attributes }}>
     <x-rpd::icon :name="$icon"/>
-    <span class="text-capitalize pt-1">{{ __($label) ?? $slot }}</span>
+    <span class="pt-1">{{ __($label) ?? $slot }}</span>
 </a>
