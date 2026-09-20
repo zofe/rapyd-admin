@@ -57,9 +57,7 @@ class RapydMakeModelCommand extends Command
             }
             File::put($migrationFile, $migrationContent);
         }
-        if (! $this->option('increments')) {
-            $this->useUuids(base_path("app/Models/{$modelName}.php"));
-        }
+        $this->decorateModel(base_path("app/Models/{$modelName}.php"), $fields, ! $this->option('increments'));
 
         if ($this->module) {
             $migrationName = basename($migrationFile);
@@ -85,16 +83,29 @@ class RapydMakeModelCommand extends Command
         return self::SUCCESS;
     }
 
-    /** HasUuids (ordered uuid keys) and ShortId (8-char label for lists) on the model Laravel just wrote. */
-    protected function useUuids(string $modelFile): void
+    /**
+     * The model Laravel just wrote gets what every Rapyd model has: HasUuids (ordered uuid keys) and
+     * ShortId (8-char label for lists) unless integer ids were asked, and $fillable from the columns.
+     */
+    protected function decorateModel(string $modelFile, array $fields, bool $uuid): void
     {
         $content = File::get($modelFile);
-        $content = str_replace(
-            "use Illuminate\\Database\\Eloquent\\Model;\n",
-            "use Illuminate\\Database\\Eloquent\\Concerns\\HasUuids;\nuse Illuminate\\Database\\Eloquent\\Model;\nuse Zofe\\Rapyd\\Traits\\ShortId;\n",
-            $content
-        );
-        $content = preg_replace('/(class \w+ extends Model\s*\{\n)/', "$1    use HasUuids;\n    use ShortId;\n", $content, 1);
+        $body = '';
+        if ($uuid) {
+            $content = str_replace(
+                "use Illuminate\\Database\\Eloquent\\Model;\n",
+                "use Illuminate\\Database\\Eloquent\\Concerns\\HasUuids;\nuse Illuminate\\Database\\Eloquent\\Model;\nuse Zofe\\Rapyd\\Traits\\ShortId;\n",
+                $content
+            );
+            $body .= "    use HasUuids;\n    use ShortId;\n";
+        }
+        if ($fields) {
+            $names = implode(', ', array_map(fn ($f) => "'{$f['fieldName']}'", $fields));
+            $body .= ($body ? "\n" : '') . "    protected \$fillable = [{$names}];\n";
+        }
+        if ($body) {
+            $content = preg_replace('/(class \\w+ extends Model\\s*\\{\\n)(\\s*\\/\\/\\n)?/', '$1' . $body, $content, 1);
+        }
         File::put($modelFile, $content);
     }
 

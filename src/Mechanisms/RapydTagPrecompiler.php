@@ -27,11 +27,24 @@ class RapydTagPrecompiler extends ComponentTagCompiler
         return $value;
     }
 
+    /**
+     * The route parameter of a generated link: the key of the model variable found in the label
+     * ("{{ $supplier->shortId }}" links with $supplier->id), so the label can be anything.
+     */
+    protected function routeParameter(string $content): string
+    {
+        if (preg_match('/\$\w+/', $content, $m)) {
+            return $m[0] . '->id';
+        }
+
+        return str_replace(['{{', '}}'], '', $content);
+    }
+
     protected function replaceLinkViewTags($value, $pattern, $params = [])
     {
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
             $content = $matches[1];
-            $viewId = str_replace(['{{', '}}'], '', $content);
+            $viewId = $this->routeParameter($content);
             if (count($params) && isset($params['route'])) {
 
                 return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}">' . $content . '</a>';
@@ -45,7 +58,7 @@ class RapydTagPrecompiler extends ComponentTagCompiler
     {
         return preg_replace_callback($pattern, function (array $matches) use ($params) {
             $content = $matches[1];
-            $viewId = str_replace(['{{', '}}'], '', $content);
+            $viewId = $this->routeParameter($content);
             if (count($params) && isset($params['route'])) {
                 return '<a href="{{ route_lang(\'' . $params['route'] . '\','.$viewId.') }}" class="btn btn-outline-primary">Edit</a>';
             }

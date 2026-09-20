@@ -31,6 +31,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ### Fixed
 
+- Generated links (`link-view`, `link-edit`) used the label as route parameter: with `shortId` labels the detail URL
+  was wrong. The parameter is now the model key, whatever the label. New models get `$fillable` from `--fields`.
 - `rpd:make` with a missing model failed (`RapydMakeBaseCommand::createModel()` had a half-written statement and
   Composer caches the miss of the class); module config, menu, views and routes were written relative to the current
   directory instead of `base_path()`.

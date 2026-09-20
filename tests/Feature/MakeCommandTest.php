@@ -2,8 +2,13 @@
 
 namespace Zofe\Rapyd\Tests\Feature;
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
+use Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder;
+use Zofe\Rapyd\Tests\Models\User;
 use Zofe\Rapyd\Tests\TestCase;
 
 /**
@@ -13,6 +18,8 @@ use Zofe\Rapyd\Tests\TestCase;
  */
 class MakeCommandTest extends TestCase
 {
+    use DatabaseMigrations;
+
     protected string $base;
 
     protected function setUp(): void
@@ -90,13 +97,57 @@ class MakeCommandTest extends TestCase
         $config = File::get("{$module}/config.php");
         $this->assertStringContainsString("'permissions' => ['view suppliers', 'edit suppliers']", $config);
         $this->assertStringContainsString("'operator' => ['view suppliers', 'edit suppliers']", $config);
-        $this->assertContains('view suppliers', config('auth.permissions'), 'merged into auth.permissions (seeded when the permissions table exists)');
+        $this->assertContains('view suppliers', config('auth.permissions'), 'merged into auth.permissions');
         $this->assertContains('edit suppliers', config('auth.role_permissions.operator'));
+        $this->assertTrue(\Spatie\Permission\Models\Permission::where('name', 'view suppliers')->exists(), 'seeded at generation');
         $this->assertStringContainsString('route="suppliers.table"', File::get("{$module}/Views/menu.blade.php"));
 
         $this->assertStringContainsString('public static string $model = Supplier::class;', File::get("{$module}/Authorizations/SupplierAuth.php"));
         $this->assertStringContainsString('public static function limit(', File::get("{$module}/Limits/SupplierLimit.php"));
         $this->assertStringContainsString('namespace App\Modules\Suppliers\Limits;', File::get("{$module}/Limits/SupplierLimit.php"));
+    }
+
+    /**
+     * The generated pages, served: the module was created after boot, so its views and routes are
+     * registered here by hand (the module loader does it at the next boot).
+     */
+    public function test_the_generated_pages_are_served_only_to_users_with_the_permission()
+    {
+        $this->seed(AuthSeeder::class);
+        $this->artisan('rpd:make', [
+            'component' => 'all', 'model' => 'Vendor', '--module' => 'Vendors',
+            '--fields' => 'name,vat_number', '--no-interaction' => true,
+        ])->assertSuccessful();
+
+        $module = $this->base . '/app/Modules/Vendors';
+        View::addNamespace('vendors', "{$module}/Views");
+        Route::get('/', fn () => '')->name('home')->crumbs(fn ($crumbs) => $crumbs->push('Home', '/'));   // the app home, parent of the generated breadcrumbs
+        Route::group([], "{$module}/routes.php");
+
+        $vendor = \App\Modules\Vendors\Models\Vendor::create(['name' => 'ACME Srl', 'vat_number' => 'IT01234567890']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f-]{36}$/', $vendor->id, 'uuid key');
+
+        $this->get('/vendors/table')->assertRedirect('/login');
+        $this->get("/vendors/view/{$vendor->id}")->assertRedirect('/login');
+
+        $admin = User::where('email', 'admin@laravel')->firstOrFail();
+        $this->actingAs($admin)->get('/vendors/table')
+            ->assertOk()
+            ->assertSee($vendor->shortId)
+            ->assertSee("/vendors/view/{$vendor->id}", false)
+            ->assertDontSee("/vendors/view/{$vendor->shortId}", false);
+        $this->actingAs($admin)->get("/vendors/view/{$vendor->id}")->assertOk()->assertSee('ACME Srl');
+        $this->actingAs($admin)->get("/vendors/edit/{$vendor->id}")->assertOk();
+
+        $operator = User::create(['name' => 'Anna', 'email' => 'anna@example.com', 'password' => 'secret']);
+        $operator->assignRole('operator');
+        $this->actingAs($operator)->get('/vendors/table')->assertOk()->assertSee('ACME Srl');
+        $this->actingAs($operator)->get("/vendors/edit/{$vendor->id}")->assertOk();
+
+        $customer = User::create(['name' => 'Bob', 'email' => 'bob@example.com', 'password' => 'secret']);
+        $customer->assignRole('customer');
+        $this->actingAs($customer)->get('/vendors/table')->assertForbidden();
+        $this->actingAs($customer)->get("/vendors/view/{$vendor->id}")->assertForbidden();
     }
 
     public function test_a_second_model_adds_its_permissions_to_the_module_config()
