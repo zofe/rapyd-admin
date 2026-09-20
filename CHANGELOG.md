@@ -2,6 +2,17 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.17.4] - 2026-09-21
+
+### Changed
+
+- "form" stays "form" in every catalogue: the translated words were not understood.
+- `rapyd.layout.brand_route` (`RAPYD_BRAND_ROUTE`): where the brand of the admin sidebar / navbar links, a route
+  name or a URL (a public demo site sends visitors to `demo` instead of the login); `rapyd_brand_url()` for the
+  themes. Default unchanged: `admin.home`, then `home`, then the root, in the language of the page.
+- `docs/LOCALIZATION.md`: the application's own routes (`routes/web.php`) must be wrapped in
+  `Route::prefix(app(Locales::class)->routePrefix())` to answer in every language.
+
 ## [9.17.3] - 2026-09-21
 
 ### Added

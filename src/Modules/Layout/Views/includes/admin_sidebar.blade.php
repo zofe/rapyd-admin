@@ -1,8 +1,8 @@
 <ul class="navbar-nav bg-sidebar sidebar accordion" id="accordionSidebar">
 
     @php
-        // Routes are optional for a theme: always guard them with Route::has().
-        $homeRoute = Route::has('admin.home') ? route('admin.home') : (Route::has('home') ? route('home') : url('/'));
+        // config rapyd.layout.brand_route, or admin.home / home / the root (routes are optional for a theme)
+        $homeRoute = rapyd_brand_url();
     @endphp
 
     <a class="sidebar-brand d-flex align-items-center justify-content-center" style="overflow: hidden;" href="{{ $homeRoute }}">

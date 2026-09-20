@@ -48,6 +48,7 @@ return [
         'favicon'      => env('RAPYD_FAVICON', 'img/favicon.png'),
         'custom_css'   => env('RAPYD_CUSTOM_CSS'),     // extra stylesheet url loaded after the theme
         'auth_links'   => env('RAPYD_AUTH_LINKS', true), // Login / Register links in the navbars (the routes stay)
+        'brand_route'  => env('RAPYD_BRAND_ROUTE'),     // where the sidebar brand links: a route name or a URL; null → admin.home, home, /
 
         // Runtime palette: any CSS colour, applied without recompiling the theme
         // (see docs/THEMES.md, "Design tokens"). Null = the theme's own colour.

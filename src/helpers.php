@@ -97,6 +97,28 @@ if (! function_exists('path_module')) {
  * @param null $lang
  * @return string
  */
+/**
+ * Where the brand of the admin sidebar / navbar links to: config rapyd.layout.brand_route
+ * (a route name or a URL, e.g. "demo" on a public demo site) or, by default, the admin home,
+ * the home, the root. In the language of the page. Themes use it too.
+ */
+if (! function_exists('rapyd_brand_url')) {
+    function rapyd_brand_url(): string
+    {
+        $target = config('rapyd.layout.brand_route');
+        if ($target) {
+            return \Illuminate\Support\Facades\Route::has($target) ? route_lang($target) : url($target);
+        }
+        foreach (['admin.home', 'home'] as $name) {
+            if (\Illuminate\Support\Facades\Route::has($name)) {
+                return route_lang($name);
+            }
+        }
+
+        return url('/');
+    }
+}
+
 if (! function_exists('route_lang')) {
     function route_lang($name, $parameters = null, $absolute = true, $lang = null)
     {

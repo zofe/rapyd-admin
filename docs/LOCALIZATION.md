@@ -28,6 +28,20 @@ the same in every language and the breadcrumbs, the menus and the components nee
 gives the current page in another language: it is what the switcher (`layout::includes.locale_switcher`, in both
 navbars) links to.
 
+### The application's own routes
+
+Module routes get the prefix by themselves. The routes of the application (`routes/web.php`: the home page, a
+landing…) are Laravel's, so wrap them the same way, or `/it/` is a 404 while `/it/companies` works:
+
+```php
+use Zofe\Rapyd\Localization\Locales;
+
+Route::prefix(app(Locales::class)->routePrefix())->group(function () {
+    Route::get('/', Home::class)->middleware(['web'])->name('home')
+        ->crumbs(fn ($crumbs) => $crumbs->push(__('Home'), route_lang('home')));
+});
+```
+
 ## Translating the texts
 
 Texts are English phrases, written as they are in the views; a `Lang/{locale}.json` file next to them maps each
