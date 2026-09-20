@@ -2,6 +2,12 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.17.5] - 2026-09-21
+
+### Fixed
+
+- A phrase translated by hand in a `.json` catalogue is no longer listed as pending by `rpd:lang`.
+
 ## [9.17.4] - 2026-09-21
 
 ### Changed

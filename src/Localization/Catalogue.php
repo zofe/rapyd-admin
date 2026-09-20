@@ -26,7 +26,8 @@ class Catalogue
             $this->translations = json_decode(File::get($this->file()), true) ?: [];
         }
         $meta = $this->sidecar()[$locale] ?? [];
-        $this->pending = array_values(array_intersect($meta['pending'] ?? [], array_keys($this->translations)));
+        // a phrase translated by hand in the .json (value no longer the phrase) is not pending any more
+        $this->pending = array_values(array_filter($meta['pending'] ?? [], fn ($p) => ($this->translations[$p] ?? null) === $p));
         $this->machine = array_values(array_intersect($meta['machine'] ?? [], array_keys($this->translations)));
     }
 
