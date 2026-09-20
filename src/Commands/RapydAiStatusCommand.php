@@ -46,8 +46,15 @@ class RapydAiStatusCommand extends Command
         $this->components->twoColumnDetail('<options=bold>Application modules</>', "{$report['summary']['modules_protected']} / {$report['summary']['modules_total']} with every page authorized");
         foreach ($report['modules'] as $m) {
             $status = $m['unprotected'] ? '<error>✘</error>' : '<info>✔</info>';
-            $detail = sprintf('%d pages, %d workflows, %d permissions, %d auth, %d limits, %d tests',
-                $m['pages'], count($m['workflows']), count($m['permissions']), $m['authorizations'], $m['limits'], $m['tests']);
+            $detail = sprintf(
+                '%d pages, %d workflows, %d permissions, %d auth, %d limits, %d tests',
+                $m['pages'],
+                count($m['workflows']),
+                count($m['permissions']),
+                $m['authorizations'],
+                $m['limits'],
+                $m['tests']
+            );
             $this->components->twoColumnDetail("{$status} {$m['name']}", $detail);
             if ($m['unprotected']) {
                 $this->components->twoColumnDetail('    without Authorize', '<comment>' . implode(', ', $m['unprotected']) . '</comment>');

@@ -74,11 +74,21 @@ class AiReadiness
             $current = $this->normalize($this->guideline());
             $installed = $this->normalize($where === 'AGENTS.md' ? $agents : $claude);
             $upToDate = $current !== '' && str_contains($installed, $current);
-            $rows[] = $this->row('guideline', 'Rapyd Admin guideline', $upToDate ? 'ok' : 'warn',
-                $upToDate ? "in {$where}, current" : "in {$where}, older than the installed package", $upToDate ? null : $refresh);
+            $rows[] = $this->row(
+                'guideline',
+                'Rapyd Admin guideline',
+                $upToDate ? 'ok' : 'warn',
+                $upToDate ? "in {$where}, current" : "in {$where}, older than the installed package",
+                $upToDate ? null : $refresh
+            );
         } else {
-            $rows[] = $this->row('guideline', 'Rapyd Admin guideline', 'missing', 'not in AGENTS.md / CLAUDE.md: the agent does not know Rapyd Admin',
-                'php artisan rpd:ai (or boost:install with zofe/rapyd-admin selected)');
+            $rows[] = $this->row(
+                'guideline',
+                'Rapyd Admin guideline',
+                'missing',
+                'not in AGENTS.md / CLAUDE.md: the agent does not know Rapyd Admin',
+                'php artisan rpd:ai (or boost:install with zofe/rapyd-admin selected)'
+            );
         }
 
         foreach ($this->packageSkills() as $name) {
@@ -91,8 +101,13 @@ class AiReadiness
             } elseif ($stamped && $this->applicationTouched($target)) {
                 $rows[] = $this->row("skill:{$name}", "Skill {$name}", 'ok', '.claude/skills, customised by this application', null);
             } else {
-                $rows[] = $this->row("skill:{$name}", "Skill {$name}", 'warn', '.claude/skills, older than the installed package',
-                    $stamped ? 'php artisan rpd:ai --force' : 'php artisan boost:update');
+                $rows[] = $this->row(
+                    "skill:{$name}",
+                    "Skill {$name}",
+                    'warn',
+                    '.claude/skills, older than the installed package',
+                    $stamped ? 'php artisan rpd:ai --force' : 'php artisan boost:update'
+                );
             }
         }
 
@@ -104,14 +119,22 @@ class AiReadiness
         $boost = class_exists(\Laravel\Boost\BoostServiceProvider::class)
             ? (InstalledVersions::isInstalled('laravel/boost') ? InstalledVersions::getPrettyVersion('laravel/boost') : 'installed')
             : null;
-        $rows[] = $this->row('boost', 'Laravel Boost', $boost ? 'ok' : 'warn',
+        $rows[] = $this->row(
+            'boost',
+            'Laravel Boost',
+            $boost ? 'ok' : 'warn',
             $boost ? "installed ({$boost}): Laravel and Livewire guidelines, docs search, MCP" : 'not installed: rpd:ai covers Rapyd Admin, Boost adds the Laravel ecosystem',
-            $boost ? null : 'composer require laravel/boost --dev && php artisan boost:install');
+            $boost ? null : 'composer require laravel/boost --dev && php artisan boost:install'
+        );
 
         $mcp = $this->mcpServers();
-        $rows[] = $this->row('mcp', 'MCP servers', in_array('laravel-boost', $mcp) ? 'ok' : ($mcp ? 'warn' : 'missing'),
+        $rows[] = $this->row(
+            'mcp',
+            'MCP servers',
+            in_array('laravel-boost', $mcp) ? 'ok' : ($mcp ? 'warn' : 'missing'),
             $mcp ? implode(', ', $mcp) . ' in .mcp.json' : 'no .mcp.json: the agent has no live access to schema, logs and docs',
-            in_array('laravel-boost', $mcp) ? null : 'php artisan boost:install (registers laravel-boost)');
+            in_array('laravel-boost', $mcp) ? null : 'php artisan boost:install (registers laravel-boost)'
+        );
 
         return $rows;
     }
