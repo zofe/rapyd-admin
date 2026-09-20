@@ -1,0 +1,47 @@
+{
+  "description": "Requests to give the coding agent of an application built on Rapyd Admin. Shown on the Develop with AI page; `requires` lists the Composer packages a prompt needs.",
+  "prompts": [
+    {
+      "id": "module-crud",
+      "title": "A new section of the admin",
+      "prompt": "Add a Suppliers section to the admin: a list, a detail page and a form for suppliers (name, vat number, email, phone, active). Operators can manage them.",
+      "produces": "app/Modules/Suppliers with model, migration, three pages, permissions, Authorizations/, Limits/, menu entry and a feature test.",
+      "requires": []
+    },
+    {
+      "id": "workflow-lifecycle",
+      "title": "A lifecycle on a model",
+      "prompt": "Suppliers must be approved before they can be used: a new supplier is pending, an admin approves or rejects it, a rejected one can be resubmitted. Show the state and the actions on the supplier page.",
+      "produces": "workflow.php with places and transitions, a subscriber for guards and effects, the workflow embed on the detail page, tests of the transitions.",
+      "requires": []
+    },
+    {
+      "id": "extend-existing",
+      "title": "Extend a bundled module",
+      "prompt": "Add a 'city' filter to the users list of the Auth module and show the city column.",
+      "produces": "The filter and the column in the users table, keeping authorization and layout; rpd:eject only if the change needs it.",
+      "requires": []
+    },
+    {
+      "id": "shop-catalogue",
+      "title": "Sell something",
+      "prompt": "Add a 'Premium support' service to the shop: yearly subscription, 290 euro, activated automatically after payment with a licence key.",
+      "produces": "Product, variant and price list rows in the shop, the service item provisioned after payment, the licence generated.",
+      "requires": ["zofe/shop-module"]
+    },
+    {
+      "id": "excel-pricelist",
+      "title": "Import a price list from Excel",
+      "prompt": "Import products and prices from this Excel file into the shop, creating the categories it needs and asking me only when a row is ambiguous.",
+      "produces": "Products, categories and price list rows read from the sheet, a report of the rows skipped.",
+      "requires": ["zofe/shop-module", "zofe/documents-module"]
+    },
+    {
+      "id": "customer-payments",
+      "title": "Take payments",
+      "prompt": "Customers must pay orders online with Stripe; mark the order paid when the gateway confirms and email the customer.",
+      "produces": "The Stripe gateway configured, the order workflow moving to paid on the webhook, the notification.",
+      "requires": ["zofe/shop-module", "zofe/payments-module"]
+    }
+  ]
+}

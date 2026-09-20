@@ -2,6 +2,20 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.16.0] - 2026-09-20
+
+### Changed
+
+- `rpd:ai:status` / `AiReadiness` become `rpd:ai:develop` / `Zofe\Rapyd\Ai\AiDevelopment`: the report is about what
+  the agent can do here (capabilities with the command that unlocks each), the generators, what was built in the
+  project and whether it follows the conventions, the prompts to try (`resources/ai/prompts.json`, each with the
+  packages it needs). Shown by ai-module 1.2 as the "Develop with AI" page.
+
+### Added
+
+- `rpd:make` records every run in `storage/rapyd/generated.json` (`Zofe\Rapyd\Ai\GenerationLog`: module, model,
+  files written and their size) and prints the boilerplate it wrote as tokens the model did not have to generate.
+
 ## [9.15.1] - 2026-09-20
 
 ### Fixed

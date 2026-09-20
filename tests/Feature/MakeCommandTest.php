@@ -102,6 +102,12 @@ class MakeCommandTest extends TestCase
         $this->assertTrue(\Spatie\Permission\Models\Permission::where('name', 'view suppliers')->exists(), 'seeded at generation');
         $this->assertStringContainsString('route="suppliers.table"', File::get("{$module}/Views/menu.blade.php"));
 
+        $log = json_decode(File::get($this->base . '/storage/rapyd/generated.json'), true);
+        $this->assertCount(1, $log, 'one run recorded');
+        $this->assertSame(['Suppliers', 'Supplier', 'Suppliers'], [$log[0]['module'], $log[0]['model'], $log[0]['component']]);
+        $this->assertContains('app/Modules/Suppliers/Livewire/SuppliersTable.php', array_column($log[0]['files'], 'path'));
+        $this->assertGreaterThan(10, count($log[0]['files']));
+
         $this->assertStringContainsString('public static string $model = Supplier::class;', File::get("{$module}/Authorizations/SupplierAuth.php"));
         $this->assertStringContainsString('public static function limit(', File::get("{$module}/Limits/SupplierLimit.php"));
         $this->assertStringContainsString('namespace App\Modules\Suppliers\Limits;', File::get("{$module}/Limits/SupplierLimit.php"));

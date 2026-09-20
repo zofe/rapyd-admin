@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Support\Str;
+use Zofe\Rapyd\Ai\GenerationLog;
 
 /**
  * Entry point of the generators. The component is either a base name (rpd:make Articles Article
@@ -47,6 +48,10 @@ class RapydMakeCommand extends RapydMakeBaseCommand
             };
         }
 
+        // what this run writes is recorded (storage/rapyd/generated.json) for the "Develop with AI" page
+        $log = app(GenerationLog::class);
+        $before = $log->snapshot(base_path());
+
         foreach ($suffixes as $suffix) {
             $this->call('rpd:make:'.strtolower($suffix), [
                 'component' => $base.$suffix,
@@ -55,6 +60,15 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 '--fields' => $this->option('fields'),
                 '--increments' => (bool) $this->option('increments'),
             ]);
+        }
+
+        $entry = $log->record(base_path(), $before, [
+            'module' => $this->option('module') ? Str::studly($this->option('module')) : null,
+            'model' => Str::studly($this->argument('model')),
+            'component' => $base,
+        ]);
+        if ($entry) {
+            $this->comment(count($entry['files']) . ' files written (~' . number_format(GenerationLog::chars([$entry]) / 4) . ' tokens the model did not have to generate)');
         }
 
         return self::SUCCESS;

@@ -57,27 +57,32 @@ php artisan rpd:ai --force         # overwrite a skill your application has modi
 The same skills are used to develop the package itself (`.claude/skills` of the repository links to them): one source,
 no copies to keep in sync.
 
-### Is the application ready? `rpd:ai:status`
+### What can the agent do here? `rpd:ai:develop`
 
 ```bash
-php artisan rpd:ai:status          # exit code 0 when everything is in place
-php artisan rpd:ai:status --json   # for scripts and CI
+php artisan rpd:ai:develop          # exit code 0 when the agent is ready and what was built follows the conventions
+php artisan rpd:ai:develop --json   # for scripts and CI
 ```
 
-It reads the files of the application, calls nothing, and reports three things:
+It reads the files of the application, calls nothing, and reports:
 
-- **the agent tooling**: guideline present and current (Boost or `rpd:ai`), each skill present, current or customised
-  by the application, `CLAUDE.md` importing `AGENTS.md`, Boost installed, MCP servers in `.mcp.json`. Every row that is
-  not ok names the command that fixes it;
-- **the context the agent loads**, estimated as characters / 4: one memory file (an agent reads `AGENTS.md` or
-  `CLAUDE.md`, not both) plus the skill descriptions are resident in every session; skill bodies are read on demand;
-- **the modules of the application** (`app/Modules/*`) against the conventions the agent is taught: full-page
-  components without `Authorize`, workflows, permissions declared in `config.php`, `Authorizations/` and `Limits/`
-  classes, tests mentioning the module.
+- **what the agent can do here**: knows Rapyd Admin (guideline present and current, from Boost or `rpd:ai`), builds
+  modules and designs workflows (the skills, present, current or customised), Claude Code reads the guideline
+  (`CLAUDE.md`), knows Laravel and Livewire (Boost), reads the schema, the logs and the routes (MCP). Every row that is
+  not ok names the command that unlocks it;
+- **the generators** the agent calls instead of writing the code, and what each writes;
+- **the context the agent loads**, estimated as characters / 4: one memory file plus the skill descriptions are
+  resident in every session; skill bodies are read on demand;
+- **what was built in this project**: for every module in `app/Modules`, whether `rpd:make` generated it (from
+  `storage/rapyd/generated.json`, written at every run: module, model, files, size) or it was written by hand, and
+  whether it follows the conventions the agent is taught: every page authorizes, permissions declared in
+  `config.php`, `Limits/`, workflows, a test mentioning it. The size of the generated files, as tokens, is the
+  boilerplate the model did not have to generate;
+- **prompts to try** (`resources/ai/prompts.json`), each saying which packages it needs.
 
-The same report is a page of the admin with [ai-module](https://github.com/zofe/ai-module) ("AI readiness", route
-`ai/status`, permission `view ai status`), with a plain-words view for developers new to AI tooling and an advanced
-view with every row, plus what the AI runtime of the application (widget, tools, provider) costs per day.
+The same report is the "Develop with AI" page of the admin with [ai-module](https://github.com/zofe/ai-module)
+(route `ai/develop`, permission `develop with ai`), with a copy button on every prompt, plus what the AI runtime of
+the application (widget, tools, provider) costs per day.
 
 ## The verification loop
 
