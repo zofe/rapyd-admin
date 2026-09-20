@@ -84,11 +84,21 @@ class AiDevelopment
             $current = $this->normalize($this->guideline());
             $installed = $this->normalize($where === 'AGENTS.md' ? $agents : $claude);
             $upToDate = $current !== '' && str_contains($installed, $current);
-            $rows[] = $this->row('guideline', 'Knows Rapyd Admin', $upToDate ? 'ok' : 'warn',
-                $upToDate ? "the guideline is in {$where} and current" : "the guideline in {$where} is older than the installed package", $upToDate ? null : $refresh);
+            $rows[] = $this->row(
+                'guideline',
+                'Knows Rapyd Admin',
+                $upToDate ? 'ok' : 'warn',
+                $upToDate ? "the guideline is in {$where} and current" : "the guideline in {$where} is older than the installed package",
+                $upToDate ? null : $refresh
+            );
         } else {
-            $rows[] = $this->row('guideline', 'Knows Rapyd Admin', 'missing', 'no guideline in AGENTS.md / CLAUDE.md: the agent writes plain Laravel, not Rapyd modules',
-                'php artisan rpd:ai (or boost:install with zofe/rapyd-admin selected)');
+            $rows[] = $this->row(
+                'guideline',
+                'Knows Rapyd Admin',
+                'missing',
+                'no guideline in AGENTS.md / CLAUDE.md: the agent writes plain Laravel, not Rapyd modules',
+                'php artisan rpd:ai (or boost:install with zofe/rapyd-admin selected)'
+            );
         }
 
         $skills = [
@@ -113,20 +123,33 @@ class AiDevelopment
         $imports = preg_match('/^@AGENTS\.md\s*$/m', $claude) || str_contains($claude, self::BOOST_MARK);
         $rows[] = $where === 'AGENTS.md' && ! $imports
             ? $this->row('claude_md', 'Claude Code reads the guideline', 'warn', 'CLAUDE.md does not import AGENTS.md', 'php artisan rpd:ai')
-            : $this->row('claude_md', 'Claude Code reads the guideline', $claude !== '' ? 'ok' : 'warn',
-                $claude !== '' ? 'CLAUDE.md present' : 'no CLAUDE.md (other agents read AGENTS.md)', $claude !== '' ? null : 'php artisan rpd:ai');
+            : $this->row(
+                'claude_md',
+                'Claude Code reads the guideline',
+                $claude !== '' ? 'ok' : 'warn',
+                $claude !== '' ? 'CLAUDE.md present' : 'no CLAUDE.md (other agents read AGENTS.md)',
+                $claude !== '' ? null : 'php artisan rpd:ai'
+            );
 
         $boost = class_exists(\Laravel\Boost\BoostServiceProvider::class)
             ? (InstalledVersions::isInstalled('laravel/boost') ? InstalledVersions::getPrettyVersion('laravel/boost') : 'installed')
             : null;
-        $rows[] = $this->row('boost', 'Knows Laravel and Livewire', $boost ? 'ok' : 'warn',
+        $rows[] = $this->row(
+            'boost',
+            'Knows Laravel and Livewire',
+            $boost ? 'ok' : 'warn',
             $boost ? "Laravel Boost {$boost}: version-specific guidelines and docs search" : 'Laravel Boost not installed: the agent guesses the Laravel and Livewire versions',
-            $boost ? null : 'composer require laravel/boost --dev && php artisan boost:install');
+            $boost ? null : 'composer require laravel/boost --dev && php artisan boost:install'
+        );
 
         $mcp = $this->mcpServers();
-        $rows[] = $this->row('mcp', 'Reads the schema, the logs, the routes', in_array('laravel-boost', $mcp) ? 'ok' : ($mcp ? 'warn' : 'missing'),
+        $rows[] = $this->row(
+            'mcp',
+            'Reads the schema, the logs, the routes',
+            in_array('laravel-boost', $mcp) ? 'ok' : ($mcp ? 'warn' : 'missing'),
             $mcp ? 'MCP servers: ' . implode(', ', $mcp) : 'no .mcp.json: the agent has no live access to the application',
-            in_array('laravel-boost', $mcp) ? null : 'php artisan boost:install (registers laravel-boost)');
+            in_array('laravel-boost', $mcp) ? null : 'php artisan boost:install (registers laravel-boost)'
+        );
 
         return $rows;
     }
