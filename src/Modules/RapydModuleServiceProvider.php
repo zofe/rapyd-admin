@@ -9,6 +9,8 @@ use Livewire\Livewire;
 
 abstract class RapydModuleServiceProvider extends ServiceProvider
 {
+    use MergesPermissions;
+
     /**
      * The module name, e.g. "Auth", "Companies".
      * Must be overridden in every module provider.
@@ -44,6 +46,7 @@ abstract class RapydModuleServiceProvider extends ServiceProvider
         $config = $this->appModulePath('config.php');
         if ($this->modulePath && file_exists($config)) {
             $this->mergeConfigFrom($config, Str::lower($this->moduleName));
+            $this->mergePermissions(config(Str::lower($this->moduleName)));
         }
     }
 

@@ -57,6 +57,28 @@ php artisan rpd:ai --force         # overwrite a skill your application has modi
 The same skills are used to develop the package itself (`.claude/skills` of the repository links to them): one source,
 no copies to keep in sync.
 
+### Is the application ready? `rpd:ai:status`
+
+```bash
+php artisan rpd:ai:status          # exit code 0 when everything is in place
+php artisan rpd:ai:status --json   # for scripts and CI
+```
+
+It reads the files of the application, calls nothing, and reports three things:
+
+- **the agent tooling**: guideline present and current (Boost or `rpd:ai`), each skill present, current or customised
+  by the application, `CLAUDE.md` importing `AGENTS.md`, Boost installed, MCP servers in `.mcp.json`. Every row that is
+  not ok names the command that fixes it;
+- **the context the agent loads**, estimated as characters / 4: one memory file (an agent reads `AGENTS.md` or
+  `CLAUDE.md`, not both) plus the skill descriptions are resident in every session; skill bodies are read on demand;
+- **the modules of the application** (`app/Modules/*`) against the conventions the agent is taught: full-page
+  components without `Authorize`, workflows, permissions declared in `config.php`, `Authorizations/` and `Limits/`
+  classes, tests mentioning the module.
+
+The same report is a page of the admin with [ai-module](https://github.com/zofe/ai-module) ("AI readiness", route
+`ai/status`, permission `view ai status`), with a plain-words view for developers new to AI tooling and an advanced
+view with every row, plus what the AI runtime of the application (widget, tools, provider) costs per day.
+
 ## The verification loop
 
 - Package tests: `vendor/bin/phpunit` (PHPUnit + Orchestra Testbench, the CI suite). Livewire pages are tested with

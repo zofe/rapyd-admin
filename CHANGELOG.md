@@ -2,6 +2,18 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.15.0] - 2026-09-20
+
+### Added
+
+- `php artisan rpd:ai:status` (`--json`): is the application ready for AI-assisted development? The agent tooling
+  (guideline present and current, skills present / current / customised, `CLAUDE.md`, Boost, MCP servers) with the
+  command that fixes each row, the estimated context the agent loads per session, and the app modules against the
+  conventions (pages without `Authorize`, workflows, permissions, `Authorizations/`, `Limits/`, tests). The report
+  is `Zofe\Rapyd\Ai\AiReadiness`; ai-module 1.1 shows it as the "AI readiness" page.
+- `MergesPermissions`: the `permissions` / `role_permissions` of a module's `config.php` are merged into `auth.*` for
+  module packages too (`RapydModuleServiceProvider`), not only for app modules.
+
 ## [9.14.0] - 2026-09-18
 
 ### Added
