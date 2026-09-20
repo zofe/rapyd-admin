@@ -2,6 +2,13 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.17.3] - 2026-09-21
+
+### Added
+
+- The prompts of `resources/ai/prompts.json` (request and what it produces) are translated by the package catalogues,
+  so the "Develop with AI" page of ai-module shows and copies them in the language of the page.
+
 ## [9.17.2] - 2026-09-21
 
 ### Changed

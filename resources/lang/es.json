@@ -129,6 +129,18 @@
     "When": "Cuándo",
     "Whoops! Something went wrong.": "¡Vaya! Algo salió mal.",
     "Zipcode": "Código postal",
+    "Add a Suppliers section to the admin: a list, a detail page and a form for suppliers (name, vat number, email, phone, active). Operators can manage them.": "Añade al admin una sección Proveedores: una lista, una página de detalle y un formulario para proveedores (nombre, NIF, correo, teléfono, activo). Los operadores pueden gestionarlos.",
+    "app/Modules/Suppliers with model, migration, three pages, permissions, Authorizations/, Limits/, menu entry and a feature test.": "app/Modules/Suppliers con modelo, migración, tres páginas, permisos, Authorizations/, Limits/, entrada de menú y un feature test.",
+    "Suppliers must be approved before they can be used: a new supplier is pending, an admin approves or rejects it, a rejected one can be resubmitted. Show the state and the actions on the supplier page.": "Los proveedores deben aprobarse antes de poder usarse: un proveedor nuevo queda pendiente, un admin lo aprueba o lo rechaza, uno rechazado puede volver a enviarse. Muestra el estado y las acciones en la página del proveedor.",
+    "workflow.php with places and transitions, a subscriber for guards and effects, the workflow embed on the detail page, tests of the transitions.": "workflow.php con estados y transiciones, un subscriber para guardas y efectos, el embed del workflow en la página de detalle, tests de las transiciones.",
+    "Add a 'city' filter to the users list of the Auth module and show the city column.": "Añade un filtro 'ciudad' a la lista de usuarios del módulo Auth y muestra la columna ciudad.",
+    "The filter and the column in the users table, keeping authorization and layout; rpd:eject only if the change needs it.": "El filtro y la columna en la tabla de usuarios, manteniendo autorización y layout; rpd:eject solo si el cambio lo necesita.",
+    "Add a 'Premium support' service to the shop: yearly subscription, 290 euro, activated automatically after payment with a licence key.": "Añade a la tienda un servicio 'Soporte premium': suscripción anual, 290 euros, activado automáticamente tras el pago con una clave de licencia.",
+    "Product, variant and price list rows in the shop, the service item provisioned after payment, the licence generated.": "Producto, variante y líneas de lista de precios en la tienda, el servicio aprovisionado tras el pago, la licencia generada.",
+    "Import products and prices from this Excel file into the shop, creating the categories it needs and asking me only when a row is ambiguous.": "Importa en la tienda productos y precios desde este archivo Excel, creando las categorías necesarias y preguntándome solo cuando una fila sea ambigua.",
+    "Products, categories and price list rows read from the sheet, a report of the rows skipped.": "Productos, categorías y líneas de lista de precios leídos de la hoja, un informe de las filas omitidas.",
+    "Customers must pay orders online with Stripe; mark the order paid when the gateway confirms and email the customer.": "Los clientes deben pagar los pedidos en línea con Stripe; marca el pedido como pagado cuando la pasarela confirme y envía un correo al cliente.",
+    "The Stripe gateway configured, the order workflow moving to paid on the webhook, the notification.": "La pasarela Stripe configurada, el workflow del pedido pasando a pagado con el webhook, la notificación.",
     "—": "—",
     "…": "…"
 }
