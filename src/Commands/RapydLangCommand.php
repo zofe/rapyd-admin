@@ -69,10 +69,16 @@ class RapydLangCommand extends Command
                 $catalogue->save();
                 $pending += count($catalogue->pending());
 
-                $this->components->twoColumnDetail("  {$locale}.json",
-                    sprintf('%d added, %d pending, %d machine-translated to review%s',
-                        count($added), count($catalogue->pending()), count($catalogue->machine()),
-                        $stale && ! $this->option('prune') ? ', ' . count($stale) . ' stale (--prune)' : ''));
+                $this->components->twoColumnDetail(
+                    "  {$locale}.json",
+                    sprintf(
+                        '%d added, %d pending, %d machine-translated to review%s',
+                        count($added),
+                        count($catalogue->pending()),
+                        count($catalogue->machine()),
+                        $stale && ! $this->option('prune') ? ', ' . count($stale) . ' stale (--prune)' : ''
+                    )
+                );
             }
         }
 
@@ -132,6 +138,7 @@ class RapydLangCommand extends Command
             $map = json_decode(trim(preg_replace('/^```(?:json)?|```$/m', '', trim($reply))), true);
             if (! is_array($map)) {
                 $this->warn('  the model did not answer with JSON for a batch; left pending');
+
                 continue;
             }
             $catalogue->fill(array_intersect_key($map, array_flip($batch)), machine: true);

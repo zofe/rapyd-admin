@@ -2,7 +2,6 @@
 
 namespace Zofe\Rapyd\Commands;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 

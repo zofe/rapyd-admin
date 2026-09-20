@@ -3,7 +3,6 @@
 namespace Zofe\Rapyd\Tests\Feature;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Zofe\Rapyd\Localization\Locales;
 use Zofe\Rapyd\Localization\SetLocale;
 use Zofe\Rapyd\Tests\TestCase;
