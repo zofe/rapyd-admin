@@ -2,13 +2,23 @@
 
 namespace {{classNamespace}};
 
+use App\Modules\Auth\Traits\Authorize;
+use App\Modules\Auth\Traits\Limit;
 use {{baseClass}};
 use {{modelNamespace}}\{{model}};
 
 
 class {{class}} extends {{baseClassName}}
 {
+    use Authorize, Limit;
+
     public ${{ item }};
+
+    public function booted(): void
+    {
+        $this->authorize('admin|view {{table}}|edit {{table}}', $this->{{ item }});
+        $this->limit();
+    }
 
     public function mount({{model}} ${{ item }})
     {

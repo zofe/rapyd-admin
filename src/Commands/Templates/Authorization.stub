@@ -1,0 +1,22 @@
+<?php
+
+namespace {{namespace}};
+
+use {{modelNamespace}}\{{model}};
+
+/**
+ * Record-level authorization for {{model}}: authorize('…', ${{ item }}) in the components calls check()
+ * for every user that is not a super admin; false answers 404. Registered automatically because it
+ * lives in the module's Authorizations folder.
+ */
+class {{model}}Auth
+{
+    public static string $model = {{model}}::class;
+
+    public static function check(${{ item }}, $user = null): bool
+    {
+        // Every user with the permission can open every record. Restrict it here, e.g. by company:
+        // return $user && ${{ item }}->company_id === $user->company_id;
+        return (bool) $user;
+    }
+}

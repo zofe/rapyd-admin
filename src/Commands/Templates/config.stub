@@ -5,10 +5,19 @@
 | {{module}} Module Configurations
 |--------------------------------------------------------------------------
 |
+| layout: the full-page layout of the module's components
+| menu_admin: the sidebar partial (Views/menu.blade.php)
+| permissions / role_permissions: merged into auth.permissions and
+| auth.role_permissions, created by AuthSeeder and checked with authorize()
 |
 */
 return [
     'layout' => 'layout::admin',
     'menu_admin' => '{{view}}',
     'menu_admin_position' => 10,
+
+    'permissions' => [{{permissions}}],
+    'role_permissions' => [
+        'operator' => [{{permissions}}],
+    ],
 ];

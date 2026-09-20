@@ -1,6 +1,6 @@
 
 Route::get('/{{routepath}}/{{modelkey}}', {{class}}::class)
-    ->middleware(['web'])
+    ->middleware(['web', 'auth'])
     ->name('{{routename}}')
     ->crumbs(function ($crumbs, ${{item}}=null) {
         if(${{item}}) {

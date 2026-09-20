@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Laravel\SerializableClosure\SerializableClosure;
 use Zofe\Rapyd\Breadcrumbs\BreadcrumbsMiddleware;
 use Zofe\Rapyd\Breadcrumbs\Manager;
+use Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder;
 use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 
 class RapydMakeBaseCommand extends Command
@@ -25,35 +26,92 @@ class RapydMakeBaseCommand extends Command
         $this->initBreadcrumb();
     }
 
+    /**
+     * The module's config.php (layout, menu, permissions) and menu.blade.php, created once.
+     * Each model adds its own "view <table>" / "edit <table>" permissions, given to the operator
+     * role, and AuthSeeder creates them so the generated pages are usable right away.
+     */
     protected function createModuleConfig()
     {
         $module = $this->option('module');
-        if ($module && ! file_exists(base_path(path_module("app/config.php", $module)))) {
+        if (! $module) {
+            return;
+        }
+        $config = base_path(path_module("app/config.php", $module));
+        $permissions = "'view {$this->getTable()}', 'edit {$this->getTable()}'";
 
-            //config
+        if (! file_exists($config)) {
             StubGenerator::from(__DIR__.'/Templates/config.stub', true)
                 ->to(base_path(path_module("app/", $module)), true, true)
                 ->as('config')
                 ->withReplacers([
                     'view' => $this->getViewPath('menu'),
                     'module' => ucfirst(strtolower($module)),
+                    'permissions' => $permissions,
                 ])
                 ->save();
-
+        } elseif (! str_contains(file_get_contents($config), "'view {$this->getTable()}'")) {
+            // another model of the same module: append its permissions to both arrays
+            $content = preg_replace(
+                ["/('permissions'\s*=>\s*\[)/", "/('operator'\s*=>\s*\[)/"],
+                '$1' . $permissions . ', ',
+                file_get_contents($config), 1
+            );
+            file_put_contents($config, $content);
         }
+        $this->seedPermissions($config);
 
-        if ($module && ! file_exists(base_path(path_module("app/Views/menu.blade.php", $module)))) {
-
-            //menu
+        if (! file_exists(base_path(path_module("app/Views/menu.blade.php", $module)))) {
             StubGenerator::from(__DIR__.'/Templates/resources/views/menu.blade.stub', true)
                 ->to(base_path(path_module("app/Views", $module)), true, true)
                 ->as('menu.blade')
                 ->save();
-
         }
-
     }
 
+    /** The module was created in this run, so its config is not merged yet: merge and seed by hand. */
+    protected function seedPermissions(string $config): void
+    {
+        $module = require $config;
+        if (empty($module['permissions'])) {
+            return;
+        }
+        config(['auth.permissions' => array_values(array_unique(array_merge(config('auth.permissions', []), $module['permissions'])))]);
+        foreach ($module['role_permissions'] ?? [] as $role => $permissions) {
+            config(["auth.role_permissions.{$role}" => array_values(array_unique(array_merge(config("auth.role_permissions.{$role}", []), $permissions)))]);
+        }
+        if (Schema::hasTable('permissions')) {
+            $this->callSilently('db:seed', ['--class' => AuthSeeder::class, '--force' => true]);
+        }
+    }
+
+    /**
+     * Authorizations/<Model>Auth.php (record-level check) and Limits/<Model>Limit.php (data scoping)
+     * in the module: discovered by the module loader, called by authorize() and limit().
+     */
+    protected function createAuthorizationAndLimit($model)
+    {
+        $module = $this->option('module');
+        if (! $module) {
+            return;
+        }
+        $replacers = [
+            'model' => $model,
+            'item' => Str::camel($model),
+            'modelNamespace' => $this->getModelNamespace(),
+        ];
+        foreach (['Authorizations' => ['Authorization.stub', 'Auth'], 'Limits' => ['Limit.stub', 'Limit']] as $dir => [$stub, $suffix]) {
+            $path = base_path(path_module("app/{$dir}", $module));
+            if (file_exists("{$path}/{$model}{$suffix}.php")) {
+                continue;
+            }
+            StubGenerator::from(__DIR__."/Templates/{$stub}", true)
+                ->to($path, true, true)
+                ->as($model.$suffix)
+                ->withReplacers($replacers + ['namespace' => namespace_module("App\\{$dir}", $module)])
+                ->save();
+        }
+    }
 
     /**
      * When the model does not exist yet it is created with rpd:make:model (columns from --fields,
@@ -70,6 +128,7 @@ class RapydMakeBaseCommand extends Command
                 'model' => $model,
                 '--module' => $module,
                 '--fields' => $this->option('fields'),
+                '--increments' => (bool) $this->option('increments'),
                 '--no-interaction' => ! $this->input->isInteractive(),
             ]);
 

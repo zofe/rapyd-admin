@@ -30,8 +30,9 @@ learning anything new: no DSL, no magic, no Filament / Nova patterns.
 - Livewire 4: `#[On('event')]` not `$listeners`, `$this->dispatch()` not `emit()`; fields bind
   `wire:model.live.debounce.150ms` by default; on an unsaved model only the attributes in `$rules` survive a request.
 - Generate, then finish: `php artisan rpd:make Things Thing --module=Name --fields="name,active:boolean"` writes the
-  model and migration (when missing), the table / view / edit components, views, routes and the menu entry, without
-  prompts; then add the authorization and scoping the stub leaves out.
+  model and migration (when missing, uuid keys), the table / view / edit components with authorization, the
+  permissions, the `Authorizations/` and `Limits/` classes, views, routes behind `auth` and the menu entry, without
+  prompts; then restrict the Limit / Authorization when the data belongs to a company or a user.
 - Verify like a developer: `vendor/bin/phpunit` (or `composer test`), then open the page you touched. Take a screenshot.
 
 ### Skills

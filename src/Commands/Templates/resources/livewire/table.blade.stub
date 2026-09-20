@@ -29,7 +29,7 @@
             @foreach ($items as ${{modelname}})
                 <tr>
                     <td>
-                        <a data-ref="link-view" href="#">{{ ${{modelname}}->id }}</a>
+                        <a data-ref="link-view" href="#">{{ ${{modelname}}->shortId }}</a>
                     </td>
                     {{fieldValues}}
                 </tr>

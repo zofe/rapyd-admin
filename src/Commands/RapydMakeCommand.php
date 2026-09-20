@@ -15,7 +15,8 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         {component : Base name of the components (e.g. Articles, ArticlesTable) or all|table|view|edit}
         {model : The model (created with its migration when missing)}
         {--module= : Module to generate into (app/Modules/{Module})}
-        {--fields= : Columns of a new model, as name:type,name:type}';
+        {--fields= : Columns of a new model, as name:type,name:type}
+        {--increments : Auto-increment integer id for a new model instead of the default uuid}';
 
     public $description = 'rapyd command to generate components (table, view and edit) for a model';
 
@@ -52,6 +53,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 'model' => $this->argument('model'),
                 '--module' => $this->option('module'),
                 '--fields' => $this->option('fields'),
+                '--increments' => (bool) $this->option('increments'),
             ]);
         }
 

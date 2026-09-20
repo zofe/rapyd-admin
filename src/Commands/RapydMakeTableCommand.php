@@ -11,7 +11,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=}';
+    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=} {--increments}';
 
     public $description = 'rapyd command to generate DataTable component';
 
@@ -27,8 +27,9 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
-        $this->createModuleConfig();
         $this->createModel($model);
+        $this->createModuleConfig();
+        $this->createAuthorizationAndLimit($model);
 
         $this->comment('generate '.$component.' for model '.$model);
 

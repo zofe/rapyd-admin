@@ -63,10 +63,12 @@ when the model does not exist yet it is created with its migration from `--field
 
 ```
 app/Modules/Blog/
-├── Livewire/ArticlesTable.php   ArticlesView.php   ArticlesEdit.php
+├── Livewire/ArticlesTable.php   ArticlesView.php   ArticlesEdit.php   (authorization and scoping built in)
 ├── Views/articles_table.blade.php   articles_view.blade.php   articles_edit.blade.php   menu.blade.php
-├── config.php                   layout, menu entry and position
-└── routes.php
+├── Models/Article.php           uuid key, ShortId
+├── Authorizations/ArticleAuth.php   Limits/ArticleLimit.php   record check and data scoping, yours to restrict
+├── config.php                   layout, menu entry, permissions (view / edit articles, given to operator)
+└── routes.php                   behind auth
 ```
 
 The views are short because the work is done by the components:

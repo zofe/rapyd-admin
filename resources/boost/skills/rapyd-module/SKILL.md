@@ -20,7 +20,9 @@ A folder in `app/Modules/{Name}/`, discovered automatically (views under the `na
 app/Modules/Blog/
 ├── Livewire/            ArticlesTable.php, ArticlesView.php, ArticlesEdit.php (+ *Embed.php for reusable blocks)
 ├── Views/               articles_table.blade.php, articles_view.blade.php, articles_edit.blade.php, menu.blade.php
-├── Models/              Article.php (optional: the model may also live in app/Models)
+├── Models/              Article.php, uuid key (HasUuids + ShortId) unless generated with --increments
+├── Authorizations/      ArticleAuth.php: record-level check, called by authorize('…', $article)
+├── Limits/              ArticleLimit.php: data scoping (global scopes per user), called by limit()
 ├── Database/Migrations/ optional
 ├── Lang/en/             optional, `__('blog::articles.title')`
 ├── config.php           layout, menu entry, permissions
@@ -59,9 +61,14 @@ code reads the table columns to build the list, the detail and the form.
 `timestamp`). Without it, and without a terminal, a new model gets only `id` and timestamps: always pass `--fields`
 when the model is new. An existing model is never touched: write its migration first, then generate.
 
-### 3. Finish what the stub leaves out
+What the generated code already does, so do not add it twice: routes behind `auth`; `Authorize` + `Limit` in every
+component (`view <table>` / `edit <table>` permissions declared in `config.php`, given to `operator`, seeded); an
+`Authorizations/<Model>Auth.php` and a `Limits/<Model>Limit.php` that allow every record (restrict them when the data
+belongs to a company or a user); uuid keys with `shortId` in lists (`--increments` only if the user asks for integer ids).
 
-The generated components are minimal. Bring each full-page component to the shape of the reference below:
+### 3. Check each component against the reference
+
+The generated components have this shape; keep it when you extend them or write new ones by hand:
 
 ```php
 namespace App\Modules\Blog\Livewire;
@@ -97,7 +104,8 @@ class ArticlesTable extends Component
 
 Checklist per component:
 - `use Authorize` + `$this->authorize('admin|<permission>')` in `booted()` (`view things` for table / view, `edit things` for edit).
-- `use Limit` + `$this->limit()` when the data belongs to companies / users.
+- `use Limit` + `$this->limit()`; the scoping itself lives in `Limits/<Model>Limit.php`, the record check in
+  `Authorizations/<Model>Auth.php`: edit those when the data belongs to companies / users.
 - `->layout('layout::admin')` on `render()` (or the layout of the module's `config.php`).
 - The edit component: `$rules` for every bound attribute (on an unsaved model only those survive a request), `save()`
   validates, saves, redirects to the detail page with a flash message.

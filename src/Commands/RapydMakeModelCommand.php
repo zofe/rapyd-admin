@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
- * Creates a model and its migration, in the application or in a module.
+ * Creates a model and its migration, in the application or in a module. The key is a uuid
+ * (HasUuids + ShortId, like the bundled models) unless --increments is given.
  * The columns come from --fields ("name:string,active:boolean", type defaults to string);
  * without --fields the command asks for them only when a terminal is attached,
  * so agents and CI get a table with the default columns and no hang.
  */
 class RapydMakeModelCommand extends Command
 {
-    public $signature = 'rpd:make:model {model} {--module=} {--fields= : Columns as name:type,name:type (types: string text integer boolean date datetime float decimal json timestamp)}';
+    public $signature = 'rpd:make:model {model} {--module=}
+        {--fields= : Columns as name:type,name:type (types: string text integer boolean date datetime float decimal json timestamp)}
+        {--increments : Auto-increment integer id instead of the default uuid}';
 
     public $description = 'rapyd command to generate models';
 
@@ -49,7 +52,13 @@ class RapydMakeModelCommand extends Command
         if ($migrationFile) {
             $migrationContent = File::get($migrationFile);
             $migrationContent = $this->addFieldsToMigration($migrationContent, $fields);
+            if (! $this->option('increments')) {
+                $migrationContent = str_replace('$table->id();', "\$table->uuid('id')->primary();", $migrationContent);
+            }
             File::put($migrationFile, $migrationContent);
+        }
+        if (! $this->option('increments')) {
+            $this->useUuids(base_path("app/Models/{$modelName}.php"));
         }
 
         if ($this->module) {
@@ -74,6 +83,19 @@ class RapydMakeModelCommand extends Command
         $this->info('Model and Migration created successfully, you can run `php artisan migrate` to create the table.');
 
         return self::SUCCESS;
+    }
+
+    /** HasUuids (ordered uuid keys) and ShortId (8-char label for lists) on the model Laravel just wrote. */
+    protected function useUuids(string $modelFile): void
+    {
+        $content = File::get($modelFile);
+        $content = str_replace(
+            "use Illuminate\\Database\\Eloquent\\Model;\n",
+            "use Illuminate\\Database\\Eloquent\\Concerns\\HasUuids;\nuse Illuminate\\Database\\Eloquent\\Model;\nuse Zofe\\Rapyd\\Traits\\ShortId;\n",
+            $content
+        );
+        $content = preg_replace('/(class \w+ extends Model\s*\{\n)/', "$1    use HasUuids;\n    use ShortId;\n", $content, 1);
+        File::put($modelFile, $content);
     }
 
     /**

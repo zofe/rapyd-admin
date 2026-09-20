@@ -11,7 +11,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeViewCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:view {component} {model} {--module=} {--table=} {--fields=}';
+    public $signature = 'rpd:make:view {component} {model} {--module=} {--table=} {--fields=} {--increments}';
 
     public $description = 'rapyd command to generate DataView component';
 
@@ -32,8 +32,9 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
-        $this->createModuleConfig();
         $this->createModel($model);
+        $this->createModuleConfig();
+        $this->createAuthorizationAndLimit($model);
 
         $this->comment('generate '.$component.' for model '.$model);
 

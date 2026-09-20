@@ -20,6 +20,12 @@ All notable changes to `rapyd-admin` will be documented in this file.
   (type defaults to `string`); without `--fields` the columns are asked only when a terminal is attached. `rpd:make`
   also accepts `all|table|view|edit` as component, resolved from the model's plural; `rpd:make:model` returns instead
   of calling `exit`, so the components are generated in the same run.
+- Generated modules are secure by default: routes behind `auth`; `Authorize` + `Limit` in every component with
+  `view <table>` / `edit <table>` permissions declared in the module's `config.php`, given to `operator` and seeded
+  at generation; `Authorizations/<Model>Auth.php` and `Limits/<Model>Limit.php` as starting points (allow every
+  record). New models get uuid keys (`HasUuids` + `ShortId`, `shortId` in lists) unless `--increments`.
+- A module's `config.php` may declare `permissions` and `role_permissions`: merged into `auth.permissions` and
+  `auth.role_permissions` by the module loader, so `AuthSeeder` creates them.
 - Generated components call `->layout()` explicitly (the module's `config.php` layout, `layout::admin`): Livewire 4
   reads `livewire.component_layout`, so the published `config/livewire.php` and the `layout.config` middleware set it.
 

@@ -1,0 +1,28 @@
+<?php
+
+namespace {{namespace}};
+
+use Illuminate\Database\Eloquent\Builder;
+use {{modelNamespace}}\{{model}};
+
+/**
+ * Data scoping for {{model}}: limit() in the components calls every registered Limit, which adds
+ * global scopes to the model for the current user. Registered automatically because it lives in
+ * the module's Limits folder.
+ */
+class {{model}}Limit
+{
+    public static function limit(array $except = [], $user = null): void
+    {
+        if ($user && $user->hasAnyRole(config('rapyd.auth.super_admin_roles', ['admin']))) {
+            return;
+        }
+
+        // Every user with the permission sees every record. Restrict it here, e.g. by company:
+        // if (! $user || ! $user->company_id) {
+        //     {{model}}::addGlobalScope('noAccess', fn (Builder $q) => $q->whereRaw('1 = 0'));
+        //     return;
+        // }
+        // {{model}}::addGlobalScope('onlyMine', fn (Builder $q) => $q->where('company_id', $user->company_id));
+    }
+}

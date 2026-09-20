@@ -83,9 +83,11 @@ The first argument is the **component name** (a plural, a full name ending with 
 columns only when a terminal is attached, otherwise the table gets just `id` and timestamps. An existing model is never
 touched. Nothing is interactive, so an agent or a script can run the whole generation in one command.
 
-The generated components are a starting point: add `Authorize` / `Limit` with `authorize()` and `limit()` in
-`booted()`, the permissions in `config.php`, then a test. `render()` already uses the layout of the module's
-`config.php` (`layout::admin`).
+What is generated is secure by default: routes behind `auth`, `Authorize` / `Limit` in every component with the
+`view <table>` / `edit <table>` permissions declared in `config.php` (given to `operator` and seeded at once), an
+`Authorizations/<Model>Auth.php` and a `Limits/<Model>Limit.php` that allow every record and are the place to restrict
+by company or user, uuid keys with `HasUuids` + `ShortId` (`--increments` for an integer id), `render()` on the layout
+of the module's `config.php`. What is left to you: the fields of the views, the `Limit` / `Authorization` rules, a test.
 
 ## Config: layout, menu, permissions
 
@@ -97,6 +99,8 @@ return [
     'menu_admin'          => 'blog::menu',      // Blade partial included in the sidebar
     'menu_admin_position' => 10,                // order among modules
     // 'menu_frontend'    => 'blog::front_menu',
+    'permissions'         => ['view articles', 'edit articles'],           // merged into auth.permissions
+    'role_permissions'    => ['operator' => ['view articles', 'edit articles']], // and auth.role_permissions
 ];
 ```
 
@@ -110,8 +114,9 @@ The sidebar partial uses the navigation components and checks permissions itself
 @endif
 ```
 
-Permissions and roles are declared in `config/permission.php` (published by `rpd:install`) and seeded by
-`AuthSeeder`; see [AUTH.md](AUTH.md).
+The `permissions` and `role_permissions` of every module config join those of the Auth module and are created by
+`AuthSeeder` (`php artisan db:seed --class="Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder"`, idempotent);
+see [AUTH.md](AUTH.md).
 
 ## Bundled modules and `rpd:eject`
 
