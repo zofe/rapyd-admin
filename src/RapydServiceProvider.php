@@ -121,6 +121,10 @@ class RapydServiceProvider extends ServiceProvider
             if (! method_exists($handled->response, 'status') || $handled->response->status() !== 200) {
                 return;
             }
+            // ...of the application, not of a package that ships its own complete layout
+            if ($this->skipsAssetInjection($handled->request)) {
+                return;
+            }
 
             $html = $handled->response->getContent();
 
@@ -132,6 +136,18 @@ class RapydServiceProvider extends ServiceProvider
                 $handled->response->original = $originalContent;
             }
         });
+    }
+
+    /**
+     * True when the path of this request is listed in config rapyd.skip_asset_injection:
+     * pages of packages with a UI of their own (Horizon, Telescope, Pulse…), whose layout
+     * the Bootstrap of rapyd would break. request()->is() syntax, wildcards allowed.
+     */
+    protected function skipsAssetInjection(?\Illuminate\Http\Request $request): bool
+    {
+        $paths = config('rapyd.skip_asset_injection', []);
+
+        return $request && $paths && $request->is(...$paths);
     }
 
     protected function assetsAreIncluded($content)
@@ -163,9 +179,15 @@ class RapydServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../config/livewire.php', 'livewire');
 
         // mergeConfigFrom is shallow: a published config/rapyd.php older than the package would drop
-        // the layout keys added since (auth_links, custom_css...). Fill them with the package defaults.
+        // the layout keys added since (auth_links, custom_css...) and the keys added later.
+        // Fill them with the package defaults; a key the application set wins.
         $defaults = require __DIR__ . '/../config/rapyd.php';
         config(['rapyd.layout' => array_replace_recursive($defaults['layout'], config('rapyd.layout', []))]);
+        foreach (['locale', 'locales', 'skip_asset_injection'] as $key) {
+            if (config("rapyd.{$key}") === null) {
+                config(["rapyd.{$key}" => $defaults[$key]]);
+            }
+        }
 
         $this->app->register(BreadcrumbsServiceProvider::class);
         $this->app->register(ModuleServiceProvider::class);

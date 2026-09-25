@@ -2,6 +2,16 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.18.0] - 2026-09-25
+
+### Added
+
+- `rapyd.skip_asset_injection`: the paths whose HTML responses do not get `rapyd.css` and `rapyd.js` injected.
+  Packages that ship a complete UI of their own broke when the Bootstrap of Rapyd was added to theirs (Horizon's
+  dashboard lost its grid); the default covers `horizon`, `telescope`, `pulse` and `_debugbar`, `request()->is()`
+  syntax. The keys a published `config/rapyd.php` does not have yet (this one, `locale`, `locales`) take the
+  package default instead of being null.
+
 ## [9.17.5] - 2026-09-21
 
 ### Fixed

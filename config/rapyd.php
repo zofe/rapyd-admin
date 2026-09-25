@@ -41,6 +41,22 @@ return [
     // false: no palette icon in the navbars; the switch still works through links (?rapyd_theme=<name>).
     'theme_picker' => env('RAPYD_THEME_PICKER', true),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Pages that must not receive the Rapyd assets
+    |--------------------------------------------------------------------------
+    | An HTML response of the application gets rapyd.css and rapyd.js injected when the
+    | layout does not include them already. Packages that ship a complete UI of their own
+    | (Horizon, Telescope, Pulse, Nova, a log viewer…) break when the Bootstrap of Rapyd is
+    | added to theirs: list their paths here. request()->is() syntax, wildcards allowed.
+    */
+    'skip_asset_injection' => [
+        'horizon', 'horizon/*',
+        'telescope', 'telescope/*',
+        'pulse', 'pulse/*',
+        '_debugbar/*',
+    ],
+
     'layout' => [
         'brand'        => env('RAPYD_BRAND'),          // null → app.name
         'logo_sidebar' => env('RAPYD_LOGO_SIDEBAR'),   // url of the sidebar logo, null → brand text

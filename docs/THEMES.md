@@ -16,6 +16,11 @@ This document is the contract. It is written for developers and for AI agents al
    Modules keep calling `->layout('layout::admin')`: nothing changes for them.
 3. `@rapydStyles` / `@rapydScripts` emit `public/vendor/themes/{name}/rapyd.css` and `rapyd.js`, published from
    the theme's `public/` folder by `vendor:publish` (tag `laravel-assets` or `rapyd-theme-{name}`).
+   A layout that does not call them gets them injected before `</head>` and `</body>`, so a page of the application
+   always has them. The pages listed in `config('rapyd.skip_asset_injection')` never do: packages with a complete UI
+   of their own (Horizon, Telescope, Pulse, Nova…) break when the Bootstrap of Rapyd is added to theirs. The default
+   covers `horizon`, `telescope`, `pulse` and `_debugbar`; add the paths of any other such package, `request()->is()`
+   syntax (`nova`, `nova/*`).
 4. One theme at a time. A registered but inactive theme changes nothing.
    With `RAPYD_THEME_SWITCH=true` (config `rapyd.theme_switch`) each visitor can pick one: a palette icon in the navbar
    lists the bundled look (`default`) and every registered theme, `?rapyd_theme=<name>` stores the choice in the session
@@ -75,7 +80,7 @@ components and applications rely on it. `rpd:theme:check` verifies the list.
 | menu | `@foreach(config('rapyd.menus.admin', []) as $menu) @include($menu) @endforeach`, then `@includeIf('menu')` and `@yield('role_menu')` |
 | `@stack('sidebar_footer')` | hook at the bottom of the sidebar |
 | search | `@livewire('search::search-navbar')` when `rapyd.search.enabled` and `Route::has('search.items')` |
-| locale switcher | from `config('app.locales')` when set |
+| locale switcher | `@include('layout::includes.locale_switcher')`, shown when `config('rapyd.locales')` has more than one language ([LOCALIZATION.md](LOCALIZATION.md)) |
 | `@stack('navbar_right')` | hook in the right part of the topbar |
 | user dropdown | name, company, Profile (`Route::has('profile')`), impersonation leave, logout form (`route('logout')`), `@yield('user_info_dropdown')` |
 | theme switcher | a light / dark toggle (icon shows what the click gives; the choice lives in localStorage, nothing stored = system) |
