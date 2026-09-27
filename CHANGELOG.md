@@ -2,6 +2,16 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.19.0] - 2026-09-27
+
+### Added
+
+- `Zofe\Rapyd\Contracts\AiActivity` and `AiActivityProvider`: the twin of `AiTool` / `AiToolProvider`. A module
+  says what the AI *did* in it, in the words of the domain ("Tickets classified", 8 845, from the categories the
+  AI proposed), with the context of the ledger rows it belongs to, so ai-module can put the cost next to it. Tools
+  say what the model may read; activities say what it has done — the page for the people who use the application,
+  not for the ones who develop it.
+
 ## [9.18.0] - 2026-09-25
 
 ### Added
