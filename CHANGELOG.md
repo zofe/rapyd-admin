@@ -2,7 +2,7 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
-## [9.19.0] - 2026-09-28
+## [9.20.0] - 2026-09-28
 
 Security release, from a report against a stock install. **Update, then change the password of
 `admin@laravel` (or delete the account) and review any user name or rich-text value that contains markup.**
@@ -35,6 +35,14 @@ Security release, from a report against a stock install. **Update, then change t
 ### Added
 
 - `ezyang/htmlpurifier` as a dependency, `rapyd_clean_html()` and the `rapyd.html_allowed` config key.
+- `tests/Feature/SecurityTest.php`, one case per vulnerability.
+
+### Changed
+
+- The user modal of the company page follows `company_role`, not a permission: an account that is not a super
+  admin and not the `owner` of its company now edits only itself there, and does not create users. If your
+  application relied on a role like `operator` administering the users of a company from that page, give those
+  accounts `company_role = 'owner'` on the company they administer, or use the Users page (`edit users`).
 
 ## [9.19.0] - 2026-09-27
 
