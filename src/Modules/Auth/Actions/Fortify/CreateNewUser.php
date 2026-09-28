@@ -16,7 +16,8 @@ class CreateNewUser implements CreatesNewUsers
         $userModel = config('auth.providers.users.model');
 
         Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
+            // registration is open: a display name is plain text, it never carries markup
+            'name' => ['required', 'string', 'max:255', 'not_regex:/[<>]/'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique($userModel)],
             'password' => $this->passwordRules(),
         ])->validate();

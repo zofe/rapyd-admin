@@ -25,7 +25,9 @@ if [[ ! -d "$APP" ]]; then
     echo "▶ zofe/rapyd-admin from $ROOT (path repository)"
     composer config repositories.rapyd-admin path "$ROOT"
     composer require "zofe/rapyd-admin:@dev" -W --no-interaction --quiet
-    php artisan rpd:make:setup --no-interaction
+    # the seeder generates a random password and prints it once; here the sandbox is a throwaway
+    # local app, so we pick a known one instead of scrolling back for it
+    RAPYD_ADMIN_PASSWORD="sandbox" php artisan rpd:make:setup --no-interaction
 
     echo "▶ laravel/boost"
     composer require laravel/boost --dev --no-interaction --quiet
@@ -41,7 +43,7 @@ if [[ ! -d "$APP" ]]; then
 
     echo
     echo "sandbox ready: $APP"
-    echo "  login: admin@laravel / admin"
+    echo "  login: admin@laravel / sandbox (a real app gets a random password, printed once)"
     echo "  guideline + skills of rapyd-admin: check AGENTS.md / CLAUDE.md and .claude/skills in the app"
     echo "  without Boost: php artisan rpd:ai"
 fi

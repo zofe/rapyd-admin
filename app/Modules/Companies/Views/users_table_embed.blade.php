@@ -14,8 +14,18 @@
                         @endphp
                         <span class="badge bg-{{ $badgeColor }}">{{ ucfirst($role) }}</span>
 
-                        @if($editable)
+                        @php
+                            // the same rule the component enforces (UsersModalEditEmbed): show only what the viewer may do
+                            $me = auth()->user();
+                            $isSuper = $me && $me->hasAnyRole(config('rapyd.auth.super_admin_roles', ['admin']));
+                            $canEdit = $me && ($isSuper || ((string) $me->company_id === (string) $company->id
+                                && ($me->company_role === 'owner' || (string) $me->getKey() === (string) $user->getKey())));
+                            $canDelete = $canEdit && (string) $me->getKey() !== (string) $user->getKey() && ($isSuper || $role !== 'owner');
+                        @endphp
+                        @if($editable && $canEdit)
                             <x-rpd::icon name="edit" click="$dispatch('editUser', {userId: '{{ $user->id }}', companyId: '{{ $company->id }}'})" />
+                        @endif
+                        @if($editable && $canDelete)
                             <x-rpd::icon name="trash-alt" click="$dispatch('deleteUser', {userId: '{{ $user->id }}'})" confirm="Delete {{ $user->name }}?" />
                         @endif
                     </div>

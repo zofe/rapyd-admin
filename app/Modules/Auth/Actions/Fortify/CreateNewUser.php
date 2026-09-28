@@ -24,7 +24,8 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input)
     {
         Validator::make($input, [
-            'name' => ['required', 'string', 'max:255'],
+            // registration is open: a display name is plain text, it never carries markup
+            'name' => ['required', 'string', 'max:255', 'not_regex:/[<>]/'],
             'email' => [
                 'required',
                 'string',

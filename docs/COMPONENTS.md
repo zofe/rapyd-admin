@@ -94,6 +94,18 @@ All field components use `wire:model.live.debounce.150ms` by default. Pass `:laz
 
 **Common props:** `label`, `placeholder`, `model`, `options`, `debounce`, `prepend`, `append`, `help`, `icon`, `size`, `multiple`, `endpoint`, `format`, `value-format`, `rows`.
 
+### HTML values
+
+A `rich-text` value is markup written by the browser, so it is never echoed as it comes: the component runs it
+through `rapyd_clean_html()` (HTMLPurifier, allow-list in `rapyd.html_allowed`). Do the same in your own views
+wherever you print such a value — `{!! rapyd_clean_html($article->body) !!}`, never `{!! $article->body !!}`.
+Every other label is data: print it with `{{ }}`.
+
+```php
+// config/rapyd.php
+'html_allowed' => 'p,br,b,strong,i,em,u,s,h1,h2,h3,h4,h5,h6,ul,ol,li,blockquote,pre,code,a[href|title],img[src|alt|width|height],span[class],table,thead,tbody,tr,th,td',
+```
+
 ## Navigation Components
 
 ```html

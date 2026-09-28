@@ -182,8 +182,10 @@ class RapydServiceProvider extends ServiceProvider
         // the layout keys added since (auth_links, custom_css...) and the keys added later.
         // Fill them with the package defaults; a key the application set wins.
         $defaults = require __DIR__ . '/../config/rapyd.php';
-        config(['rapyd.layout' => array_replace_recursive($defaults['layout'], config('rapyd.layout', []))]);
-        foreach (['locale', 'locales', 'skip_asset_injection'] as $key) {
+        foreach (['layout', 'auth'] as $group) {
+            config(["rapyd.{$group}" => array_replace_recursive($defaults[$group], config("rapyd.{$group}", []))]);
+        }
+        foreach (['locale', 'locales', 'skip_asset_injection', 'html_allowed'] as $key) {
             if (config("rapyd.{$key}") === null) {
                 config(["rapyd.{$key}" => $defaults[$key]]);
             }

@@ -28,6 +28,50 @@ if (! function_exists('dot_to_property')) {
     }
 }
 
+if (! function_exists('rapyd_clean_html')) {
+    /**
+     * Sanitise the HTML of a rich-text field before it is echoed raw. HTMLPurifier keeps
+     * an allow-list of formatting tags (config rapyd.html_allowed) and drops scripts,
+     * event handlers, javascript: urls and anything it does not know. Use it in the
+     * application too, wherever such a value is printed with {!! !!}.
+     */
+    function rapyd_clean_html($html): string
+    {
+        if ($html === null || $html === '' || ! class_exists(\HTMLPurifier::class)) {
+            // without the library the value is escaped rather than printed as markup
+            return $html === null ? '' : e((string) $html);
+        }
+
+        $allowed = config(
+            'rapyd.html_allowed',
+            'p,br,b,strong,i,em,u,s,h1,h2,h3,h4,h5,h6,ul,ol,li,blockquote,pre,code,a[href|title],img[src|alt|width|height],span[class],table,thead,tbody,tr,th,td'
+        );
+
+        // one purifier per allow-list: building it is expensive, and the list can change
+        static $purifiers = [];
+        $purifier = $purifiers[$allowed] ?? null;
+        if ($purifier === null) {
+            $config = \HTMLPurifier_Config::createDefault();
+            $config->set('HTML.Allowed', $allowed);
+            $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true]);
+
+            // the definition cache is a speed-up, not a requirement: without a writable
+            // directory (read-only deploys, tests) HTMLPurifier must not fail
+            $cache = storage_path('framework/cache/htmlpurifier');
+            if (! is_dir($cache)) {
+                @mkdir($cache, 0775, true);
+            }
+            is_writable($cache)
+                ? $config->set('Cache.SerializerPath', $cache)
+                : $config->set('Cache.DefinitionImpl', null);
+
+            $purifier = $purifiers[$allowed] = new \HTMLPurifier($config);
+        }
+
+        return $purifier->purify((string) $html);
+    }
+}
+
 if (! function_exists('url_contains')) {
     function url_contains($needle, $strict = false)
     {

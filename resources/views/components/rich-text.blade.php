@@ -57,7 +57,8 @@
         x-ref="quillEditor"
         x-on:quill-input.debounce.defer="@this.set('{{ $key }}', $event.detail)"
     >
-        {!! dot_to_property($this, $key) !!}
+        {{-- the value is a Livewire property the browser can write: sanitise before echoing it as markup --}}
+        {!! rapyd_clean_html(dot_to_property($this, $key)) !!}
     </div>
 </div>
 

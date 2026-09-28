@@ -117,6 +117,21 @@ return [
     */
     'auth' => [
         'super_admin_roles' => ['admin'],
+
+        // The first admin: created by AuthSeeder with a random password printed once
+        // (or RAPYD_ADMIN_PASSWORD), never in production, never twice. false: never.
+        'seed_admin' => env('RAPYD_SEED_ADMIN', true),
+        'admin_email' => env('RAPYD_ADMIN_EMAIL', 'admin@laravel'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | HTML allowed in a rich-text value
+    |--------------------------------------------------------------------------
+    | `rapyd_clean_html()` (used by x-rpd::rich-text, and by your own views wherever
+    | such a value is printed raw) keeps these tags and attributes and drops the rest:
+    | scripts, event handlers, javascript: urls. HTMLPurifier syntax.
+    */
+    'html_allowed' => 'p,br,b,strong,i,em,u,s,h1,h2,h3,h4,h5,h6,ul,ol,li,blockquote,pre,code,a[href|title],img[src|alt|width|height],span[class],table,thead,tbody,tr,th,td',
 
 ];

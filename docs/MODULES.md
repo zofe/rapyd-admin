@@ -168,6 +168,13 @@ Scoping is opt-in per component: `$this->limit()` in `booted()` applies every re
 runs the registered `Authorization` classes on that model (`CompanyAuth`: own company or a child). Owner-only
 actions call `CompanyOwnerAuth::check($company, $user)` explicitly.
 
+> `CompanyLimit` scopes **Company**, not **User**: users are not scoped globally. A component that takes a user id
+> has to filter by `company_id` in its own query — a permission alone is not an answer to *which* user.
+> `companies::users-modal-edit-embed` resolves every id that way, on each of `editUser`, `save` and `deleteUser`:
+> a super admin (`rapyd.auth.super_admin_roles`) administers anyone, the `owner` of a company its members, anybody
+> else only himself; `company_id` is forced to the caller's company and only an owner hands out the `owner` role.
+> Follow the same shape in your own embeds, and keep the icons in the table on the same rule.
+
 ### Addresses
 
 Postal addresses attachable to any model (`HasAddresses` on the model, `rpd:install --addresses` adds it to User).

@@ -82,6 +82,8 @@ class RapydMakeBaseCommand extends Command
             config(["auth.role_permissions.{$role}" => array_values(array_unique(array_merge(config("auth.role_permissions.{$role}", []), $permissions)))]);
         }
         if (Schema::hasTable('permissions')) {
+            // roles and permissions only: generating a module must never create a user
+            config(['rapyd.auth.seed_admin' => false]);
             $this->callSilently('db:seed', ['--class' => AuthSeeder::class, '--force' => true]);
         }
     }

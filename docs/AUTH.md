@@ -13,7 +13,25 @@ in one file and seeded. Google sign-in is built in. Impersonation too.
   (`--companies` adds `HasCompanies`, `--addresses` adds `HasAddresses`, `--uuid-users` publishes the UUID conversion);
 - `--no-user-model` skips the User model, `--force` overwrites published configs.
 
-The seeder creates the roles, permissions and the first admin (`admin@laravel` / `admin`: change it).
+The seeder creates the roles, permissions and the first admin.
+
+### The first admin
+
+`AuthSeeder` creates `admin@laravel` **once**, with a random password printed on the console:
+
+```
+Admin user created: admin@laravel / xY7kq2mNbT4wRs9p
+This password is shown once: change it after the first login.
+```
+
+- `RAPYD_ADMIN_PASSWORD` in `.env` sets the password instead of generating one;
+- `rapyd.auth.admin_email` (`RAPYD_ADMIN_EMAIL`) changes the address;
+- the account is never created in production, and never recreated once it exists: re-running the seeder — every
+  `rpd:make` does, to refresh roles and permissions — leaves the users alone. The generator seeds with
+  `rapyd.auth.seed_admin` (`RAPYD_SEED_ADMIN`) off for the same reason.
+
+If you lost the password: `php artisan tinker` and
+`User::where('email','admin@laravel')->first()->update(['password' => Hash::make('...')])`.
 
 ## Roles and permissions
 

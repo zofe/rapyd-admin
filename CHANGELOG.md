@@ -2,6 +2,40 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.19.0] - 2026-09-28
+
+Security release, from a report against a stock install. **Update, then change the password of
+`admin@laravel` (or delete the account) and review any user name or rich-text value that contains markup.**
+
+### Security
+
+- **A company member could take over any account** (`UsersModalEditEmbed`): `editUser`, `save` and `deleteUser`
+  took an id from the browser and the only check was a permission, so the `customer` role (which carries
+  `edit own users`) reached the owner of its own company, accounts of other tenants and the super admin,
+  changed their password, deleted them, promoted itself to `owner` and created users in other companies.
+  Every entry point now resolves the id through the caller: a super admin administers anyone, the owner of a
+  company its members, anybody else only himself; `role` is validated against `rapyd.companies.roles` and only
+  an owner (or a super admin) hands out `owner`; `company_id` is forced to the caller's company. The icons of
+  the company page follow the same rule.
+- **An operator could grant himself the `admin` role** (`UsersEdit`): the roles came from the browser and were
+  synced as they were. The assignable roles are now computed on the server (a non-super-admin never sees nor
+  sends a role of `rapyd.auth.super_admin_roles`), a non-super-admin cannot edit a super admin (it would reset
+  his password) nor add a role to himself. The dead `$unchangable` property is gone.
+- **The first admin had a known password** (`AuthSeeder`): `admin@laravel` / `admin`, recreated by every
+  `rpd:make`. The account is now created once with a random password printed on the console (or
+  `RAPYD_ADMIN_PASSWORD`), never in production, never recreated; `rpd:make` refreshes roles and permissions
+  only (`rapyd.auth.seed_admin`, `rapyd.auth.admin_email`).
+- **Stored XSS through a display name** (`x-rpd::select-list`): option labels were printed raw, so a name
+  chosen at registration ran in the admin session (Logs → Activity, the users and permissions forms). They are
+  escaped now, like `x-rpd::select`, and a name may no longer contain `<` or `>`.
+- **Stored XSS in a rich-text value** (`x-rpd::rich-text`): the value is written by the browser and was echoed
+  raw when the record was reopened. It goes through `rapyd_clean_html()` (HTMLPurifier, allow-list in
+  `rapyd.html_allowed`). Use that helper in your own views too, wherever such a value is printed with `{!! !!}`.
+
+### Added
+
+- `ezyang/htmlpurifier` as a dependency, `rapyd_clean_html()` and the `rapyd.html_allowed` config key.
+
 ## [9.19.0] - 2026-09-27
 
 ### Added

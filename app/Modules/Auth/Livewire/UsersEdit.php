@@ -21,8 +21,6 @@ class UsersEdit extends Component
 
     public $roles = [];
 
-    public $unchangable = [1, 2, 3, 4, 5, 6, 7];
-
     public $fixed_type;
 
     public $readonly = false;
@@ -57,11 +55,35 @@ class UsersEdit extends Component
         if ($this->user->exists && method_exists($this->user, 'roles')) {
             $this->roles = $this->user->roles->pluck('id')->toArray();
         }
-        $this->available_roles = Role::query()->pluck('name', 'id')->toArray();
+        $this->available_roles = $this->assignableRoles();
 
         if ($this->hasCompanies() && ! $this->user->company_role) {
             $this->user->company_role = 'member';
         }
+    }
+
+    protected function isSuperAdmin(): bool
+    {
+        return auth()->user()->hasAnyRole($this->superAdminRoles());
+    }
+
+    protected function superAdminRoles(): array
+    {
+        return config('rapyd.auth.super_admin_roles', ['admin']);
+    }
+
+    /**
+     * The roles the caller may grant. A super admin grants everything; anybody else
+     * everything but the super-admin roles, which would bypass Authorize, the Limit
+     * scopes and unlock impersonation. Computed on the server: the ids that come back
+     * from the browser are checked against this list in save(), never trusted.
+     */
+    protected function assignableRoles(): array
+    {
+        return Role::query()
+            ->when(! $this->isSuperAdmin(), fn ($q) => $q->whereNotIn('name', $this->superAdminRoles()))
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
     public function hasCompanies(): bool
@@ -85,6 +107,20 @@ class UsersEdit extends Component
 
     public function save()
     {
+        if (! $this->isSuperAdmin()) {
+            // a super admin is edited by a super admin only: otherwise his password is changed here
+            abort_if($this->user->exists && $this->user->hasAnyRole($this->superAdminRoles()), 403);
+            // and nobody grants himself a role he does not have yet
+            abort_if(
+                $this->user->exists
+                && (string) $this->user->getKey() === (string) auth()->user()->getKey()
+                && array_diff(array_filter($this->roles), $this->user->roles->pluck('id')->all()),
+                403
+            );
+        }
+        // whatever the browser sent, only roles of the allow-list
+        abort_if(array_diff(array_filter($this->roles), array_keys($this->assignableRoles())), 403);
+
         if (! $this->user->exists) {
             $this->addRule('psswd', 'required|min:8');
         } else {

@@ -27,6 +27,14 @@ learning anything new: no DSL, no magic, no Filament / Nova patterns.
 - Routes: `Route::get('things', ThingsTable::class)->middleware(['web'])->name('things.table')->crumbs(fn ($crumbs) => …)`.
 - Permissions are strings (`view things`, `edit things`) declared in the module's `config.php` and checked with
   `authorize('admin|edit things')`; the sidebar entry (`Views/menu.blade.php`) checks them too.
+- A permission says *what* the caller may do, never *on which row*. Every id and every value of a Livewire
+  component comes from the browser, on each entry point (`#[On]` listeners, `save()`, delete): re-resolve the
+  record with a query narrowed to the caller (`where('company_id', auth()->user()->company_id)`), validate a role
+  or a status against an allow-list, and force the fields the caller must not choose. `abort_unless(…, 403)` when it
+  does not match, for a row of another tenant and for one that does not exist alike. Show a button only where the
+  server would allow the action.
+- Print values with `{{ }}`. A label, a name, a description is data, never markup. The exception is a rich-text
+  value, and it goes through `{!! rapyd_clean_html($value) !!}`.
 - Livewire 4: `#[On('event')]` not `$listeners`, `$this->dispatch()` not `emit()`; fields bind
   `wire:model.live.debounce.150ms` by default; on an unsaved model only the attributes in `$rules` survive a request.
 - Generate, then finish: `php artisan rpd:make Things Thing --module=Name --fields="name,active:boolean"` writes the
