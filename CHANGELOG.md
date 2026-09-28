@@ -2,6 +2,16 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.20.1] - 2026-09-28
+
+### Fixed
+
+- `rapyd_clean_html()` was also removing what the editor writes: the `class` that carries alignment and
+  indentation (`ql-align-center`, `ql-indent-1`) and the `data:` url of a pasted image. A rich-text value
+  reopened after 9.20.0 lost its formatting. `class` is allowed on the blocks now, and `data:` on images —
+  HTMLPurifier lets through an actual image (png, gif, jpeg, webp) and never `data:text/html`. Sanitising is
+  not reformatting: a test covers it.
+
 ## [9.20.0] - 2026-09-28
 
 Security release, from a report against a stock install. **Update, then change the password of

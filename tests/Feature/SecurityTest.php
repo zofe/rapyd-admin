@@ -233,4 +233,25 @@ class SecurityTest extends TestCase
         $this->assertSame('', rapyd_clean_html(null));
         $this->assertStringNotContainsString('<script', rapyd_clean_html('<script>alert(1)</script>'));
     }
+
+    /** 5b. And what the editor writes survives the cleaning: sanitising is not reformatting. */
+    public function test_the_formatting_of_the_editor_survives_the_sanitising()
+    {
+        $quill = '<p class="ql-align-center">Centered</p>'
+            .'<ul><li class="ql-indent-1">indented</li></ul>'
+            .'<pre class="ql-syntax">code</pre>'
+            .'<p><span class="ql-size-large">large</span></p>';
+
+        $clean = rapyd_clean_html($quill);
+
+        foreach (['ql-align-center', 'ql-indent-1', 'ql-syntax', 'ql-size-large'] as $class) {
+            $this->assertStringContainsString($class, $clean, "the editor stores the formatting in {$class}");
+        }
+
+        // an image pasted in the editor travels as a data url: a real one stays
+        $png = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+        $this->assertStringContainsString('data:image/png', rapyd_clean_html('<img src="data:image/png;base64,'.$png.'">'));
+        // but a data url that is not an image does not
+        $this->assertStringNotContainsString('data:text/html', rapyd_clean_html('<img src="data:text/html;base64,PHNjcmlwdD4=">'));
+    }
 }

@@ -131,7 +131,13 @@ return [
     | `rapyd_clean_html()` (used by x-rpd::rich-text, and by your own views wherever
     | such a value is printed raw) keeps these tags and attributes and drops the rest:
     | scripts, event handlers, javascript: urls. HTMLPurifier syntax.
+    |
+    | `class` is allowed on the blocks because that is how the editor stores alignment
+    | and indentation (ql-align-center, ql-indent-1): without it the formatting is lost
+    | when the value is read back. A class can restyle a paragraph, it cannot run.
     */
-    'html_allowed' => 'p,br,b,strong,i,em,u,s,h1,h2,h3,h4,h5,h6,ul,ol,li,blockquote,pre,code,a[href|title],img[src|alt|width|height],span[class],table,thead,tbody,tr,th,td',
+    'html_allowed' => 'p[class],br,b,strong,i,em,u,s,h1[class],h2[class],h3[class],h4[class],h5[class],h6[class],'
+        .'ul[class],ol[class],li[class],blockquote[class],pre[class],code[class],div[class],'
+        .'a[href|title],img[src|alt|width|height],span[class],table[class],thead,tbody,tr,th,td',
 
 ];

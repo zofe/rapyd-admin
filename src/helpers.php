@@ -42,10 +42,11 @@ if (! function_exists('rapyd_clean_html')) {
             return $html === null ? '' : e((string) $html);
         }
 
-        $allowed = config(
-            'rapyd.html_allowed',
-            'p,br,b,strong,i,em,u,s,h1,h2,h3,h4,h5,h6,ul,ol,li,blockquote,pre,code,a[href|title],img[src|alt|width|height],span[class],table,thead,tbody,tr,th,td'
-        );
+        // the real default is in config/rapyd.php, merged by the service provider; this
+        // one only covers a call made before the framework booted
+        $allowed = config('rapyd.html_allowed')
+            ?: 'p[class],br,b,strong,i,em,u,s,h1[class],h2[class],h3[class],ul[class],ol[class],li[class],'
+              .'blockquote[class],pre[class],code[class],a[href|title],img[src|alt|width|height],span[class]';
 
         // one purifier per allow-list: building it is expensive, and the list can change
         static $purifiers = [];
@@ -53,7 +54,9 @@ if (! function_exists('rapyd_clean_html')) {
         if ($purifier === null) {
             $config = \HTMLPurifier_Config::createDefault();
             $config->set('HTML.Allowed', $allowed);
-            $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true]);
+            // "data" is there for the images the editor pastes inline: HTMLPurifier only
+            // lets through an actual image (png, gif, jpeg, webp), never data:text/html
+            $config->set('URI.AllowedSchemes', ['http' => true, 'https' => true, 'mailto' => true, 'data' => true]);
 
             // the definition cache is a speed-up, not a requirement: without a writable
             // directory (read-only deploys, tests) HTMLPurifier must not fail

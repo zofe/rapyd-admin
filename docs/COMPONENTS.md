@@ -99,11 +99,13 @@ All field components use `wire:model.live.debounce.150ms` by default. Pass `:laz
 A `rich-text` value is markup written by the browser, so it is never echoed as it comes: the component runs it
 through `rapyd_clean_html()` (HTMLPurifier, allow-list in `rapyd.html_allowed`). Do the same in your own views
 wherever you print such a value — `{!! rapyd_clean_html($article->body) !!}`, never `{!! $article->body !!}`.
-Every other label is data: print it with `{{ }}`.
+Every other label is data: print it with `{{ }}`. `class` is on the list because the editor stores alignment
+and indentation there (`ql-align-center`, `ql-indent-1`), and `data:` urls are allowed on `img` for pasted
+images — an actual image only, never `data:text/html`.
 
 ```php
 // config/rapyd.php
-'html_allowed' => 'p,br,b,strong,i,em,u,s,h1,h2,h3,h4,h5,h6,ul,ol,li,blockquote,pre,code,a[href|title],img[src|alt|width|height],span[class],table,thead,tbody,tr,th,td',
+'html_allowed' => 'p[class],br,b,strong,i,em,u,s,h1[class],…,ul[class],ol[class],li[class],a[href|title],img[src|alt|width|height],span[class],…',
 ```
 
 ## Navigation Components
