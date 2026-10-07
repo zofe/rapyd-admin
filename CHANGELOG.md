@@ -2,6 +2,17 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.20.2] - 2026-10-07
+
+### Fixed
+
+- `config/rapyd.php` and `config/livewire.php` were published under the `laravel-assets` tag, the one
+  composer republishes with `--force` after every `composer require` or `update`: whatever the application
+  had written in its `config/rapyd.php` (search models, menus, roles) was silently replaced by the package
+  copy. The two files now belong to the `rapyd-config` tag with `permission.php` and `fortify.php`;
+  `laravel-assets` carries the public assets only. `rpd:install` already copied the configs on its own and
+  is unchanged.
+
 ## [9.20.1] - 2026-09-28
 
 ### Fixed

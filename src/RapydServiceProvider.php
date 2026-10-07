@@ -59,13 +59,16 @@ class RapydServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
 
+            // Only the public assets go under `laravel-assets`: composer republishes that tag with
+            // --force after every install/update, and a config file published there would be
+            // overwritten each time, wiping what the application had set in it.
             $this->publishes([
                 __DIR__ . '/../public' => public_path('vendor/rapyd'),
-                __DIR__ . '/../config/rapyd.php' => config_path('rapyd.php'),
-                __DIR__ . '/../config/livewire.php' => config_path('livewire.php'),
             ], 'laravel-assets');
 
             $this->publishes([
+                __DIR__ . '/../config/rapyd.php' => config_path('rapyd.php'),
+                __DIR__ . '/../config/livewire.php' => config_path('livewire.php'),
                 __DIR__ . '/../config/permission.php' => config_path('permission.php'),
                 __DIR__ . '/../config/fortify.php' => config_path('fortify.php'),
             ], 'rapyd-config');
