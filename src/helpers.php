@@ -202,6 +202,7 @@ if (! function_exists('rapyd_apps')) {
         foreach ($apps as $i => $app) {
             if ($app['url'] === null) {
                 $found = $i;
+
                 break;
             }
             if ($found === null && $host && parse_url($app['url'], PHP_URL_HOST) === $host) {
