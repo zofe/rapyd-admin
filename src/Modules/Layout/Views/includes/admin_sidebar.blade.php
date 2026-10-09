@@ -6,13 +6,19 @@
         $homeRoute = rapyd_brand_url();
     @endphp
 
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" style="overflow: hidden;" href="{{ $homeRoute }}">
-        @if(config('rapyd.layout.logo_sidebar'))
-            <img src="{{ config('rapyd.layout.logo_sidebar') }}" class="img-fluid px-2" alt="{{ config('rapyd.layout.brand') ?: config('app.name') }}">
-        @else
-            {{ config('rapyd.layout.brand') ?: config('app.name') }}
-        @endif
-    </a>
+    @php($apps = rapyd_apps())
+
+    @if($apps)
+        @include('layout::includes.app_switcher', ['apps' => $apps, 'homeRoute' => $homeRoute])
+    @else
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" style="overflow: hidden;" href="{{ $homeRoute }}">
+            @if(config('rapyd.layout.logo_sidebar'))
+                <img src="{{ config('rapyd.layout.logo_sidebar') }}" class="img-fluid px-2" alt="{{ config('rapyd.layout.brand') ?: config('app.name') }}">
+            @else
+                {{ config('rapyd.layout.brand') ?: config('app.name') }}
+            @endif
+        </a>
+    @endif
 
     <li class="nav-item d-md-none text-end pe-2">
         <button type="button" class="btn border-0 text-reset py-0" data-bs-dismiss="offcanvas" data-bs-target="#accordionSidebar" aria-label="{{ __('Close') }}">

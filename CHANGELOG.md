@@ -2,6 +2,26 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.22.0] - 2026-10-09
+
+### Added
+
+- **Application switcher in the sidebar.** An installation that is one of several sibling applications
+  (single sign-on between them) can list them in `rapyd.layout.apps` — `['name' => …, 'url' => …, 'icon' => …]`
+  each, or the same list as JSON in `RAPYD_APPS`. The brand keeps linking to the home as always; next to it a
+  chevron opens a dropdown with the current application ticked and the others as links, opened in the same tab.
+  The current one is the entry with a null url, or the one whose url has the same host as `app.url`.
+  **With fewer than two entries nothing changes at all**: `rapyd_apps()` returns an empty array and the sidebar
+  keeps the plain brand, so an application that does not configure it sees no difference. In the narrow sidebar
+  only the chevron remains, and the menu escapes the clipping with Popper in `fixed` strategy; in the mobile
+  drawer the entries are 44px tall. Colours are inherited from the theme, so it holds up on a coloured sidebar
+  in light and dark mode. A theme that wants it includes `layout::includes.app_switcher`; see `docs/THEMES.md`.
+
+### Fixed
+
+- The arrow of the sidebar collapse button sat 4px off centre (`margin-left` on the `::after`) and was not
+  centred vertically either.
+
 ## [9.21.0] - 2026-10-09
 
 ### Added

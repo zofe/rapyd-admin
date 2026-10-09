@@ -66,6 +66,12 @@ return [
         'auth_links'   => env('RAPYD_AUTH_LINKS', true), // Login / Register links in the navbars (the routes stay)
         'brand_route'  => env('RAPYD_BRAND_ROUTE'),     // where the sidebar brand links: a route name or a URL; null → admin.home, home, /
 
+        // Sibling applications to switch to, shown as a dropdown next to the brand. Each entry is
+        // ['name' => …, 'url' => …, 'icon' => …]; the current application is the one with a null url
+        // (or the one whose url has the same host as app.url). Fewer than two entries: no switcher,
+        // the sidebar stays exactly as it is. RAPYD_APPS takes the same list as JSON.
+        'apps' => json_decode((string) env('RAPYD_APPS', '[]'), true) ?: [],
+
         // Runtime palette: any CSS colour, applied without recompiling the theme
         // (see docs/THEMES.md, "Design tokens"). Null = the theme's own colour.
         'palette' => [

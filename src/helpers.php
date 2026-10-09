@@ -166,6 +166,54 @@ if (! function_exists('rapyd_brand_url')) {
     }
 }
 
+/**
+ * The applications the sidebar can switch to: config rapyd.layout.apps, normalised.
+ *
+ * Each entry gets name, url, icon and `current`. The current application is the one with no url,
+ * or the one whose url has the same host as config('app.url'); with nothing matching, the first.
+ * Fewer than two usable entries means no switcher at all — the sidebar stays as it is.
+ *
+ * @return array<int, array{name: string, url: ?string, icon: ?string, current: bool}>
+ */
+if (! function_exists('rapyd_apps')) {
+    function rapyd_apps(): array
+    {
+        $apps = [];
+        foreach ((array) config('rapyd.layout.apps', []) as $app) {
+            $name = is_array($app) ? ($app['name'] ?? null) : null;
+            if (! is_string($name) || trim($name) === '') {
+                continue;   // an entry without a name has nothing to show
+            }
+            $url = $app['url'] ?? null;
+            $apps[] = [
+                'name' => trim($name),
+                'url' => is_string($url) && trim($url) !== '' ? trim($url) : null,
+                'icon' => is_string($app['icon'] ?? null) && trim($app['icon']) !== '' ? trim($app['icon']) : null,
+                'current' => false,
+            ];
+        }
+
+        if (count($apps) < 2) {
+            return [];
+        }
+
+        $host = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $found = null;
+        foreach ($apps as $i => $app) {
+            if ($app['url'] === null) {
+                $found = $i;
+                break;
+            }
+            if ($found === null && $host && parse_url($app['url'], PHP_URL_HOST) === $host) {
+                $found = $i;
+            }
+        }
+        $apps[$found ?? 0]['current'] = true;
+
+        return $apps;
+    }
+}
+
 if (! function_exists('route_lang')) {
     function route_lang($name, $parameters = null, $absolute = true, $lang = null)
     {

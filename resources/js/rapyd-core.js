@@ -44,7 +44,22 @@ function toggleSidebar() {
     localStorage.setItem('sidebarToggled', sidebar.classList.contains('toggled'));
 }
 
+// The application switcher lives inside the sidebar, which clips when narrow
+// (overflow-x: hidden) and would cut its menu off. Popper in "fixed" strategy
+// positions the menu against the viewport instead, outside that clipping.
+function initAppSwitcher() {
+    document.querySelectorAll('.sidebar-apps-toggle[data-bs-toggle="dropdown"]').forEach(el => {
+        bootstrap.Dropdown.getOrCreateInstance(el, {
+            popperConfig: defaults => ({ ...defaults, strategy: 'fixed' }),
+        });
+    });
+}
+
+document.addEventListener('livewire:navigated', initAppSwitcher);
+
 document.addEventListener('DOMContentLoaded', () => {
+    initAppSwitcher();
+
     // Ripristina stato sidebar
     if (localStorage.getItem('sidebarToggled') === 'true') {
         document.body.classList.add('sidebar-toggled');

@@ -91,9 +91,13 @@
 
     // Toggler (sotto md non fa nulla di diverso, ma mostro icona collapsed)
     #sidebarToggle {
+        // inline-flex, non flex: centra la freccia nel cerchio senza che il cerchio
+        // diventi block-level e perda il text-center del contenitore
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         width: 2.5rem;
         height: 2.5rem;
-        text-align: center;
         margin-bottom: 1rem;
         cursor: pointer;
 
@@ -101,7 +105,7 @@
             font-weight: 900;
             content: '\f104';
             font-family: 'Font Awesome 5 Free';
-            margin-left: 0.25rem;
+            line-height: 1;
         }
         &:hover {
             text-decoration: none;
@@ -457,6 +461,82 @@
         i {
             display: inline !important;
             margin: 0 0.25rem 0 0;
+        }
+    }
+}
+
+// ────────────────────────────────────────────────────────────────
+// Selettore delle applicazioni (config rapyd.layout.apps)
+// Colori solo ereditati dalla sidebar: deve reggere qualunque tema.
+// ────────────────────────────────────────────────────────────────
+.sidebar .sidebar-apps {
+    .sidebar-brand {
+        // il brand resta il link alla home: la freccia è un bersaglio a parte
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .sidebar-apps-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        margin-right: .25rem;
+        padding: 0;
+        border: 0;
+        border-radius: .35rem;
+        background-color: transparent;
+        color: inherit;          // segue --rpd-sidebar-text / il colore del tema
+        font-size: .8rem;
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            background-color: color-mix(in srgb, currentColor 18%, transparent);
+        }
+        &[aria-expanded="true"] .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+        .fa-chevron-down {
+            transition: transform .15s;
+        }
+    }
+
+    .sidebar-apps-menu {
+        --bs-dropdown-min-width: 13rem;
+        // il menu è posizionato in strategy "fixed" (resources/js/rapyd-core.js):
+        // la sidebar stretta ritaglia, e qui dentro verrebbe tagliato
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            min-height: 44px;    // bersaglio tattile anche nel drawer
+        }
+        .dropdown-item.active {
+            // la voce corrente non è un link: niente colore d'azione
+            background-color: var(--bs-tertiary-bg);
+            color: var(--bs-body-color);
+            cursor: default;
+        }
+    }
+}
+
+// Sidebar stretta: il nome dell'applicazione non ci sta accanto alla freccia,
+// resta il solo selettore, centrato (la home è la prima voce del menu).
+@include media-breakpoint-up(md) {
+    .sidebar.toggled .sidebar-apps {
+        .sidebar-brand {
+            display: none;
+        }
+        .sidebar-apps-row {
+            justify-content: center;    // resta solo la freccia: va al centro della colonna
+        }
+        .sidebar-apps-toggle {
+            margin: .25rem 0;
         }
     }
 }
