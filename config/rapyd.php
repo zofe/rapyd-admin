@@ -69,11 +69,14 @@ return [
         // Runtime palette: any CSS colour, applied without recompiling the theme
         // (see docs/THEMES.md, "Design tokens"). Null = the theme's own colour.
         'palette' => [
-            'primary'      => env('RAPYD_PRIMARY'),        // buttons, links, active items, badges
-            'sidebar_bg'   => env('RAPYD_SIDEBAR_BG'),
-            'sidebar_text' => env('RAPYD_SIDEBAR_TEXT'),
-            'topbar_bg'    => env('RAPYD_TOPBAR_BG'),
-            'content_bg'   => env('RAPYD_CONTENT_BG'),
+            'primary'        => env('RAPYD_PRIMARY'),      // buttons, links, active items, badges
+            'sidebar_bg'     => env('RAPYD_SIDEBAR_BG'),
+            'sidebar_text'   => env('RAPYD_SIDEBAR_TEXT'),
+            'sidebar_border' => env('RAPYD_SIDEBAR_BORDER'), // sidebar edge and dividers; null → derived from sidebar_bg
+            'topbar_bg'      => env('RAPYD_TOPBAR_BG'),
+            'content_bg'     => env('RAPYD_CONTENT_BG'),
+            'border_color'   => env('RAPYD_BORDER_COLOR'),   // tables, cards, inputs
+            // 'dark' => [...the same keys...]  // dark mode; without it only the accent follows, lightened
         ],
     ],
 

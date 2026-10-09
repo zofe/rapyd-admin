@@ -164,10 +164,18 @@
 //    background-color: transparent !important;
 //}
 
-@media (max-width: 576px) {
+// Fondo di ripiego della topbar; _dark.scss lo ridefinisce. Un solo nome, così
+// il pannello della navbar collassata è opaco sia in chiaro sia in scuro.
+:root {
+    --rpd-topbar-bg-fallback: #{$navbar-admin-bg};
+}
+
+@media (max-width: 575.98px) {
+    // Pannello della navbar aperta su telefono: deve coprire il contenuto sotto.
+    // Era `var(--sidebar-bg)`, definita solo in .dark: in tema chiaro restava trasparente.
     .topbar .navbar-collapse.collapse.show {
 
-        background-color: var(--sidebar-bg);
+        background: var(--rpd-topbar-bg, var(--rpd-topbar-bg-fallback));
         border-radius: .35rem;
 
         border: 1px solid var(--bs-border-color);

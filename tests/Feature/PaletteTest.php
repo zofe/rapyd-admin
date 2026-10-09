@@ -49,6 +49,65 @@ class PaletteTest extends TestCase
         $this->assertStringContainsString('--rpd-topbar-bg: hsl(210 40% 98%)', $css);
     }
 
+    public function test_light_values_do_not_leak_into_dark_mode()
+    {
+        $css = Palette::css(['content_bg' => '#f8f9fc']);
+
+        $this->assertStringContainsString('html:not(.dark) { --rpd-content-bg: #f8f9fc; }', $css);
+        $this->assertStringNotContainsString('html.dark', $css);
+    }
+
+    public function test_dark_block_drives_the_same_tokens()
+    {
+        $css = Palette::css([
+            'sidebar_bg' => '#4e73df',
+            'dark' => ['sidebar_bg' => '#16244a', 'content_bg' => '#0f1424'],
+        ]);
+
+        $this->assertStringContainsString('html:not(.dark) { --rpd-sidebar-bg: #4e73df', $css);
+        $this->assertStringContainsString('html.dark { --rpd-sidebar-bg: #16244a', $css);
+        $this->assertStringContainsString('--rpd-content-bg: #0f1424', $css);
+    }
+
+    public function test_gradients_are_allowed_as_backgrounds_only()
+    {
+        $gradient = 'linear-gradient(180deg, #4e73df 10%, #224abe 100%)';
+        $css = Palette::css(['sidebar_bg' => $gradient, 'primary' => $gradient]);
+
+        $this->assertStringContainsString("--rpd-sidebar-bg: {$gradient}", $css);
+        // color-mix() needs a colour: a gradient sidebar gets translucent shades instead
+        $this->assertStringContainsString('--rpd-sidebar-inner-bg: rgba(0, 0, 0, .14)', $css);
+        $this->assertStringNotContainsString('--bs-primary', $css);
+        $this->assertSame('', Palette::css(['sidebar_bg' => 'linear-gradient(url(http://x))']));
+    }
+
+    public function test_border_colour_reaches_tables_cards_and_dropdowns()
+    {
+        $css = Palette::css(['border_color' => '#b7c0d4']);
+
+        $this->assertStringContainsString('--rpd-border-color: #b7c0d4', $css);
+        $this->assertStringContainsString('--bs-border-color: #b7c0d4', $css);
+        $this->assertStringContainsString('--bs-card-border-color: #b7c0d4', $css);
+        $this->assertStringContainsString('--bs-dropdown-border-color: #b7c0d4', $css);
+    }
+
+    public function test_sidebar_border_is_derived_from_the_sidebar_background()
+    {
+        $derived = Palette::css(['sidebar_bg' => '#4e73df']);
+        $this->assertStringContainsString('--rpd-sidebar-border: rgba(0, 0, 0, .25)', $derived);
+        $this->assertStringContainsString('.sidebar hr.sidebar-divider { border-top-color: rgba(0, 0, 0, .25); opacity: 1; }', $derived);
+
+        // with a light sidebar text the hairline follows it, instead of being a black line on colour
+        $fromText = Palette::css(['sidebar_bg' => '#4e73df', 'sidebar_text' => '#ffffff']);
+        $this->assertStringContainsString('--rpd-sidebar-border: color-mix(in srgb, #ffffff 20%, transparent)', $fromText);
+
+        $explicit = Palette::css(['sidebar_bg' => '#4e73df', 'sidebar_border' => 'rgba(255, 255, 255, .16)']);
+        $this->assertStringContainsString('--rpd-sidebar-border: rgba(255, 255, 255, .16)', $explicit);
+
+        // no sidebar at all: nothing to separate
+        $this->assertStringNotContainsString('--rpd-sidebar-border', Palette::css(['content_bg' => '#fff']));
+    }
+
     public function test_directive_emits_the_style_block_after_the_stylesheet()
     {
         config(['rapyd.layout.palette' => ['primary' => '#6a1c9a']]);

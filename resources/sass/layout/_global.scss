@@ -19,8 +19,11 @@ a {
 // Main page wrapper
 #wrapper {
   display: flex;
+  // Sotto md la sidebar è un drawer fuori flusso: senza questo il wrapper si
+  // accorcia al contenuto e sotto la pagina compare lo sfondo del body.
+  min-height: 100vh;
   #content-wrapper {
-    background-color: var(--rpd-content-bg, #{$gray-100});
+    background: var(--rpd-content-bg, #{$gray-100});
     width: 100%;
     overflow-x: hidden;
     #content {

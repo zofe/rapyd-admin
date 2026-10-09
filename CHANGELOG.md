@@ -2,6 +2,33 @@
 
 All notable changes to `rapyd-admin` will be documented in this file.
 
+## [9.21.0] - 2026-10-09
+
+### Added
+
+- The palette gained a `dark` block, driving the same `--rpd-*` tokens under `html.dark`, and two keys:
+  `border_color` (tables, cards, dropdowns, inputs — in both modes) and `sidebar_border` (the sidebar edge and
+  its dividers, derived from the sidebar text when not given). `sidebar_bg`, `topbar_bg` and `content_bg` now
+  also accept a gradient.
+
+### Changed
+
+- **Below `md` the sidebar is a drawer** (Bootstrap `offcanvas-md`) instead of a narrow column: on a 390px
+  screen it used to eat 104px and wrap the menu labels. The topbar has two distinct buttons now — the
+  hamburger opens the sidebar, the kebab the navbar's own items — and picking an entry closes the drawer.
+  A theme is free to use any equivalent; see "narrow screens" in `docs/THEMES.md` for the two traps
+  (Bootstrap forces `background-color: transparent !important` above the breakpoint, and `#wrapper` needs
+  `min-height: 100vh` once the sidebar leaves the flow).
+- The light palette values are scoped to `html:not(.dark)`, so they no longer leak into dark mode. Dark mode
+  keeps following the accent, lightened for contrast, when no dark `primary` is given.
+
+### Fixed
+
+- The navbar never collapsed on phones: `.navbar-collapse` carried `d-flex`, which is `display:flex !important`
+  and beat `.collapse{display:none}`. The breadcrumb ended up over the search box and the Add button.
+- The panel of the collapsed navbar was transparent in light mode — it was painted with `var(--sidebar-bg)`,
+  a custom property defined only inside `.dark`, so in light mode it resolved to nothing.
+
 ## [9.20.2] - 2026-10-07
 
 ### Fixed

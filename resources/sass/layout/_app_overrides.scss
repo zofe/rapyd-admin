@@ -28,7 +28,7 @@ body.theme-dark {
     border-bottom: 1px solid $border-color;
 }
 .navbar-admin {
-    background-color: var(--rpd-topbar-bg, #{$navbar-admin-bg});
+    background: var(--rpd-topbar-bg, #{$navbar-admin-bg});
     border-bottom: 1px solid $border-color;
 }
 

@@ -51,11 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.sidebar')?.classList.add('toggled');
     }
 
-    document.getElementById('sidebarToggleTop')?.addEventListener('click', e => {
-        e.preventDefault(); toggleSidebar();
-    });
+    // #sidebarToggleTop is the navbar's own toggler (Bootstrap collapse); only the
+    // button inside the sidebar collapses it, and only from md up.
     document.getElementById('sidebarToggle')?.addEventListener('click', e => {
         e.preventDefault(); toggleSidebar();
+    });
+
+    // Below md the sidebar is an offcanvas: picking an entry has to close it,
+    // otherwise the drawer stays over the page that just loaded. The links that
+    // open a sub-menu (data-bs-toggle="collapse") must keep it open.
+    document.querySelector('.sidebar')?.addEventListener('click', e => {
+        const link = e.target.closest('a[href]');
+        if (!link || link.dataset.bsToggle === 'collapse') return;
+        const drawer = bootstrap.Offcanvas.getInstance(document.getElementById('accordionSidebar'));
+        drawer?.hide();
     });
 });
 

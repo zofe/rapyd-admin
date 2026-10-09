@@ -1,4 +1,5 @@
-<ul class="navbar-nav bg-sidebar sidebar accordion" id="accordionSidebar">
+{{-- offcanvas-md: a drawer below md, the usual column from md up (docs/THEMES.md). --}}
+<ul class="navbar-nav bg-sidebar sidebar accordion offcanvas-md offcanvas-start" id="accordionSidebar" tabindex="-1">
 
     @php
         // config rapyd.layout.brand_route, or admin.home / home / the root (routes are optional for a theme)
@@ -12,6 +13,12 @@
             {{ config('rapyd.layout.brand') ?: config('app.name') }}
         @endif
     </a>
+
+    <li class="nav-item d-md-none text-end pe-2">
+        <button type="button" class="btn border-0 text-reset py-0" data-bs-dismiss="offcanvas" data-bs-target="#accordionSidebar" aria-label="{{ __('Close') }}">
+            <i class="fas fa-times"></i>
+        </button>
+    </li>
 
     @if(app()->environment(['stage']))
         <div class="text-white text-center py-1 h5">

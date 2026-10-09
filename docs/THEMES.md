@@ -79,6 +79,7 @@ components and applications rely on it. `rpd:theme:check` verifies the list.
 | brand | `config('rapyd.layout.logo_sidebar')` as image, else `config('rapyd.layout.brand')` / `app.name`; links to `admin.home` or `home` when they exist |
 | menu | `@foreach(config('rapyd.menus.admin', []) as $menu) @include($menu) @endforeach`, then `@includeIf('menu')` and `@yield('role_menu')` |
 | `@stack('sidebar_footer')` | hook at the bottom of the sidebar |
+| narrow screens | below `md` the sidebar has to get out of the way, not shrink. The bundled layout does it with Bootstrap's `offcanvas-md offcanvas-start` on the sidebar plus a `data-bs-toggle="offcanvas"` button in the topbar; a theme may use any equivalent drawer. Two things come with it: above the breakpoint Bootstrap forces `background-color: transparent !important` on `.offcanvas-md`, so the sidebar background must be restated by a more specific rule (and the fallback has to work in dark mode too — see `--rpd-sidebar-bg-fallback`), and `#wrapper` needs `min-height: 100vh`, since a drawer no longer holds the page up |
 | search | `@livewire('search::search-navbar')` when `rapyd.search.enabled` and `Route::has('search.items')` |
 | locale switcher | `@include('layout::includes.locale_switcher')`, shown when `config('rapyd.locales')` has more than one language ([LOCALIZATION.md](LOCALIZATION.md)) |
 | `@stack('navbar_right')` | hook in the right part of the topbar |
@@ -115,15 +116,17 @@ The pages use `.auth-card` / `.auth-card-narrow` and `config('rapyd.layout.logo_
 
 The components do not hard-code the accent colour: `resources/sass/_tokens.scss` maps `.btn-primary`, outline buttons,
 focus rings, checks, pagination, active items and badges onto Bootstrap's CSS variables (`--bs-primary`,
-`--bs-primary-rgb`, `--bs-link-color`…), deriving hover and tint shades with `color-mix()`. The layout reads three
-tokens of its own with a fallback to the theme's compiled value:
+`--bs-primary-rgb`, `--bs-link-color`…), deriving hover and tint shades with `color-mix()`. The layout reads a few
+tokens of its own, in light and in dark mode, each falling back to the theme's compiled value:
 
 | Token | Used by |
 |---|---|
 | `--rpd-sidebar-bg` | `.sidebar`, `.bg-sidebar` |
 | `--rpd-sidebar-inner-bg`, `--rpd-sidebar-active-bg` | open sub-menus and the active item (derived from `sidebar_bg` by the palette) |
+| `--rpd-sidebar-border` | the sidebar edge and its dividers (derived from `sidebar_bg` when not given) |
 | `--rpd-topbar-bg` | `.navbar-admin` |
 | `--rpd-content-bg` | `#content-wrapper` |
+| `--rpd-border-color` | tables, cards, dropdowns and inputs, in light and dark mode (`border_color`) |
 
 So an application changes the look **without recompiling**, from `.env`:
 
@@ -131,15 +134,37 @@ So an application changes the look **without recompiling**, from `.env`:
 RAPYD_PRIMARY="#6a1c9a"
 RAPYD_SIDEBAR_BG="#1e293b"
 RAPYD_SIDEBAR_TEXT="#f8fafc"
+RAPYD_SIDEBAR_BORDER="rgba(0, 0, 0, .35)"
 RAPYD_TOPBAR_BG="#ffffff"
 RAPYD_CONTENT_BG="#f1f5f9"
+RAPYD_BORDER_COLOR="#b7c0d4"
 ```
 
 Quote the values: in a `.env` file an unquoted `#` starts a comment.
 
 `config('rapyd.layout.palette')` is turned by `Zofe\Rapyd\Themes\Palette` into a `<style id="rapyd-palette">` that
-`@rapydStyles` emits right after the theme stylesheet. `primary` is applied to light mode as is and to dark mode
-lightened for contrast; the other tokens only affect light mode (dark mode keeps the theme's dark backgrounds).
+`@rapydStyles` emits right after the theme stylesheet. The keys above are scoped to `html:not(.dark)`, so they never
+leak into dark mode; `primary` also reaches dark mode, lightened for contrast when no dark accent is given.
+
+### Dark mode
+
+A `dark` sub-array drives the very same tokens under `html.dark`; anything it leaves out keeps the theme's own dark value:
+
+```php
+'palette' => [
+    'sidebar_bg' => '#4e73df',
+    'dark' => ['sidebar_bg' => '#16244a'],
+],
+```
+
+The three background keys (`sidebar_bg`, `topbar_bg`, `content_bg`) also accept a gradient — `linear-gradient(…)`,
+`radial-gradient(…)`, `conic-gradient(…)` — which is why the layout sets them with the `background` shorthand. With a
+gradient sidebar the derived `--rpd-sidebar-inner-bg` / `--rpd-sidebar-active-bg` become translucent black instead of a
+`color-mix()` of the base colour.
+
+The palette retouches the theme in place, per application. A different look to install and pick from the theme
+switcher is a **theme** of its own: `zofe/theme-desk` is the smallest possible one — it keeps the bundled layout and
+only changes the colours, so its whole stylesheet is `@import "@rapyd/sass/rapyd"` plus the token values.
 
 A theme must keep this working: import `@rapyd/rapyd-base` (which includes the tokens) and use the three `--rpd-*`
 tokens for its sidebar, topbar and content backgrounds.
