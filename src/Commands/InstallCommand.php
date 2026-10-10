@@ -56,6 +56,9 @@ class InstallCommand extends Command
             __DIR__ . '/../../config/permission.php' => config_path('permission.php'),
             __DIR__ . '/../../config/fortify.php' => config_path('fortify.php'),
             __DIR__ . '/../../config/rapyd.php' => config_path('rapyd.php'),
+            // legacy_model_binding and component_layout: the generated components need them, and
+            // Livewire's own defaults win over the package's merge
+            __DIR__ . '/../../config/livewire.php' => config_path('livewire.php'),
         ];
 
         foreach ($configs as $src => $dest) {
