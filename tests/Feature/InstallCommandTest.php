@@ -65,6 +65,49 @@ PHP;
         $this->assertSame($out, $this->inject('injectTraitUses', $out, ['HasRoles', 'Authorize', 'Limit']), 'idempotent');
     }
 
+    protected function publishConfigs(): string
+    {
+        $command = new InstallCommand();
+        $command->setLaravel($this->app);
+        $output = new \Symfony\Component\Console\Output\BufferedOutput();
+        $input = new \Symfony\Component\Console\Input\ArrayInput([], $command->getDefinition());
+        $command->setInput($input);
+        $command->setOutput(new \Illuminate\Console\OutputStyle($input, $output));
+
+        $m = new ReflectionMethod(InstallCommand::class, 'publishConfigs');
+        $m->setAccessible(true);
+        $m->invoke($command, new \Illuminate\Filesystem\Filesystem());
+
+        return $output->fetch();
+    }
+
+    public function test_install_copies_the_livewire_config_and_keeps_an_existing_one()
+    {
+        $files = ['livewire.php', 'rapyd.php', 'permission.php', 'fortify.php'];
+        $backup = [];
+        foreach ($files as $file) {
+            $backup[$file] = @file_get_contents(config_path($file));
+            @unlink(config_path($file));
+        }
+
+        try {
+            $this->publishConfigs();
+            $this->assertFileEquals(__DIR__ . '/../../config/livewire.php', config_path('livewire.php'));
+            $this->assertTrue((require config_path('livewire.php'))['legacy_model_binding']);
+
+            file_put_contents(config_path('livewire.php'), "<?php\n\nreturn ['legacy_model_binding' => false];\n");
+            $this->assertStringContainsString('SKIP', $this->publishConfigs());
+            $this->assertFalse((require config_path('livewire.php'))['legacy_model_binding'], "the application's copy stays");
+        } finally {
+            foreach ($files as $file) {
+                @unlink(config_path($file));
+                if ($backup[$file] !== false) {
+                    file_put_contents(config_path($file), $backup[$file]);
+                }
+            }
+        }
+    }
+
     public function test_a_fresh_user_model_gets_imports_and_traits()
     {
         $fresh = "<?php\n\nnamespace App\\Models;\n\nuse Illuminate\\Foundation\\Auth\\User as Authenticatable;\n\nclass User extends Authenticatable\n{\n}\n";
