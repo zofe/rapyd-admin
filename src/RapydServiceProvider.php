@@ -27,6 +27,7 @@ use Zofe\Rapyd\Modules\Companies\CompaniesModuleServiceProvider;
 use Zofe\Rapyd\Modules\Layout\LayoutModuleServiceProvider;
 use Zofe\Rapyd\Modules\Log\LogModuleServiceProvider;
 use Zofe\Rapyd\Modules\ModuleServiceProvider;
+use Zofe\Rapyd\Modules\Remote\RemoteModuleServiceProvider;
 use Zofe\Rapyd\Modules\Search\SearchModuleServiceProvider;
 use Zofe\Rapyd\Modules\Workflow\WorkflowModuleServiceProvider;
 use Zofe\Rapyd\Stubs\StubGenerator;
@@ -203,6 +204,7 @@ class RapydServiceProvider extends ServiceProvider
         $this->app->register(SearchModuleServiceProvider::class);
         $this->app->register(LogModuleServiceProvider::class);
         $this->app->register(LayoutModuleServiceProvider::class);
+        $this->app->register(RemoteModuleServiceProvider::class);
         $this->app->bind('stub-generator', function () {
             return new StubGenerator;
         });

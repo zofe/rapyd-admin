@@ -137,6 +137,7 @@ see [AUTH.md](AUTH.md).
 | Log | `log::` | `/log/app` viewer with AI analysis, `/log/activity`; `log_activity('orders', $order, ['total' => 99])` helper |
 | Search | `search::` | navbar search over the models listed in `config/search.php`; models use the `SSearch` trait |
 | Layout | `layout::` | the admin, frontend and auth layouts, i.e. the reference theme ([THEMES.md](THEMES.md)) |
+| Remote | `remote::` | experimental, off by default: entities of another app as fields and labels (see [Remote](#remote)) |
 
 Bundled modules are configured, not forked: colours, brand and layout through the theme, behaviour through their
 config files. When you really need to change one, copy it into your app:
@@ -174,6 +175,58 @@ actions call `CompanyOwnerAuth::check($company, $user)` explicitly.
 > a super admin (`rapyd.auth.super_admin_roles`) administers anyone, the `owner` of a company its members, anybody
 > else only himself; `company_id` is forced to the caller's company and only an owner hands out the `owner` role.
 > Follow the same shape in your own embeds, and keep the icons in the table on the same rule.
+
+### Remote
+
+> Experimental: the API may change. Off by default (`RAPYD_REMOTE_ENABLED=true` to turn it on): until then no route
+> and no migration.
+
+Show entities owned by another app (the customers of a CRM inside a device portal…) without copying them. One app
+**exposes** a resource, the others **read** it. Reading only: to edit, link to the app that owns it.
+
+The owner app, in `AppServiceProvider::boot()`:
+
+```php
+use Zofe\Rapyd\Modules\Remote\Expose\RemoteExpose;
+
+RemoteExpose::resource('customers', Customer::class)
+    ->searchable(['name', 'vat_number'])   // columns matched by ?q=
+    ->fields(['name', 'vat_number'])       // attributes sent
+    ->label(fn ($c) => $c->name)
+    ->scope(fn ($query, $user) => $query->where('tenant_id', $user?->tenant_id));
+```
+
+This publishes `GET /_remote/customers?q=acme` and `?ids[]=1&ids[]=2`. The caller sends its token and the id of the
+user it acts for (`X-Remote-User`, its own `auth()->id()`: with single sign-on the ids match); `scope` gets that user
+and must apply the visibility they have in this app. Tokens go in `rapyd.remote.callers` (name => token).
+
+The reading app lists the sources in `rapyd.remote.sources` (`'crm' => ['url' => …, 'token' => …]`) and refers to a
+resource as `"crm.customers"`:
+
+```php
+class Device extends Model
+{
+    use \App\Modules\Remote\Traits\HasRemote;
+
+    protected $casts = ['service_ids' => 'array'];
+
+    public function customer(): ?RemoteRecord { return $this->remote('crm.customers', 'customer_id'); }
+    public function services(): array { return $this->remoteMany('crm.services', 'service_ids'); }
+}
+
+$device->customer()?->label;
+$device->customer()?->payload['vat_number'];
+```
+
+```blade
+<x-remote::select resource="crm.customers" wire:model="customer_id" :value="$customer_id" label="Customer" />
+<x-remote::checkboxes resource="crm.services" wire:model="service_ids" label="Services" />
+<x-remote::label resource="crm.customers" :id="$device->customer_id" />
+```
+
+Every record read is kept in `remote_records`: fresh for `RAPYD_REMOTE_TTL` seconds (600), then fetched again; when
+the source is down the last copy is used. In a table, `Remote::many('crm.customers', $items->pluck('customer_id'))`
+before rendering fetches the page in one call. Checkboxes list at most 50 items: for long lists use the select.
 
 ### Addresses
 

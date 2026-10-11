@@ -72,7 +72,7 @@ class RapydContextCommand extends Command
         }
 
         return [
-            'bundled' => ['Auth', 'Companies', 'Addresses', 'Workflow', 'Log', 'Search', 'Layout'],
+            'bundled' => ['Auth', 'Companies', 'Addresses', 'Workflow', 'Log', 'Search', 'Layout', 'Remote'],
             'app' => $app,
         ];
     }
