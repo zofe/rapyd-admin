@@ -83,6 +83,50 @@ class RemoteTest extends TestCase
             ->assertJsonCount(1, 'data');
     }
 
+    public function test_a_source_that_failed_is_left_alone_for_a_while()
+    {
+        $this->actingAs($this->user);
+        Http::fake(fn () => Http::response(null, 503));
+
+        Remote::find('self.companies', $this->company->id);
+        Remote::find('self.companies', $this->company->id);
+        Remote::find('self.companies', $this->company->id);
+        Http::assertSentCount(1);   // the other two did not even leave
+
+        // once the pause is over the source is tried again
+        $this->travel(config('rapyd.remote.retry_after') + 1)->seconds();
+        Remote::find('self.companies', $this->company->id);
+        Http::assertSentCount(2);
+    }
+
+    public function test_a_search_shorter_than_the_minimum_is_not_sent()
+    {
+        $this->actingAs($this->user);
+        $this->fakeSourceIsThisApp();
+
+        $this->assertSame([], Remote::search('self.companies', 'a'));
+        Http::assertNothingSent();
+
+        $this->assertCount(1, Remote::search('self.companies', 'ac'));
+        Http::assertSentCount(1);
+    }
+
+    public function test_user_attribute_decides_which_id_the_source_is_told()
+    {
+        config(['rapyd.remote.sources.self.user_attribute' => 'name']);   // stands in for an OIDC sub
+        $this->actingAs($this->user);
+
+        $sent = null;
+        Http::fake(function (Request $request) use (&$sent) {
+            $sent = $request->header('X-Remote-User')[0] ?? null;
+
+            return Http::response(['data' => []], 200);
+        });
+
+        Remote::find('self.companies', $this->company->id);
+        $this->assertSame('Op', $sent);   // the attribute, not the local id
+    }
+
     public function test_find_fetches_once_then_reads_the_cache_and_refetches_after_the_ttl()
     {
         $this->actingAs($this->user);

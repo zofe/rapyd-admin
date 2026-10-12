@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd\Modules\Remote\Support;
 
 use Zofe\Rapyd\Modules\Remote\Models\RemoteRecord;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Throwable;
 
@@ -42,7 +43,7 @@ class Remote
         try {
             $fetched = static::fetch($source, $resource, ['ids' => $missing->all()]);
         } catch (Throwable $e) {
-            report($e);
+            static::reportOnce($e);
 
             return static::keyById($cached); // source down: last known copies
         }
@@ -53,10 +54,16 @@ class Remote
     public static function search(string $ref, string $term): array
     {
         [$source, $resource] = explode('.', $ref, 2);
+
+        // Below this the search would return the whole list on every keystroke.
+        if (mb_strlen(trim($term)) < (int) config('rapyd.remote.min_search', 2)) {
+            return [];
+        }
+
         try {
             return array_values(static::fetch($source, $resource, ['q' => $term]));
         } catch (Throwable $e) {
-            report($e);
+            static::reportOnce($e);
 
             return [];
         }
@@ -81,17 +88,60 @@ class Remote
         return $keyed;
     }
 
+    /** A source that just failed is left alone for a while, instead of costing every page a timeout. */
+    protected static function downKey(string $source): string
+    {
+        return "rapyd:remote:down:{$source}";
+    }
+
+    /** Only the first failure of a down source is reported: the others would just fill the log. */
+    protected static function reportOnce(Throwable $e): void
+    {
+        if (! $e instanceof SourceUnavailable || ! str_contains($e->getMessage(), 'waiting')) {
+            report($e);
+        }
+    }
+
+    /**
+     * Who the source should answer for.
+     *
+     * By default the local user id, which works when the two apps share their users. When they do
+     * not — a rapyd app reading from an application that has its own accounts — `user_attribute`
+     * names the attribute holding the id that app knows (the OIDC `sub`, say).
+     */
+    protected static function actingUser(array $cfg): string
+    {
+        $user = auth()->user();
+        if (! $user) {
+            return '';
+        }
+
+        $attribute = $cfg['user_attribute'] ?? null;
+
+        return (string) ($attribute ? ($user->getAttribute($attribute) ?? '') : $user->getAuthIdentifier());
+    }
+
     /** Calls the source as the current user, stores the results, returns them keyed by id. */
     protected static function fetch(string $source, string $resource, array $query): array
     {
         $cfg = config("rapyd.remote.sources.{$source}");
 
-        $items = Http::withToken($cfg['token'])
-            ->withHeaders(['X-Remote-User' => (string) auth()->id()])
-            ->timeout(3)
-            ->get(rtrim($cfg['url'], '/') . "/_remote/{$resource}", $query)
-            ->throw()
-            ->json('data');
+        if (Cache::has(static::downKey($source))) {
+            throw SourceUnavailable::for($source, 'waiting before trying again');
+        }
+
+        try {
+            $items = Http::withToken($cfg['token'])
+                ->withHeaders(['X-Remote-User' => static::actingUser($cfg)])
+                ->timeout((int) config('rapyd.remote.timeout', 3))
+                ->get(rtrim($cfg['url'], '/') . "/_remote/{$resource}", $query)
+                ->throw()
+                ->json('data');
+        } catch (Throwable $e) {
+            Cache::put(static::downKey($source), true, (int) config('rapyd.remote.retry_after', 30));
+
+            throw SourceUnavailable::for($source, $e->getMessage());
+        }
 
         $records = [];
         foreach ($items as $item) {

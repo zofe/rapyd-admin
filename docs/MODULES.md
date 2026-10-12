@@ -224,8 +224,41 @@ $device->customer()?->payload['vat_number'];
 <x-remote::label resource="crm.customers" :id="$device->customer_id" />
 ```
 
+#### The endpoint, for a source that does not run rapyd-admin
+
+The source does not need this module, or Laravel, or a recent one: the contract is one GET endpoint. An older
+application can serve it from a single controller and remove it by deleting that route.
+
+```
+GET /_remote/{resource}?q=acme
+GET /_remote/{resource}?ids[]=12&ids[]=15
+
+Authorization: Bearer <the token the source gave this caller>
+X-Remote-User: <the id of the user the caller acts for, as the SOURCE knows it>
+```
+
+```json
+{ "data": [
+  { "id": "12", "label": "Acme SpA", "attributes": { "vat_number": "IT01234567890" } }
+] }
+```
+
+- `id` is a string, and it is the id the caller will ask with next time.
+- `label` is what the reading app shows. `attributes` is free, and only what the caller may see.
+- The answer is `401` without a valid token, `404` for an unknown resource. Anything else counts as a failure, and
+  the caller falls back to its last copy.
+- **`X-Remote-User` is the source's own id for that person**, not the caller's. When the two apps share their users
+  they are the same; when they do not, the caller sends the attribute named by `user_attribute` (the OIDC `sub`
+  saved at login, typically). An empty value means nobody is logged in: answer with what an anonymous caller may
+  see, which is usually nothing.
+- At most 50 records per answer, and the caller never asks for more than it needs.
+
+#### Reading side
+
 Every record read is kept in `remote_records`: fresh for `RAPYD_REMOTE_TTL` seconds (600), then fetched again; when
-the source is down the last copy is used. In a table, `Remote::many('crm.customers', $items->pluck('customer_id'))`
+the source is down the last copy is used. After a failure the source is left alone for `RAPYD_REMOTE_RETRY_AFTER`
+seconds (30), so a source that is down costs one timeout and not one per page, and only the first failure is
+reported. Searches shorter than `RAPYD_REMOTE_MIN_SEARCH` characters (2) are not sent at all. In a table, `Remote::many('crm.customers', $items->pluck('customer_id'))`
 before rendering fetches the page in one call. Checkboxes list at most 50 items: for long lists use the select.
 
 ### Addresses
