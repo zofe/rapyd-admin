@@ -40,10 +40,10 @@ class AgentSkillsTest extends TestCase
         return $texts;
     }
 
-    public function test_the_guideline_and_the_two_skills_exist()
+    public function test_the_guideline_and_the_skills_exist()
     {
         $this->assertFileExists($this->boost . '/guidelines/core.blade.php');
-        $this->assertSame(['rapyd-module', 'rapyd-workflow'], array_keys($this->skillFiles()));
+        $this->assertSame(['rapyd-module', 'rapyd-remote', 'rapyd-workflow'], array_keys($this->skillFiles()));
     }
 
     public function test_every_skill_has_a_name_and_a_description_in_its_frontmatter()

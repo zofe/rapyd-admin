@@ -14,7 +14,10 @@ class ExposeController
 
         $query = $res->model::query();
         if ($res->scope) {
-            ($res->scope)($query, $request->attributes->get('remote_user'));
+            // The return value matters: a scope written as `fn ($q, $u) => $u ? $q : $q->whereRaw('1 = 0')`
+            // hands back a different builder, and dropping it would publish rows nobody may see.
+            // A scope that only narrows the builder in place may return nothing.
+            $query = ($res->scope)($query, $request->attributes->get('remote_user')) ?? $query;
         }
 
         if ($request->filled('ids')) {

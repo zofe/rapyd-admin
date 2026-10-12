@@ -36,7 +36,7 @@ class Remote
         $missing = $ids->diff($fresh->keys());
 
         if ($missing->isEmpty()) {
-            return $fresh->all();
+            return static::keyById($fresh);
         }
 
         try {
@@ -44,10 +44,10 @@ class Remote
         } catch (Throwable $e) {
             report($e);
 
-            return $cached->all(); // source down: last known copies
+            return static::keyById($cached); // source down: last known copies
         }
 
-        return $fresh->merge($fetched)->all();
+        return static::keyById($fresh) + static::keyById($fetched);
     }
 
     public static function search(string $ref, string $term): array
@@ -60,6 +60,25 @@ class Remote
 
             return [];
         }
+    }
+
+    /**
+     * Index records by their remote id, as a string.
+     *
+     * Callers look a record up by the id they asked for, so the key has to be that id and
+     * nothing else: merging collections would renumber it, and the lookup would miss.
+     *
+     * @param  iterable<RemoteRecord>  $records
+     * @return array<string, RemoteRecord>
+     */
+    protected static function keyById(iterable $records): array
+    {
+        $keyed = [];
+        foreach ($records as $record) {
+            $keyed[(string) $record->remote_id] = $record;
+        }
+
+        return $keyed;
     }
 
     /** Calls the source as the current user, stores the results, returns them keyed by id. */

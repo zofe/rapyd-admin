@@ -72,6 +72,17 @@ class RemoteTest extends TestCase
             ->assertJsonPath('data.0.attributes.status', 'active');
     }
 
+    /** The scope has to hold on the id lookup too, not only on the search. */
+    public function test_the_scope_also_applies_when_ids_are_asked_for()
+    {
+        $this->withToken('secret')->getJson('/_remote/companies?ids[]=' . $this->company->id)
+            ->assertJsonCount(0, 'data');
+
+        $this->withToken('secret')->withHeader('X-Remote-User', $this->user->id)
+            ->getJson('/_remote/companies?ids[]=' . $this->company->id)
+            ->assertJsonCount(1, 'data');
+    }
+
     public function test_find_fetches_once_then_reads_the_cache_and_refetches_after_the_ttl()
     {
         $this->actingAs($this->user);
