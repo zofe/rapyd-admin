@@ -2,8 +2,8 @@
 
 namespace Zofe\Rapyd\Modules\Remote\Http;
 
-use Zofe\Rapyd\Modules\Remote\Expose\RemoteExpose;
 use Illuminate\Http\Request;
+use Zofe\Rapyd\Modules\Remote\Expose\RemoteExpose;
 
 /** GET /_remote/{resource}?q=acme   or   ?ids[]=1&ids[]=2 */
 class ExposeController

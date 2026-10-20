@@ -3,8 +3,8 @@
 namespace Zofe\Rapyd\Modules\Remote;
 
 use Illuminate\Support\Facades\Route;
-use Zofe\Rapyd\Modules\Remote\Http\AuthenticateRemoteCaller;
 use Zofe\Rapyd\Modules\RapydModuleServiceProvider;
+use Zofe\Rapyd\Modules\Remote\Http\AuthenticateRemoteCaller;
 
 class RemoteModuleServiceProvider extends RapydModuleServiceProvider
 {

@@ -2,8 +2,8 @@
 
 namespace Zofe\Rapyd\Modules\Remote\Http;
 
-use Zofe\Rapyd\Modules\Remote\Support\Remote;
 use Illuminate\Http\Request;
+use Zofe\Rapyd\Modules\Remote\Support\Remote;
 
 /** Feeds <x-remote::select>: [{id, title}] for TomSelect */
 class LookupController

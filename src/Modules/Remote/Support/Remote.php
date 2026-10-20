@@ -2,10 +2,10 @@
 
 namespace Zofe\Rapyd\Modules\Remote\Support;
 
-use Zofe\Rapyd\Modules\Remote\Models\RemoteRecord;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Throwable;
+use Zofe\Rapyd\Modules\Remote\Models\RemoteRecord;
 
 /**
  * Consumer side. References are "source.resource", e.g. "crm.customers".
