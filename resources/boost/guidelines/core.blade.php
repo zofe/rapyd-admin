@@ -37,6 +37,8 @@ learning anything new: no DSL, no magic, no Filament / Nova patterns.
   value, and it goes through `{!! rapyd_clean_html($value) !!}`.
 - Livewire 4: `#[On('event')]` not `$listeners`, `$this->dispatch()` not `emit()`; fields bind
   `wire:model.live.debounce.150ms` by default; on an unsaved model only the attributes in `$rules` survive a request.
+- On a page with `wire:poll`, pagination and filters live in a `*Embed` child component, never in an `@island`: an
+  island shares the page's state and the last response wins, so a poll can undo the user's click.
 - Generate, then finish: `php artisan rpd:make Things Thing --module=Name --fields="name,active:boolean"` writes the
   model and migration (when missing, uuid keys), the table / view / edit components with authorization, the
   permissions, the `Authorizations/` and `Limits/` classes, views, routes behind `auth` and the menu entry, without

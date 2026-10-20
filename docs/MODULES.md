@@ -385,3 +385,9 @@ users can copy it there and it keeps working. `zofe/demo-module` is the referenc
 - On a model that is not saved yet, only the attributes listed in `$rules` survive between requests.
 - Module components in Blade use `.` as directory separator: `<livewire:blog::subdir.component />`.
 - Livewire ships Alpine.js: do not include a separate Alpine bundle.
+- On a page that refreshes itself (`wire:poll`), what the user browses (pagination, filters, an open tab) goes in a
+  `*Embed` child component, not in an `@island`. An island shares the component's state and its requests run in
+  parallel with the poll: the last response to come back wins, so a poll fired just before a click puts the user back
+  on the previous page. A child component keeps its own state, which the parent's requests never carry. Pass it the
+  key it needs (`#[Locked]`), let it refresh on its own (`wire:poll`, `#[On]`), and have the parent
+  `$this->dispatch()` an event when it writes something the child shows.
