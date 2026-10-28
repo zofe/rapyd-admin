@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.28.0] - 2026-10-28
+
 ### Added
 
 - **`SECURITY.md`**, and private vulnerability reporting switched on for the repository: a security problem is
