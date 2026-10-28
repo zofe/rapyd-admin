@@ -1,6 +1,7 @@
 # Rapyd Admin
 
 <a href="https://github.com/zofe/rapyd-admin/actions/workflows/run-tests.yml"><img src="https://github.com/zofe/rapyd-admin/actions/workflows/run-tests.yml/badge.svg" alt="Build Status"></a>
+<a href="https://github.com/zofe/rapyd-admin/actions/workflows/fresh-install.yml"><img src="https://github.com/zofe/rapyd-admin/actions/workflows/fresh-install.yml/badge.svg" alt="Fresh install"></a>
 <a href="https://packagist.org/packages/zofe/rapyd-admin"><img src="https://img.shields.io/packagist/dt/zofe/rapyd-admin" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/zofe/rapyd-admin"><img src="https://img.shields.io/packagist/v/zofe/rapyd-admin" alt="Latest Stable Version"></a>
 

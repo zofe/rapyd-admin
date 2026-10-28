@@ -1,0 +1,132 @@
+name: Fresh install
+
+# The README quick start, done by a machine the way a stranger would do it: a new Laravel application,
+# the package from this checkout in place of Packagist, rpd:make:setup, the first module from the README,
+# and then what must be true at the end — the form saves, the pages answer, the agent finds the guideline.
+# Weekly as well: a dependency can move under the README while nothing here changes (Laravel 13.39 did).
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  fresh-install:
+    runs-on: ubuntu-latest
+    name: README quick start on a new Laravel application
+
+    steps:
+      - name: Checkout the package
+        uses: actions/checkout@v4
+        with:
+          path: package
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl, fileinfo
+          coverage: none
+
+      - name: A new Laravel application
+        run: composer create-project laravel/laravel app --no-interaction --prefer-dist
+
+      # The README says `composer require zofe/rapyd-admin:^9`. The same line, with this checkout answering
+      # as 9.999.0 so that it wins over Packagist; copied, not symlinked, as a real install would be.
+      - name: Require the package, from this checkout
+        working-directory: app
+        run: |
+          composer config repositories.rapyd '{"type":"path","url":"../package","options":{"symlink":false,"versions":{"zofe/rapyd-admin":"9.999.0"}}}'
+          composer require zofe/rapyd-admin:^9 --no-interaction
+
+      - name: rpd:make:setup
+        working-directory: app
+        env:
+          RAPYD_ADMIN_PASSWORD: fresh-install-ci
+        run: php artisan rpd:make:setup --no-interaction
+
+      - name: What setup has to leave behind
+        working-directory: app
+        run: |
+          test -f config/livewire.php
+          test -f config/rapyd.php
+          test -f public/vendor/rapyd/rapyd.css
+          test -f public/vendor/rapyd/img/favicon.svg
+          test "$(grep -c "view('welcome')" routes/web.php)" = 0
+          grep -q "'web', 'auth'" routes/web.php
+          grep -q zofe/rapyd-admin boost.json
+
+      - name: The first module, as in the README
+        working-directory: app
+        run: php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --no-interaction
+
+      # The one thing a reader of the README does next: fills the generated form and saves.
+      # 9.22.0 shipped with this broken (config/livewire.php missing), and nothing in the package suite could see it.
+      - name: The generated form saves and the pages answer
+        working-directory: app
+        run: |
+          cat > tests/Feature/GeneratedModuleTest.php <<'PHP'
+          <?php
+
+          namespace Tests\Feature;
+
+          use App\Models\User;
+          use App\Modules\Blog\Livewire\ArticlesEdit;
+          use App\Modules\Blog\Models\Article;
+          use Illuminate\Foundation\Testing\RefreshDatabase;
+          use Livewire\Livewire;
+          use Tests\TestCase;
+          use Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder;
+
+          class GeneratedModuleTest extends TestCase
+          {
+              use RefreshDatabase;
+
+              public function test_the_dashboard_is_behind_auth_and_the_generated_form_saves(): void
+              {
+                  $this->seed(AuthSeeder::class);
+                  $admin = User::where('email', 'admin@laravel')->firstOrFail();
+
+                  $this->get('/admin')->assertRedirect('/login');
+                  $this->actingAs($admin)->get('/admin')->assertOk()->assertSee('Getting started');
+                  $this->actingAs($admin)->get('/articles/table')->assertOk();
+                  $this->actingAs($admin)->get('/articles/edit')->assertOk();
+
+                  Livewire::actingAs($admin)->test(ArticlesEdit::class)
+                      ->set('article.title', 'First article')
+                      ->set('article.body', 'Written from the CI')
+                      ->set('article.published_at', '2026-10-28 12:00:00')
+                      ->call('save')
+                      ->assertHasNoErrors()
+                      ->assertRedirect();
+
+                  $this->assertSame(1, Article::count());
+                  $this->assertSame('First article', Article::first()->title);
+              }
+          }
+          PHP
+          php artisan test
+
+      - name: The pages, served
+        working-directory: app
+        run: |
+          php artisan serve --port=8000 > serve.log 2>&1 &
+          sleep 3
+          curl -sf -o /dev/null http://127.0.0.1:8000/login
+          curl -sf -o /dev/null http://127.0.0.1:8000/
+          curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' http://127.0.0.1:8000/admin | grep -q '^302 .*/login'
+          curl -sf -o /dev/null http://127.0.0.1:8000/vendor/rapyd/img/favicon.svg
+          ! grep -i "exception\|error" serve.log
+
+      # A fresh Laravel skeleton tells the agent to install Boost first: run without a terminal it has to
+      # find the package in boost.json, or the agent learns nothing of Rapyd.
+      - name: The guideline reaches an agent through Laravel Boost, without a terminal
+        working-directory: app
+        run: |
+          composer require laravel/boost --dev --no-interaction
+          php artisan boost:install --no-interaction
+          grep -q 'zofe/rapyd-admin' AGENTS.md
+          test -d .claude/skills/rapyd-module
+          test -d .claude/skills/rapyd-workflow
