@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.25.0] - 2026-10-28
+
 ### Added
 
 - **`rpd:make` writes a factory and a seeder with the model, and `--seed` fills the table.** A generated module
