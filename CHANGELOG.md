@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.31.0] - 2026-10-28
+
 ### Added
 
 - **`php artisan rpd:deploy`** writes what the application needs to go online as containers: a `Dockerfile` on
