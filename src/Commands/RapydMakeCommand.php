@@ -18,7 +18,8 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         {--module= : Module to generate into (app/Modules/{Module})}
         {--fields= : Columns of a new model, as name:type,name:type}
         {--increments : Auto-increment integer id for a new model instead of the default uuid}
-        {--seed : Fill the table with ten records from the generated factory}';
+        {--seed : Fill the table with ten records from the generated factory}
+        {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}';
 
     public $description = 'rapyd command to generate components (table, view and edit) for a model';
 
@@ -54,13 +55,17 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         $before = $log->snapshot(base_path());
 
         foreach ($suffixes as $suffix) {
-            $this->call('rpd:make:'.strtolower($suffix), [
+            $options = [
                 'component' => $base.$suffix,
                 'model' => $this->argument('model'),
                 '--module' => $this->option('module'),
                 '--fields' => $this->option('fields'),
                 '--increments' => (bool) $this->option('increments'),
-            ]);
+            ];
+            if ($suffix === 'Table') {
+                $options['--icon'] = $this->option('icon');   // the sidebar entry is written with the table
+            }
+            $this->call('rpd:make:'.strtolower($suffix), $options);
         }
 
         $entry = $log->record(base_path(), $before, [

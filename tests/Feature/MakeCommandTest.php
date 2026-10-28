@@ -61,6 +61,7 @@ class MakeCommandTest extends TestCase
             'model' => 'Supplier',
             '--module' => 'Suppliers',
             '--fields' => 'name:string,vat_number,active:boolean',
+            '--icon' => 'truck',
             '--no-interaction' => true,
         ])->expectsOutputToContain('Fill the table with ten records')->assertSuccessful();   // without --seed, the command says how
 
@@ -101,6 +102,7 @@ class MakeCommandTest extends TestCase
         $this->assertContains('edit suppliers', config('auth.role_permissions.operator'));
         $this->assertTrue(\Spatie\Permission\Models\Permission::where('name', 'view suppliers')->exists(), 'seeded at generation');
         $this->assertStringContainsString('route="suppliers.table"', File::get("{$module}/Views/menu.blade.php"));
+        $this->assertStringContainsString('icon="fas fa-fw fa-truck"', File::get("{$module}/Views/menu.blade.php"), '--icon names the Font Awesome icon');
 
         $log = json_decode(File::get($this->base . '/storage/rapyd/generated.json'), true);
         $this->assertCount(1, $log, 'one run recorded');
@@ -148,6 +150,12 @@ class MakeCommandTest extends TestCase
         $this->assertIsNumeric($customer->score);
         $this->assertNotEmpty($customer->signed_at);
         $this->assertNotEmpty($customer->company_name);
+
+        // the list cuts a long text to one line; the other columns are printed as they are
+        $table = File::get($this->base . '/app/Modules/Customers/Views/customers_table.blade.php');
+        $this->assertStringContainsString('Str::limit(strip_tags((string) $customer->notes), 80)', $table);
+        $this->assertStringContainsString('<td>{{ $customer->email }}</td>', $table);
+        $this->assertStringContainsString('icon="fas fa-fw fa-circle"', File::get($this->base . '/app/Modules/Customers/Views/menu.blade.php'), 'no --icon: the default');
     }
 
     /**

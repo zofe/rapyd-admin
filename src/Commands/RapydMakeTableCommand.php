@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 use Zofe\Rapyd\Stubs\Facades\StubGenerator;
@@ -10,7 +11,8 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=} {--increments}';
+    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=} {--increments}
+        {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}';
 
     public $description = 'rapyd command to generate DataTable component';
 
@@ -70,10 +72,15 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
             ->save();
 
 
-        //view
+        //view: a long text column is cut to one line in the list (the full value stays in the title and on the detail page)
         $items = '';
         foreach ($fields as $field) {
-            $items .= "                <td>{{ \$".$item."->$field }}</td>\n";
+            $type = Schema::getColumnType($table, $field);
+            if (str_contains((string) $type, 'text') || $type === 'json') {
+                $items .= "                <td class=\"text-truncate\" style=\"max-width: 20rem;\" title=\"{{ Str::limit(strip_tags((string) \$".$item."->$field), 300) }}\">{{ Str::limit(strip_tags((string) \$".$item."->$field), 80) }}</td>\n";
+            } else {
+                $items .= "                <td>{{ \$".$item."->$field }}</td>\n";
+            }
         }
 
 
@@ -117,7 +124,19 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
             'label' => $routetitle,
             'route' => $routename,
             'active' => $routeuri,
+            'icon' => $this->navIcon($this->option('icon')),
         ]]);
+    }
+
+    /** "newspaper", "fa-newspaper" or a full class list: all end up as a Font Awesome class. */
+    protected function navIcon(?string $icon): string
+    {
+        $icon = trim((string) $icon);
+        if ($icon === '') {
+            return 'fas fa-fw fa-circle';
+        }
+
+        return str_contains($icon, ' ') ? $icon : 'fas fa-fw fa-' . Str::after($icon, 'fa-');
     }
 
     protected function getSearchQuery($fields)

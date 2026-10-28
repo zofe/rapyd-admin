@@ -297,7 +297,7 @@ class RapydMakeBaseCommand extends Command
         $newNavItems = '';
         foreach ($navItems as $navItem) {
             if (! in_array($navItem['route'], $existingRoutes)) {
-                $newNavItems .= '<x-rpd::nav-item icon="fas fa-fw fa-circle" label="' . htmlspecialchars($navItem['label']) . '" route="' . htmlspecialchars($navItem['route']) . '"';
+                $newNavItems .= '<x-rpd::nav-item icon="' . htmlspecialchars($navItem['icon'] ?? 'fas fa-fw fa-circle') . '" label="' . htmlspecialchars($navItem['label']) . '" route="' . htmlspecialchars($navItem['route']) . '"';
                 if (isset($navItem['active'])) {
                     $newNavItems .= ' active="' . htmlspecialchars($navItem['active']) . '"';
                 }

@@ -61,10 +61,11 @@ Details in [docs/MODULES.md](docs/MODULES.md).
 ## Your first module in two minutes
 
 ```bash
-php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --seed
+php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --seed --icon=newspaper
 ```
 
-creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry;
+creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry (with
+the icon you name, a circle otherwise);
 when the model does not exist yet it is created with its migration from `--fields`, migrated, and — with `--seed` —
 filled with ten records from the generated factory, so the table opens with something in it. No prompts:
 

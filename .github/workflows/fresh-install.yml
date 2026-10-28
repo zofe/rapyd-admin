@@ -61,7 +61,7 @@ jobs:
       - name: The first module, as in the README, seeded
         working-directory: app
         run: |
-          php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --seed --no-interaction
+          php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --seed --icon=newspaper --no-interaction
           test -f app/Modules/Blog/Database/Factories/ArticleFactory.php
           php artisan tinker --execute='echo App\Modules\Blog\Models\Article::count();' | grep -q '^10$'
 

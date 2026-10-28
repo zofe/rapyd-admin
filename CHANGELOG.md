@@ -4,6 +4,19 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`rpd:make --icon=newspaper`** names the Font Awesome icon of the module's sidebar entry; without it every
+  generated module got the same circle, and a sidebar of circles tells nothing. `newspaper`, `fa-newspaper` or
+  a full class list are all accepted.
+
+### Fixed
+
+- **A long text column made the generated list unreadable.** The table printed every column as it was, so a
+  `text` field with a few paragraphs (the seeder writes two) stretched each row to a screen. The list now cuts
+  text and json columns to one line of 80 characters, with the first 300 in the cell's title; the detail page
+  keeps the whole value.
+
 ## [9.25.0] - 2026-10-28
 
 ### Added
