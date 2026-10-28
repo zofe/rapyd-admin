@@ -59,4 +59,4 @@ class {{class}} extends TestCase
         $plain = User::factory()->create();
         $this->actingAs($plain)->get(route('{{listRoute}}'))->assertForbidden();
     }
-}
+{{ extraTests }}}

@@ -13,7 +13,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeEditCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:edit {component} {model} {--module=} {--table=} {--fields=} {--increments}';
+    public $signature = 'rpd:make:edit {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company}';
 
     public $description = 'rapyd command to generate DataEdit component';
 
@@ -171,7 +171,16 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 $label = Str::headline($relation['method']);
                 $property = Str::plural($relation['method']);
                 $properties .= "    public array \${$property} = [];\n";
-                $mountOptions .= "        \$this->{$property} = \\{$relation['target']}::query()->orderBy('{$relation['label']}')->pluck('{$relation['label']}', 'id')->toArray();\n";
+                if ($relation['target'] === 'Zofe\\Rapyd\\Modules\\Companies\\Models\\Company') {
+                    // the company: a new record gets the user's own; the choice is the companies the user may see
+                    // (limit() runs after mount, so the scope is spelled out here)
+                    $mountOptions .= "        if (! \$this->{$item}->exists) {\n            \$this->{$item}->{$field} = auth()->user()->company_id;\n        }\n"
+                        . "        \$this->{$property} = \\{$relation['target']}::query()\n"
+                        . "            ->when(! auth()->user()->hasAnyRole(config('rapyd.auth.super_admin_roles', ['admin'])), fn (\$q) => \$q->where('id', auth()->user()->company_id)->orWhere('parent_id', auth()->user()->company_id))\n"
+                        . "            ->orderBy('{$relation['label']}')->pluck('{$relation['label']}', 'id')->toArray();\n";
+                } else {
+                    $mountOptions .= "        \$this->{$property} = \\{$relation['target']}::query()->orderBy('{$relation['label']}')->pluck('{$relation['label']}', 'id')->toArray();\n";
+                }
                 $component = $this->wantsSearch($field, $relation['target']) ? 'select-list' : 'select';
                 $items .= "       <x-rpd::{$component} col=\"col-12\" model=\"$item.$field\" label=\"$label\" placeholder=\"—\" :options=\"\${$property}\" />\n";
 

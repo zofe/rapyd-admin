@@ -18,11 +18,6 @@ class {{model}}Limit
             return;
         }
 
-        // Every user with the permission sees every record. Restrict it here, e.g. by company:
-        // if (! $user || ! $user->company_id) {
-        //     {{model}}::addGlobalScope('noAccess', fn (Builder $q) => $q->whereRaw('1 = 0'));
-        //     return;
-        // }
-        // {{model}}::addGlobalScope('onlyMine', fn (Builder $q) => $q->where('company_id', $user->company_id));
+{{ body }}
     }
 }

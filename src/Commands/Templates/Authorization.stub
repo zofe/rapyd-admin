@@ -15,8 +15,6 @@ class {{model}}Auth
 
     public static function check(${{ item }}, $user = null): bool
     {
-        // Every user with the permission can open every record. Restrict it here, e.g. by company:
-        // return $user && ${{ item }}->company_id === $user->company_id;
-        return (bool) $user;
+{{ body }}
     }
 }

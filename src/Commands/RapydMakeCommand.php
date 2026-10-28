@@ -21,7 +21,8 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         {--fields= : Columns of a new model, as name:type,name:type:nullable}
         {--increments : Auto-increment integer id for a new model instead of the default uuid}
         {--seed : Fill the table with ten records from the generated factory}
-        {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}';
+        {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}
+        {--company : Multi-tenant: company_id on the model, each user sees the records of their company (and its children)}';
 
     public $description = 'rapyd command to generate components (table, view and edit) for a model';
 
@@ -63,6 +64,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 '--module' => $this->option('module'),
                 '--fields' => $this->option('fields'),
                 '--increments' => (bool) $this->option('increments'),
+                '--company' => (bool) $this->option('company'),
             ];
             if ($suffix === 'Table') {
                 $options['--icon'] = $this->option('icon');   // the sidebar entry is written with the table
@@ -132,10 +134,35 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 'viewPermission' => "view {$resource}",
                 'editPermission' => "edit {$resource}",
                 'seeFirst' => $seeField ? "->assertSee(\$records->first()->{$seeField})" : '',
+                'extraTests' => $this->option('company') ? $this->companyTest($model, $route) : '',
             ])
             ->save();
 
         $this->line("  Test written: <fg=white>php artisan test --filter {$base}Test</>");
+    }
+
+    /** With --company: an operator sees the records of their company and not the others', the list and the page alike. */
+    protected function companyTest(string $model, string $route): string
+    {
+        return <<<PHP
+
+    public function test_a_user_sees_the_records_of_their_own_company_only(): void
+    {
+        \$mine = \\Zofe\\Rapyd\\Modules\\Companies\\Models\\Company::create(['business_name' => 'Mine']);
+        \$theirs = \\Zofe\\Rapyd\\Modules\\Companies\\Models\\Company::create(['business_name' => 'Theirs']);
+        \$me = User::factory()->create();
+        \$me->assignRole('operator');
+        \$me->assignToCompany(\$mine);
+
+        \$own = {$model}::factory()->create(['company_id' => \$mine->id]);
+        \$other = {$model}::factory()->create(['company_id' => \$theirs->id]);
+
+        \$this->actingAs(\$me)->get(route('{$route}.table'))->assertOk()->assertSee(\$own->id)->assertDontSee(\$other->id);
+        \$this->actingAs(\$me)->get(route('{$route}.view', \$own))->assertOk();
+        \$this->actingAs(\$me)->get(route('{$route}.view', \$other))->assertNotFound();
+    }
+
+PHP;
     }
 
     /** The seeder rpd:make:model wrote: run it with --seed, otherwise say how, so the table does not stay empty. */

@@ -11,7 +11,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=} {--increments}
+    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company}
         {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}';
 
     public $description = 'rapyd command to generate DataTable component';

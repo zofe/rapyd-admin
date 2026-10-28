@@ -19,7 +19,8 @@ class RapydMakeModelCommand extends Command
 {
     public $signature = 'rpd:make:model {model} {--module=}
         {--fields= : Columns as name:type,name:type:nullable (types: string text integer boolean date datetime float decimal json timestamp; category_id:belongsTo[:Category] for a relation)}
-        {--increments : Auto-increment integer id instead of the default uuid}';
+        {--increments : Auto-increment integer id instead of the default uuid}
+        {--company : The record belongs to a company: company_id, the relation, the factory}';
 
     public $description = 'rapyd command to generate models';
 
@@ -41,6 +42,9 @@ class RapydMakeModelCommand extends Command
         $fields = $this->option('fields') !== null ? $this->parseFields($this->option('fields')) : $this->askFields();
         if ($fields === false) {
             return self::FAILURE;
+        }
+        if ($this->option('company') && ! collect($fields)->contains('fieldName', 'company_id')) {
+            $fields[] = ['fieldName' => 'company_id', 'fieldType' => 'belongsTo', 'nullable' => false, 'target' => 'Company'];
         }
         $fields = $this->resolveRelations($fields);
         if ($fields === false) {
@@ -108,11 +112,13 @@ class RapydMakeModelCommand extends Command
         $definition = [];
         foreach ($fields as $field) {
             // a relation: the related model's factory when it has one, an existing row otherwise
-            $value = $field['fieldType'] === 'belongsTo'
-                ? (in_array(\Illuminate\Database\Eloquent\Factories\HasFactory::class, class_uses_recursive($field['target']))
-                    ? "\\{$field['target']}::factory()"
-                    : "fn () => \\{$field['target']}::query()->inRandomOrder()->value('id')")
-                : $this->fakeFor($field['fieldName'], $field['fieldType']);
+            // (a company is made up when there is none, so seeds and tests work on an empty database)
+            $value = match (true) {
+                $field['fieldType'] !== 'belongsTo' => $this->fakeFor($field['fieldName'], $field['fieldType']),
+                $field['target'] === 'Zofe\\Rapyd\\Modules\\Companies\\Models\\Company' => "fn () => \\{$field['target']}::query()->inRandomOrder()->value('id') ?? \\{$field['target']}::create(['business_name' => fake()->company()])->id",
+                in_array(\Illuminate\Database\Eloquent\Factories\HasFactory::class, class_uses_recursive($field['target'])) => "\\{$field['target']}::factory()",
+                default => "fn () => \\{$field['target']}::query()->inRandomOrder()->value('id')",
+            };
             $definition[] = "            '{$field['fieldName']}' => {$value},";
         }
 

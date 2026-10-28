@@ -11,6 +11,13 @@ All notable changes to `rapyd-admin` will be documented in this file.
   week and fixed in a patch release with an advisory. The file also says which versions get fixes (9.x) and what a
   stock install exposes by default (open registration, the first admin's password, the rich-text allow-list).
 
+- **`rpd:make --company`: the module is multi-tenant from the first record.** Companies and `CompanyLimit` were
+  in the core, but a generated module came with a `Limit` that let every record through and a comment on how to
+  restrict it. With `--company` the model gets `company_id` (a `belongsTo` to the bundled Company, `constrained`),
+  the `Limit` scopes the list to the user's company and its children — a user without a company sees nothing,
+  super admins everything — the `Auth` answers 404 for another company's record, a new record takes the user's
+  company in the form (the dropdown offers only the companies the user may see), the factory picks a company or
+  makes one up, and the generated test proves it: two companies, an operator in each, each sees their own.
 - **`--fields` knows relations: `category_id:belongsTo`.** The most common thing in an application — an article
   has a category, an order has a customer — used to be done by hand after the generator. Now `category_id:belongsTo`
   (or `category:belongsTo`, `author_id:belongsTo:User` to name the model, `:nullable`, `:search`) writes the

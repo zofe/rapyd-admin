@@ -87,6 +87,10 @@ tests/Feature/Modules/Blog/ArticlesTest.php   the list behind auth, the form sav
 `php artisan test` runs that test straight away: an agent that changes the module has something to run before
 it says it is done.
 
+Add `--company` and the module is multi-tenant: `company_id` on the model, each user sees and opens the records of
+their own company (and its children), a new record takes the user's company, and the generated test proves it with
+two companies and an operator in each.
+
 The views are short because the work is done by the components:
 
 ```html

@@ -199,6 +199,57 @@ class MakeCommandTest extends TestCase
         $this->assertSame(1, \App\Modules\Blog\Models\Category::count());
     }
 
+    /** --company: the record belongs to a company, and a user sees those of their own company (and its children) only. */
+    public function test_with_company_the_module_is_multi_tenant_from_the_first_record()
+    {
+        $this->seed(AuthSeeder::class);
+        $this->artisan('rpd:make', [
+            'component' => 'all', 'model' => 'Invoice', '--module' => 'Billing',
+            '--fields' => 'number,total:decimal', '--company' => true, '--no-interaction' => true,
+        ])->assertSuccessful();
+
+        $module = $this->base . '/app/Modules/Billing';
+        $this->assertStringContainsString("\$table->foreignUuid('company_id')->constrained('companies');", File::get(File::files("{$module}/Database/Migrations")[0]->getPathname()));
+        $this->assertStringContainsString('public function company(): BelongsTo', File::get("{$module}/Models/Invoice.php"));
+        $this->assertStringContainsString("addGlobalScope('onlyMine'", File::get("{$module}/Limits/InvoiceLimit.php"));
+        $this->assertStringContainsString("->orWhereIn('company_id', \Zofe\Rapyd\Modules\Companies\Models\Company::select('id')->where('parent_id', \$user->company_id))", File::get("{$module}/Limits/InvoiceLimit.php"));
+        $this->assertStringContainsString('$invoice->company_id === $user->company_id', File::get("{$module}/Authorizations/InvoiceAuth.php"));
+        $this->assertStringContainsString('$this->invoice->company_id = auth()->user()->company_id;', File::get("{$module}/Livewire/InvoicesEdit.php"), 'a new record gets the user\'s company');
+        $this->assertStringContainsString("'invoice.company_id' => 'required|exists:companies,id',", File::get("{$module}/Livewire/InvoicesEdit.php"));
+        $this->assertStringContainsString('<x-rpd::select-list col="col-12" model="invoice.company_id" label="Company"', File::get("{$module}/Views/invoices_edit.blade.php"));
+        $this->assertStringContainsString('{{ $invoice->company?->business_name }}', File::get("{$module}/Views/invoices_table.blade.php"));
+        $this->assertStringContainsString('test_a_user_sees_the_records_of_their_own_company_only', File::get($this->base . '/tests/Feature/Modules/Billing/InvoicesTest.php'));
+
+        // served: two companies, an operator in each, each sees their own (the module was created after boot:
+        // views, routes, Limit and Authorization are registered here by hand, as the loader does at the next boot)
+        View::addNamespace('billing', "{$module}/Views");
+        Route::get('/', fn () => '')->name('home')->crumbs(fn ($crumbs) => $crumbs->push('Home', '/'));
+        Route::group([], "{$module}/routes.php");
+        config(['auth.limits' => array_merge(config('auth.limits', []), [\App\Modules\Billing\Limits\InvoiceLimit::class])]);
+        config(['auth.authorizations' => array_merge(config('auth.authorizations', []), [\App\Modules\Billing\Authorizations\InvoiceAuth::class])]);
+
+        $acme = \Zofe\Rapyd\Modules\Companies\Models\Company::create(['business_name' => 'ACME']);
+        $globex = \Zofe\Rapyd\Modules\Companies\Models\Company::create(['business_name' => 'Globex']);
+        $mine = \App\Modules\Billing\Models\Invoice::factory()->create(['company_id' => $acme->id, 'number' => 'INV-ACME']);
+        $theirs = \App\Modules\Billing\Models\Invoice::factory()->create(['company_id' => $globex->id, 'number' => 'INV-GLOBEX']);
+
+        // admin first: a Limit adds global scopes to the model class, and in one test process they stay
+        // (in the application every request is a fresh process)
+        $admin = User::where('email', 'admin@laravel')->firstOrFail();
+        $this->actingAs($admin)->get('/invoices/table')->assertOk()->assertSee('INV-ACME')->assertSee('INV-GLOBEX');
+
+        $anna = User::create(['name' => 'Anna', 'email' => 'anna@example.com', 'password' => 'x']);
+        $anna->assignRole('operator');
+        $anna->assignToCompany($acme);
+        $this->actingAs($anna)->get('/invoices/table')->assertOk()->assertSee('INV-ACME')->assertDontSee('INV-GLOBEX');
+        $this->actingAs($anna)->get("/invoices/view/{$mine->id}")->assertOk();
+        $this->actingAs($anna)->get("/invoices/view/{$theirs->id}")->assertNotFound();
+
+        $nobody = User::create(['name' => 'Nobody', 'email' => 'nobody@example.com', 'password' => 'x']);
+        $nobody->assignRole('operator');   // the permission, but no company: nothing to see
+        $this->actingAs($nobody)->get('/invoices/table')->assertOk()->assertDontSee('INV-ACME')->assertDontSee('INV-GLOBEX');
+    }
+
     public function test_a_belongs_to_to_a_model_that_does_not_exist_is_refused_with_a_hint()
     {
         $this->artisan('rpd:make', [

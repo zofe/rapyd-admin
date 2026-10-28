@@ -103,6 +103,10 @@ class RapydMakeBaseCommand extends Command
             'item' => Str::camel($model),
             'modelNamespace' => $this->getModelNamespace(),
         ];
+        $bodies = $this->hasOption('company') && $this->option('company')
+            ? $this->companyScopedBodies($model, Str::camel($model))
+            : $this->openBodies($model, Str::camel($model));
+
         foreach (['Authorizations' => ['Authorization.stub', 'Auth'], 'Limits' => ['Limit.stub', 'Limit']] as $dir => [$stub, $suffix]) {
             $path = base_path(path_module("app/{$dir}", $module));
             if (file_exists("{$path}/{$model}{$suffix}.php")) {
@@ -111,9 +115,53 @@ class RapydMakeBaseCommand extends Command
             StubGenerator::from(__DIR__."/Templates/{$stub}", true)
                 ->to($path, true, true)
                 ->as($model.$suffix)
-                ->withReplacers($replacers + ['namespace' => namespace_module("App\\{$dir}", $module)])
+                ->withReplacers($replacers + ['namespace' => namespace_module("App\\{$dir}", $module), 'body' => $bodies[$suffix]])
                 ->save();
         }
+    }
+
+    /** Without --company: every user with the permission sees and opens every record, the restriction is a comment. */
+    protected function openBodies(string $model, string $item): array
+    {
+        return [
+            'Limit' => "        // Every user with the permission sees every record. Restrict it here, e.g. by company:\n"
+                . "        // if (! \$user || ! \$user->company_id) {\n"
+                . "        //     {$model}::addGlobalScope('noAccess', fn (Builder \$q) => \$q->whereRaw('1 = 0'));\n"
+                . "        //     return;\n"
+                . "        // }\n"
+                . "        // {$model}::addGlobalScope('onlyMine', fn (Builder \$q) => \$q->where('company_id', \$user->company_id));",
+            'Auth' => "        // Every user with the permission can open every record. Restrict it here, e.g. by company:\n"
+                . "        // return \$user && \${$item}->company_id === \$user->company_id;\n"
+                . "        return (bool) \$user;",
+        ];
+    }
+
+    /**
+     * With --company: a user sees and opens the records of their own company and of its children,
+     * as the bundled Companies do; a user without a company sees nothing. Super admins are let
+     * through before this, by the stub.
+     */
+    protected function companyScopedBodies(string $model, string $item): array
+    {
+        $company = '\\Zofe\\Rapyd\\Modules\\Companies\\Models\\Company';
+
+        return [
+            'Limit' => "        // Guests and users without a company see nothing.\n"
+                . "        if (! \$user || ! \$user->company_id) {\n"
+                . "            {$model}::addGlobalScope('noAccess', fn (Builder \$q) => \$q->whereRaw('1 = 0'));\n\n"
+                . "            return;\n"
+                . "        }\n\n"
+                . "        // Own company plus its children.\n"
+                . "        {$model}::addGlobalScope('onlyMine', fn (Builder \$q) => \$q->where(function (\$q) use (\$user) {\n"
+                . "            \$q->where('company_id', \$user->company_id)\n"
+                . "                ->orWhereIn('company_id', {$company}::select('id')->where('parent_id', \$user->company_id));\n"
+                . "        }));",
+            'Auth' => "        // Own company plus its children, as the list does.\n"
+                . "        return \$user && \$user->company_id && (\n"
+                . "            \${$item}->company_id === \$user->company_id\n"
+                . "            || {$company}::where('id', \${$item}->company_id)->where('parent_id', \$user->company_id)->exists()\n"
+                . "        );",
+        ];
     }
 
     /**
@@ -132,6 +180,7 @@ class RapydMakeBaseCommand extends Command
                 '--module' => $module,
                 '--fields' => $this->option('fields'),
                 '--increments' => (bool) $this->option('increments'),
+                '--company' => $this->hasOption('company') && (bool) $this->option('company'),
                 '--no-interaction' => ! $this->input->isInteractive(),
             ]);
             if ($created !== self::SUCCESS) {
@@ -269,7 +318,8 @@ class RapydMakeBaseCommand extends Command
     protected function labelColumnOf(string $table): string
     {
         $columns = Schema::getColumnListing($table);
-        foreach (['name', 'title', 'business_name', 'company_name', 'label', 'email', 'code'] as $candidate) {
+        // business_name before name: a company has both, and reads by the former
+        foreach (['business_name', 'company_name', 'name', 'title', 'label', 'email', 'code'] as $candidate) {
             if (in_array($candidate, $columns)) {
                 return $candidate;
             }
