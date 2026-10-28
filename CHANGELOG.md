@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.23.0] - 2026-10-28
+
 ### Added
 
 - **`/admin` is a dashboard now, not the landing page again.** `rpd:make:home` used to generate the same hero
