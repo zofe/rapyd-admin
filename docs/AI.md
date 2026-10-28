@@ -6,7 +6,9 @@ the log viewer).
 
 The loop starts with what `rpd:make` leaves behind: a factory, a seeder and a feature test per module
 (`tests/Feature/Modules/<Module>/<Name>Test.php`), so `php artisan test` has something to say about a module
-from the minute it exists.
+from the minute it exists. And `php artisan rpd:doctor` says whether the installation itself is in order —
+published files, assets, migrations, the first admin, mail, the guideline — with `--fail` for a script that has
+to stop on a problem.
 
 ## Briefing an agent: `rpd:context`
 

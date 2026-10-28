@@ -39,6 +39,9 @@ Working with an AI agent? With [Laravel Boost](https://laravel.com/docs/boost), 
 brings the Rapyd Admin guideline and skills to it (`boost.json` lists the package already); without Boost,
 `php artisan rpd:ai` does the same. Details in [docs/AI.md](docs/AI.md).
 
+Not sure the installation is in order — after a `composer update`, say? `php artisan rpd:doctor` checks it and
+says what to do.
+
 > Google sign-in appears on the login page as soon as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set, see [docs/AUTH.md](docs/AUTH.md).
 
 ## What's included

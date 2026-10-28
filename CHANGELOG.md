@@ -4,6 +4,15 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`php artisan rpd:doctor`** looks at the installation and says what is wrong, changing nothing: the config
+  files published, the assets in `public/vendor/rapyd` and whether they are behind the package (the cause of a
+  `composer update` that "did nothing"), migrations not run, `APP_DEBUG` in production, `admin@laravel` still on
+  the password printed at setup, mail going to the log, registration open, no module yet, `boost.json` and the
+  AI guideline. The same checks as the dashboard's *Getting started*, in a place an agent can run and read.
+  `--fail` exits with 1 on a problem: the fresh-install job runs it as its last step.
+
 ## [9.29.0] - 2026-10-28
 
 ### Added

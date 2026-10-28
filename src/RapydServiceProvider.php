@@ -11,6 +11,7 @@ use Zofe\Rapyd\Commands\InstallCommand;
 use Zofe\Rapyd\Commands\RapydAiCommand;
 use Zofe\Rapyd\Commands\RapydAiDevelopCommand;
 use Zofe\Rapyd\Commands\RapydContextCommand;
+use Zofe\Rapyd\Commands\RapydDoctorCommand;
 use Zofe\Rapyd\Commands\RapydLangCommand;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
 use Zofe\Rapyd\Commands\RapydMakeEditCommand;
@@ -78,6 +79,7 @@ class RapydServiceProvider extends ServiceProvider
                 ThemeCheckCommand::class,
                 EjectCommand::class,
                 RapydContextCommand::class,
+                RapydDoctorCommand::class,
                 RapydMakeCommand::class,
                 RapydMakeSetupCommand::class,
                 RapydMakeHomeCommand::class,

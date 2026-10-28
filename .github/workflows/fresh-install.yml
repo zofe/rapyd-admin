@@ -96,3 +96,10 @@ jobs:
           grep -l 'zofe/rapyd-admin/core' AGENTS.md CLAUDE.md
           test -d .claude/skills/rapyd-module
           test -d .claude/skills/rapyd-workflow
+
+      # The installation looked at the way an agent would, at the end: nothing it calls a problem is allowed
+      - name: rpd:doctor finds nothing wrong
+        working-directory: app
+        env:
+          RAPYD_ADMIN_PASSWORD: fresh-install-ci
+        run: php artisan rpd:doctor --fail
