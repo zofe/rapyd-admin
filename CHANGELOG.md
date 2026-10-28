@@ -13,6 +13,13 @@ All notable changes to `rapyd-admin` will be documented in this file.
   generated together, never over an existing file. The fresh-install job runs it in place of its own hand-written
   check.
 
+### Fixed
+
+- **The sidebar entry of a generated module went dark on its detail and form pages.** The entry was written with
+  `active="articles/table"`, the path of the list alone; opening an article or the form left the menu with nothing
+  lit. The entry now carries the prefix (`active="/articles"`), as the bundled menus do. For a module generated
+  before, change that attribute in its `Views/menu.blade.php`.
+
 ## [9.26.0] - 2026-10-28
 
 ### Added

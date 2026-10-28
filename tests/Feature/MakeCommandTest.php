@@ -105,6 +105,7 @@ class MakeCommandTest extends TestCase
         $this->assertTrue(\Spatie\Permission\Models\Permission::where('name', 'view suppliers')->exists(), 'seeded at generation');
         $this->assertStringContainsString('route="suppliers.table"', File::get("{$module}/Views/menu.blade.php"));
         $this->assertStringContainsString('icon="fas fa-fw fa-truck"', File::get("{$module}/Views/menu.blade.php"), '--icon names the Font Awesome icon');
+        $this->assertStringContainsString('active="/suppliers"', File::get("{$module}/Views/menu.blade.php"), 'lit on the list, the detail and the form');
 
         $log = json_decode(File::get($this->base . '/storage/rapyd/generated.json'), true);
         $this->assertCount(1, $log, 'one run recorded');

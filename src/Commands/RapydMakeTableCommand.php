@@ -123,7 +123,8 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $this->addNavItemIfNotExists([[
             'label' => $routetitle,
             'route' => $routename,
-            'active' => $routeuri,
+            // the entry stays lit on the detail and the form too: the prefix, not the list's path
+            'active' => '/' . Str::beforeLast($routeuri, '/'),
             'icon' => $this->navIcon($this->option('icon')),
         ]]);
     }
