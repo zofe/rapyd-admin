@@ -32,7 +32,9 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
-        $this->createModel($model);
+        if (! $this->createModel($model)) {
+            return self::FAILURE;
+        }
         $this->createModuleConfig();
         $this->createAuthorizationAndLimit($model);
 
@@ -77,9 +79,15 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
             ->save();
 
 
-        //view
+        //view: a relation shows the related record's label, not its id
         $items = '';
         foreach ($fields as $field) {
+            if ($relation = $this->belongsToOf($this->getModelNamespace(true), $field)) {
+                $items .= "    <dt class=\"col-5\">{{ __('" . Str::headline($relation['method']) . "') }}</dt>\n";
+                $items .= "               <dd class=\"col-7\">{{ \${$item}->{$relation['method']}?->{$relation['label']} }}</dd>\n";
+
+                continue;
+            }
             $items .= "    <dt class=\"col-5\">{{ __('" . \Illuminate\Support\Str::headline($field) . "') }}</dt>\n";
             $items .= "               <dd class=\"col-7\">{{ \${$item}->{$field} }}</dd>\n";
         }

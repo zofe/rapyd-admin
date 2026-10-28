@@ -11,6 +11,16 @@ All notable changes to `rapyd-admin` will be documented in this file.
   week and fixed in a patch release with an advisory. The file also says which versions get fixes (9.x) and what a
   stock install exposes by default (open registration, the first admin's password, the rich-text allow-list).
 
+- **`--fields` knows relations: `category_id:belongsTo`.** The most common thing in an application — an article
+  has a category, an order has a customer — used to be done by hand after the generator. Now `category_id:belongsTo`
+  (or `category:belongsTo`, `author_id:belongsTo:User` to name the model, `:nullable`, `:search`) writes the
+  foreign key in the migration (`foreignUuid` or `foreignId` after the related key, `constrained`), the
+  `category()` method on the model, the related factory in the factory, an `exists` rule, and in the form a
+  dropdown of the related records — `x-rpd::select` for a list that stays short, `x-rpd::select-list` (search as
+  you type) for users and companies and for any relation marked `:search`. The options are a property filled in
+  `mount()`, as hand-written forms do, so the query is one place to scope. The list and the detail page show the
+  related record's label (`name`, `title`, `business_name`… or the first string column), not its id. The related
+  model has to exist: the command says so, and how, when it does not.
 - **`--fields` knows `nullable`, and the generated rules follow the column.** `phone:string:nullable` (or
   `phone:nullable`, type string by default) writes `->nullable()` in the migration; every other column stays
   required. The form's rules used to be `required` for everything: they are now built from the column as the

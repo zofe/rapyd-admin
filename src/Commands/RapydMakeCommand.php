@@ -67,7 +67,9 @@ class RapydMakeCommand extends RapydMakeBaseCommand
             if ($suffix === 'Table') {
                 $options['--icon'] = $this->option('icon');   // the sidebar entry is written with the table
             }
-            $this->call('rpd:make:'.strtolower($suffix), $options);
+            if ($this->call('rpd:make:'.strtolower($suffix), $options) !== self::SUCCESS) {
+                return self::FAILURE;   // it said why; the rest would only pile errors on top
+            }
         }
 
         $entry = $log->record(base_path(), $before, [

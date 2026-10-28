@@ -28,7 +28,9 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
-        $this->createModel($model);
+        if (! $this->createModel($model)) {
+            return self::FAILURE;
+        }
         $this->createModuleConfig();
         $this->createAuthorizationAndLimit($model);
 
@@ -72,9 +74,18 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
             ->save();
 
 
-        //view: a long text column is cut to one line in the list (the full value stays in the title and on the detail page)
+        //view: a long text column is cut to one line in the list (the full value stays in the title and on the detail page),
+        //a relation shows the related record's label, not its id
         $items = '';
+        $headings = [];
         foreach ($fields as $field) {
+            $headings[$field] = Str::headline($field);
+            if ($relation = $this->belongsToOf($this->getModelNamespace(true), $field)) {
+                $headings[$field] = Str::headline($relation['method']);
+                $items .= "                <td>{{ \$".$item."->{$relation['method']}?->{$relation['label']} }}</td>\n";
+
+                continue;
+            }
             $type = Schema::getColumnType($table, $field);
             if (str_contains((string) $type, 'text') || $type === 'json') {
                 $items .= "                <td class=\"text-truncate\" style=\"max-width: 20rem;\" title=\"{{ Str::limit(strip_tags((string) \$".$item."->$field), 300) }}\">{{ Str::limit(strip_tags((string) \$".$item."->$field), 80) }}</td>\n";
@@ -92,7 +103,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
                 'modelname' => $item,
                 'title' => $routetitle,
                 // column headings as phrases ("Vat number"), translated by Lang/{locale}.json
-                'fieldNames' => implode("\n", array_map(fn ($field) => "                <th>{{ __('" . \Illuminate\Support\Str::headline($field) . "') }}</th>", $fields)),
+                'fieldNames' => implode("\n", array_map(fn ($field) => "                <th>{{ __('" . $headings[$field] . "') }}</th>", $fields)),
                 'fieldValues' => $items,
             ])
             ->save();

@@ -13,7 +13,7 @@ class {{class}} extends {{baseClassName}}
     use Authorize, Limit;
 
     public ${{ item }};
-
+{{ properties }}
     protected $rules = [
         {{ rules }}
     ];
@@ -27,7 +27,7 @@ class {{class}} extends {{baseClassName}}
     public function mount({{model}} ${{ item }})
     {
        $this->{{ item }} = ${{ item }};
-    }
+{{ mountOptions }}    }
 
     public function save()
     {

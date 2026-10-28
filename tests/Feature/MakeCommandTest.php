@@ -145,6 +145,68 @@ class MakeCommandTest extends TestCase
         $this->assertStringContainsString('view suppliers, edit suppliers', $test);
     }
 
+    public function test_a_belongs_to_field_gives_a_relation_a_dropdown_and_the_label_in_the_list()
+    {
+        $this->artisan('rpd:make', [
+            'component' => 'all', 'model' => 'Category', '--module' => 'Blog',
+            '--fields' => 'name', '--no-interaction' => true,
+        ])->assertSuccessful();
+
+        $this->artisan('rpd:make', [
+            'component' => 'all', 'model' => 'Article', '--module' => 'Blog',
+            '--fields' => 'title,category_id:belongsTo,author_id:belongsTo:User:nullable,reviewer:belongsTo:User:search',
+            '--no-interaction' => true,
+        ])->assertSuccessful();
+
+        $module = $this->base . '/app/Modules/Blog';
+
+        $migration = File::get(collect(File::files("{$module}/Database/Migrations"))->first(fn ($f) => str_contains($f->getFilename(), 'create_articles_table'))->getPathname());
+        $this->assertStringContainsString("\$table->foreignUuid('category_id')->constrained('categories');", $migration);
+        $this->assertStringContainsString("\$table->foreignUuid('author_id')->nullable()->constrained('users');", $migration);
+        $this->assertStringContainsString("\$table->foreignUuid('reviewer_id')->constrained('users');", $migration, '"reviewer" gets its _id');
+
+        $model = File::get("{$module}/Models/Article.php");
+        $this->assertStringContainsString('public function category(): BelongsTo', $model);
+        $this->assertStringContainsString('return $this->belongsTo(\App\Modules\Blog\Models\Category::class);', $model);
+        $this->assertStringContainsString('public function author(): BelongsTo', $model);
+        $this->assertStringContainsString('public function reviewer(): BelongsTo', $model);
+
+        $factory = File::get("{$module}/Database/Factories/ArticleFactory.php");
+        $this->assertStringContainsString("'category_id' => \App\Modules\Blog\Models\Category::factory(),", $factory, 'the related factory when there is one');
+        $this->assertStringContainsString("'author_id' => ", $factory);
+
+        // the form: a plain select for a category, a searchable one for users (a list that grows) and on request
+        $edit = File::get("{$module}/Views/articles_edit.blade.php");
+        $this->assertStringContainsString('<x-rpd::select col="col-12" model="article.category_id" label="Category" placeholder="—" :options="$categories" />', $edit);
+        $this->assertStringContainsString('<x-rpd::select-list col="col-12" model="article.author_id" label="Author" placeholder="—" :options="$authors" />', $edit);
+        $this->assertStringContainsString('<x-rpd::select-list col="col-12" model="article.reviewer_id" label="Reviewer"', $edit);
+        $component = File::get("{$module}/Livewire/ArticlesEdit.php");
+        $this->assertStringContainsString('public array $categories = [];', $component);
+        $this->assertStringContainsString("\$this->categories = \App\Modules\Blog\Models\Category::query()->orderBy('name')->pluck('name', 'id')->toArray();", $component);
+        $this->assertStringContainsString("'article.category_id' => 'required|exists:categories,id',", $component);
+        $this->assertStringContainsString("'article.author_id' => 'nullable|exists:users,id',", $component);
+
+        // the list and the detail show the related record's label, not the id
+        $this->assertStringContainsString('{{ $article->category?->name }}', File::get("{$module}/Views/articles_table.blade.php"));
+        $this->assertStringContainsString("<th>{{ __('Category') }}</th>", File::get("{$module}/Views/articles_table.blade.php"));
+        $this->assertStringContainsString('{{ $article->author?->name }}', File::get("{$module}/Views/articles_view.blade.php"));
+
+        // and it all holds together: a factory-made article has a real category (and a reviewer: the User
+        // model has no factory here, so the factory takes an existing user)
+        User::create(['name' => 'Reviewer', 'email' => 'reviewer@example.com', 'password' => 'x']);
+        $article = \App\Modules\Blog\Models\Article::factory()->create();
+        $this->assertNotEmpty($article->category->name);
+        $this->assertSame(1, \App\Modules\Blog\Models\Category::count());
+    }
+
+    public function test_a_belongs_to_to_a_model_that_does_not_exist_is_refused_with_a_hint()
+    {
+        $this->artisan('rpd:make', [
+            'component' => 'all', 'model' => 'Order', '--module' => 'Shop',
+            '--fields' => 'total:decimal,customer_id:belongsTo', '--no-interaction' => true,
+        ])->expectsOutputToContain('No model Customer')->assertFailed();
+    }
+
     public function test_with_seed_the_table_opens_with_ten_records()
     {
         $this->artisan('rpd:make', [

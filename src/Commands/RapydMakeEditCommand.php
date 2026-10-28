@@ -55,10 +55,29 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
      * The validation rules of a column: nullable or required from the schema, the type's rule, and what
      * the name says (email, url). A boolean is never required — an unticked box is a value.
      */
+    /**
+     * Which dropdown for a relation. x-rpd::select (native, no search) for a short, stable list: a category,
+     * a type. x-rpd::select-list (TomSelect, search as you type) for a list that grows with the application —
+     * users and companies always, any other on request with "<column>:belongsTo:search" in --fields.
+     * Both load every row: past a few thousand, give select-list an endpoint of your own.
+     */
+    protected function wantsSearch(string $field, string $target): bool
+    {
+        if (in_array($target, [config('auth.providers.users.model'), 'Zofe\\Rapyd\\Modules\\Companies\\Models\\Company'], true)) {
+            return true;
+        }
+
+        return (bool) preg_match('/(^|,)\s*' . preg_quote($field, '/') . '(:[^,:]+)*:search(:|,|$)/', (string) $this->option('fields'));
+    }
+
     protected function rulesFor(string $table, string $field): string
     {
         $column = $this->columns($table)[$field] ?? [];
         $nullable = (bool) ($column['nullable'] ?? false);
+
+        if ($relation = $this->belongsToOf($this->getModelNamespace(true), $field)) {
+            return ($nullable ? 'nullable' : 'required') . "|exists:{$relation['table']},id";
+        }
         $typeName = strtolower((string) ($column['type_name'] ?? ''));
         $kind = $this->columnKind($table, $field);
         $name = strtolower($field);
@@ -100,7 +119,9 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
-        $this->createModel($model);
+        if (! $this->createModel($model)) {
+            return self::FAILURE;
+        }
         $this->createModuleConfig();
         $this->createAuthorizationAndLimit($model);
 
@@ -135,30 +156,28 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         }
 
 
-        StubGenerator::from(__DIR__.'/Templates/Livewire/DataEdit.stub', true)
-            ->to(base_path($classPath), true, true)
-            ->as($componentName)
-            ->withReplacers([
-                'class' => $componentName,
-                'model' => $model,
-                'table' => $table,
-                'view' => $view,
-                'layout' => $this->getLayout(),
-                'modelNamespace' => $modelNamespace,
-                'baseClass' => 'Livewire\\Component',
-                'baseClassName' => 'Component',
-                'classNamespace' => $classNamespace,
-                'item' => Str::camel($model),
-                'rules' => $rules,
-            ])
-            ->save();
-
-
         //view: the component of each column's type, not a text input for everything
         $items = "\n";
+        $properties = '';
+        $mountOptions = '';
 
         foreach ($fields as $field) {
             $label = Str::headline($field);
+
+            // a relation: a dropdown of the related records, searchable when the list is the kind that grows.
+            // The options are a property filled in mount(), as the hand-written forms do: the view stays
+            // plain and the query is one place to scope later.
+            if ($relation = $this->belongsToOf($this->getModelNamespace(true), $field)) {
+                $label = Str::headline($relation['method']);
+                $property = Str::plural($relation['method']);
+                $properties .= "    public array \${$property} = [];\n";
+                $mountOptions .= "        \$this->{$property} = \\{$relation['target']}::query()->orderBy('{$relation['label']}')->pluck('{$relation['label']}', 'id')->toArray();\n";
+                $component = $this->wantsSearch($field, $relation['target']) ? 'select-list' : 'select';
+                $items .= "       <x-rpd::{$component} col=\"col-12\" model=\"$item.$field\" label=\"$label\" placeholder=\"—\" :options=\"\${$property}\" />\n";
+
+                continue;
+            }
+
             $items .= '       ' . match ($this->columnKind($table, $field)) {
                 'text' => "<x-rpd::textarea col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
                 'date' => "<x-rpd::date col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
@@ -182,6 +201,27 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'routeparent_table' => $routeparent_table,
                 'routeparent_view' => $routeparent_view,
                 'routeparent_view_parameter' => $routeparent_view_parameter,
+            ])
+            ->save();
+
+        //component (after the view: the relations found there become its properties, filled in mount())
+        StubGenerator::from(__DIR__.'/Templates/Livewire/DataEdit.stub', true)
+            ->to(base_path($classPath), true, true)
+            ->as($componentName)
+            ->withReplacers([
+                'class' => $componentName,
+                'model' => $model,
+                'table' => $table,
+                'view' => $view,
+                'layout' => $this->getLayout(),
+                'modelNamespace' => $modelNamespace,
+                'baseClass' => 'Livewire\\Component',
+                'baseClassName' => 'Component',
+                'classNamespace' => $classNamespace,
+                'item' => Str::camel($model),
+                'rules' => $rules,
+                'properties' => $properties,
+                'mountOptions' => $mountOptions,
             ])
             ->save();
 

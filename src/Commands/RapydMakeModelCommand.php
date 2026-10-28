@@ -18,14 +18,14 @@ use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 class RapydMakeModelCommand extends Command
 {
     public $signature = 'rpd:make:model {model} {--module=}
-        {--fields= : Columns as name:type,name:type:nullable (types: string text integer boolean date datetime float decimal json timestamp)}
+        {--fields= : Columns as name:type,name:type:nullable (types: string text integer boolean date datetime float decimal json timestamp; category_id:belongsTo[:Category] for a relation)}
         {--increments : Auto-increment integer id instead of the default uuid}';
 
     public $description = 'rapyd command to generate models';
 
     public const TYPES = [
         'string', 'text', 'integer', 'boolean', 'date',
-        'datetime', 'float', 'decimal', 'json', 'timestamp',
+        'datetime', 'float', 'decimal', 'json', 'timestamp', 'belongsTo',
     ];
 
     public $module;
@@ -39,6 +39,10 @@ class RapydMakeModelCommand extends Command
         $this->comment('No Model ' . $modelName.' found, start creation...');
 
         $fields = $this->option('fields') !== null ? $this->parseFields($this->option('fields')) : $this->askFields();
+        if ($fields === false) {
+            return self::FAILURE;
+        }
+        $fields = $this->resolveRelations($fields);
         if ($fields === false) {
             return self::FAILURE;
         }
@@ -79,6 +83,7 @@ class RapydMakeModelCommand extends Command
 
         }
 
+        $this->addRelations(base_path(path_module("app/Models/{$modelName}.php", $this->module)), $fields);
         $this->createFactoryAndSeeder($modelName, $fields);
 
         $this->info('Model, migration, factory and seeder created.');
@@ -102,7 +107,13 @@ class RapydMakeModelCommand extends Command
 
         $definition = [];
         foreach ($fields as $field) {
-            $definition[] = "            '{$field['fieldName']}' => " . $this->fakeFor($field['fieldName'], $field['fieldType']) . ',';
+            // a relation: the related model's factory when it has one, an existing row otherwise
+            $value = $field['fieldType'] === 'belongsTo'
+                ? (in_array(\Illuminate\Database\Eloquent\Factories\HasFactory::class, class_uses_recursive($field['target']))
+                    ? "\\{$field['target']}::factory()"
+                    : "fn () => \\{$field['target']}::query()->inRandomOrder()->value('id')")
+                : $this->fakeFor($field['fieldName'], $field['fieldType']);
+            $definition[] = "            '{$field['fieldName']}' => {$value},";
         }
 
         StubGenerator::from(__DIR__.'/Templates/Factory.stub', true)
@@ -130,6 +141,67 @@ class RapydMakeModelCommand extends Command
             base_path(path_module("app/Models/{$modelName}.php", $module)),
             $module ? "{$factoryNamespace}\\{$modelName}Factory" : null
         );
+    }
+
+    /**
+     * "category_id:belongsTo" (or "category:belongsTo", "author_id:belongsTo:User") points to a model that
+     * has to exist already: the module's, the application's, the users model, or a bundled one. Each
+     * relation field gets its class, table and whether its key is a uuid — the migration needs to know.
+     */
+    protected function resolveRelations(array $fields): array|false
+    {
+        foreach ($fields as &$field) {
+            if ($field['fieldType'] !== 'belongsTo') {
+                continue;
+            }
+            if (! str_ends_with($field['fieldName'], '_id')) {
+                $field['fieldName'] .= '_id';
+            }
+            $name = $field['target'] ?? Str::studly(Str::singular(Str::beforeLast($field['fieldName'], '_id')));
+            $class = collect([
+                namespace_module('App\\Models', $this->module) . "\\{$name}",
+                "App\\Models\\{$name}",
+                $name === 'User' ? config('auth.providers.users.model') : null,
+                "Zofe\\Rapyd\\Modules\\Companies\\Models\\{$name}",
+            ])->filter()->first(fn ($candidate) => class_exists($candidate));
+
+            if (! $class) {
+                $this->error("No model {$name} for '{$field['fieldName']}': generate it first (rpd:make {$name}s {$name} --fields=...), or name it: {$field['fieldName']}:belongsTo:TheModel");
+
+                return false;
+            }
+            $instance = new $class;
+            $field['target'] = $class;
+            $field['targetTable'] = $instance->getTable();
+            $field['targetUuid'] = $instance->getKeyType() === 'string';
+            $field['method'] = Str::camel(Str::beforeLast($field['fieldName'], '_id'));
+        }
+
+        return $fields;
+    }
+
+    /** One belongsTo method per relation field, before the closing brace of the class. */
+    protected function addRelations(string $modelFile, array $fields): void
+    {
+        $relations = array_filter($fields, fn ($f) => $f['fieldType'] === 'belongsTo');
+        if (! $relations) {
+            return;
+        }
+
+        $content = File::get($modelFile);
+        $content = str_replace(
+            "use Illuminate\\Database\\Eloquent\\Model;\n",
+            "use Illuminate\\Database\\Eloquent\\Model;\nuse Illuminate\\Database\\Eloquent\\Relations\\BelongsTo;\n",
+            $content
+        );
+
+        $methods = '';
+        foreach ($relations as $field) {
+            $methods .= "\n    public function {$field['method']}(): BelongsTo\n    {\n        return \$this->belongsTo(\\{$field['target']}::class);\n    }\n";
+        }
+        $content = rtrim($content);
+        $content = substr($content, 0, strrpos($content, '}')) . ltrim($methods, "\n") . "}\n";
+        File::put($modelFile, $content);
     }
 
     protected function addFactoryToModel(string $modelFile, ?string $factoryClass): void
@@ -227,8 +299,10 @@ class RapydMakeModelCommand extends Command
             $parts = array_map('trim', explode(':', $item));
             $name = array_shift($parts);
             $nullable = in_array('nullable', $parts, true);
-            $parts = array_values(array_filter($parts, fn ($p) => $p !== '' && $p !== 'nullable'));
+            // "search" is read by the form generator (a searchable dropdown for the relation); here it is just not a type
+            $parts = array_values(array_filter($parts, fn ($p) => $p !== '' && ! in_array($p, ['nullable', 'search'], true)));
             $type = $parts[0] ?? 'string';
+            $target = $type === 'belongsTo' ? ($parts[1] ?? null) : null;
             if (! preg_match('/^[a-z][a-z0-9_]*$/', $name)) {
                 $this->error("Invalid column name '{$name}' in --fields (use snake_case)");
 
@@ -239,7 +313,7 @@ class RapydMakeModelCommand extends Command
 
                 return false;
             }
-            $fields[] = ['fieldName' => $name, 'fieldType' => $type, 'nullable' => $nullable];
+            $fields[] = ['fieldName' => $name, 'fieldType' => $type, 'nullable' => $nullable, 'target' => $target];
         }
 
         return $fields;
@@ -287,6 +361,12 @@ class RapydMakeModelCommand extends Command
         $fieldStrings = '';
         foreach ($fields as $field) {
             $nullable = ! empty($field['nullable']) ? '->nullable()' : '';
+            if ($field['fieldType'] === 'belongsTo') {
+                $foreign = $field['targetUuid'] ? 'foreignUuid' : 'foreignId';
+                $fieldStrings .= "            \$table->{$foreign}('{$field['fieldName']}'){$nullable}->constrained('{$field['targetTable']}');\n";
+
+                continue;
+            }
             $fieldStrings .= "            \$table->{$field['fieldType']}('{$field['fieldName']}'){$nullable};\n";
         }
 

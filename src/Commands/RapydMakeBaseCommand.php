@@ -121,19 +121,22 @@ class RapydMakeBaseCommand extends Command
      * no prompt without a terminal) and its migration is run, since the generators read the table schema.
      * A new module's migrations are not registered in this process, hence the explicit path.
      */
-    protected function createModel($model)
+    protected function createModel($model): bool
     {
         $module = $this->option('module');
         $modelClass = $this->getModelNamespace(true, false);
 
         if (! $modelClass) {
-            $this->call('rpd:make:model', [
+            $created = $this->call('rpd:make:model', [
                 'model' => $model,
                 '--module' => $module,
                 '--fields' => $this->option('fields'),
                 '--increments' => (bool) $this->option('increments'),
                 '--no-interaction' => ! $this->input->isInteractive(),
             ]);
+            if ($created !== self::SUCCESS) {
+                return false;   // the model command said why (a bad --fields, a relation to a model that is not there)
+            }
 
             // Composer caches the miss of the class_exists() above: load the new file explicitly
             $file = base_path(path_module("app/Models/{$model}.php", $module));
@@ -147,6 +150,8 @@ class RapydMakeBaseCommand extends Command
             }
             $this->call('migrate', $options);
         }
+
+        return true;
     }
 
     protected function getComponentName(): string
@@ -228,6 +233,53 @@ class RapydMakeBaseCommand extends Command
     {
         //da capire forse ha senso usare il singolare del ComponentName (senza la parte finale)
         return Str::singular($this->getTable());
+    }
+
+    /**
+     * The belongsTo behind a "<name>_id" column, when the model has the method: the relation's name,
+     * the related class and table, and the column of the related table that reads as a label.
+     * Null for a plain column.
+     *
+     * @return array{method: string, target: string, table: string, label: string}|null
+     */
+    protected function belongsToOf(string $modelClass, string $column): ?array
+    {
+        if (! str_ends_with($column, '_id') || ! class_exists($modelClass)) {
+            return null;
+        }
+        $method = Str::camel(Str::beforeLast($column, '_id'));
+        if (! method_exists($modelClass, $method)) {
+            return null;
+        }
+        try {
+            $relation = (new $modelClass)->{$method}();
+        } catch (\Throwable) {
+            return null;
+        }
+        if (! $relation instanceof \Illuminate\Database\Eloquent\Relations\BelongsTo) {
+            return null;
+        }
+        $table = $relation->getRelated()->getTable();
+
+        return ['method' => $method, 'target' => get_class($relation->getRelated()), 'table' => $table, 'label' => $this->labelColumnOf($table)];
+    }
+
+    /** The column of a table to show a record by: name, title…, else the first string column, else the id. */
+    protected function labelColumnOf(string $table): string
+    {
+        $columns = Schema::getColumnListing($table);
+        foreach (['name', 'title', 'business_name', 'company_name', 'label', 'email', 'code'] as $candidate) {
+            if (in_array($candidate, $columns)) {
+                return $candidate;
+            }
+        }
+        foreach ($columns as $column) {
+            if ($column !== 'id' && str_contains(strtolower((string) Schema::getColumnType($table, $column)), 'char')) {
+                return $column;
+            }
+        }
+
+        return 'id';
     }
 
     protected function getFields($safeForView = true, $safeForEdit = false)

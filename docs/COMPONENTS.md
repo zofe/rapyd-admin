@@ -76,6 +76,16 @@ All field components use `wire:model.live.debounce.150ms` by default. Pass `:laz
 <!-- TomSelect dropdown, supports remote endpoint -->
 <x-rpd::select-list model="roles" multiple :options="$available_roles" label="Roles" />
 <x-rpd::select-list model="roles" multiple endpoint="/ajax/roles" label="Roles" />
+```
+
+Which dropdown: `select` is the browser's own — for a short list that stays short (a status, a type, a category),
+no search, nothing to load. `select-list` is TomSelect — search as you type, `multiple`, `create` — for a list that
+grows with the application (people, companies, products). Both take every row in `:options` (a `pluck('name', 'id')`
+filled in `mount()`); past a few thousand rows give `select-list` an `endpoint` of your own, answering
+`?q=term` with `[{id, title}]`. `rpd:make` follows the same rule for a `belongsTo`: `select`, `select-list` for users
+and companies, or for any relation marked `:search`.
+
+```html
 
 <x-rpd::date model="date" format="dd/MM/yyyy" value-format="yyyy-MM-dd" label="Date" />
 <x-rpd::datetime model="date_time" format="dd/MM/yyyy HH:mm" value-format="yyyy-MM-dd HH:mm:ss" label="DateTime" />
