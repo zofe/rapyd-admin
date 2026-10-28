@@ -61,7 +61,7 @@ return [
         'brand'        => env('RAPYD_BRAND'),          // null → app.name
         'logo_sidebar' => env('RAPYD_LOGO_SIDEBAR'),   // url of the sidebar logo, null → brand text
         'logo_login'   => env('RAPYD_LOGO_LOGIN'),     // url of the login logo, null → brand text
-        'favicon'      => env('RAPYD_FAVICON', 'img/favicon.png'),
+        'favicon'      => env('RAPYD_FAVICON', 'vendor/rapyd/img/favicon.svg'),   // shipped with the assets; your own: a path under public/
         'custom_css'   => env('RAPYD_CUSTOM_CSS'),     // extra stylesheet url loaded after the theme
         'auth_links'   => env('RAPYD_AUTH_LINKS', true), // Login / Register links in the navbars (the routes stay)
         'brand_route'  => env('RAPYD_BRAND_ROUTE'),     // where the sidebar brand links: a route name or a URL; null → admin.home, home, /

@@ -13,7 +13,8 @@ class InstallCommand extends Command
         {--no-user-model : Skip trait injection into app/Models/User.php}
         {--companies : Also add HasCompanies trait to the User model}
         {--addresses : Also add HasAddresses trait to the User model}
-        {--force : Overwrite already published config files}';
+        {--force : Overwrite already published config files}
+        {--no-next-steps : Skip the closing hints (rpd:make:setup migrates and seeds by itself)}';
 
     protected $description = 'Install rapyd-admin v2 — injects traits into User model and publishes configs';
 
@@ -33,7 +34,9 @@ class InstallCommand extends Command
             $this->publishUuidMigration($files);
         }
 
-        $this->printNextSteps();
+        if (! $this->option('no-next-steps')) {
+            $this->printNextSteps();
+        }
 
         return self::SUCCESS;
     }
@@ -226,18 +229,21 @@ class InstallCommand extends Command
         $this->line('');
     }
 
+    /** What is still to do after a standalone rpd:install (the assets are published by Composer already). */
     protected function printNextSteps(): void
     {
         $this->line('<fg=cyan>Next steps:</>');
-        $this->line('  1. Run: <fg=white>php artisan migrate</>');
-        $this->line('  2. Run: <fg=white>php artisan vendor:publish --tag=laravel-assets</>');
-        $this->line('  3. Seed roles/permissions: <fg=white>php artisan db:seed --class=RoleSeeder</>  (coming soon)');
+        $this->line('  1. <fg=white>php artisan migrate</>');
+        $this->line('  2. <fg=white>php artisan db:seed --class="Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder"</>  (roles, permissions, the first admin)');
         $this->line('');
-        $this->line('  To add Companies module:');
-        $this->line('    <fg=white>php artisan rpd:install --companies</>');
-        $this->line('');
-        $this->line('  To convert users.id to UUID (fresh install only!):');
-        $this->line('    <fg=white>php artisan rpd:install --uuid-users</>');
+        $this->line('  On a fresh application <fg=white>php artisan rpd:make:setup</> does all of this at once.');
+
+        if (! $this->option('companies')) {
+            $this->line('  To add the Companies trait to the User model: <fg=white>php artisan rpd:install --companies</>');
+        }
+        if (! $this->option('uuid-users')) {
+            $this->line('  To convert users.id to UUID (fresh database only): <fg=white>php artisan rpd:install --uuid-users</>');
+        }
         $this->line('');
     }
 }

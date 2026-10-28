@@ -78,7 +78,7 @@ class RapydMakeModelCommand extends Command
 
         }
 
-        $this->info('Model and Migration created successfully, you can run `php artisan migrate` to create the table.');
+        $this->info('Model and migration created.');
 
         return self::SUCCESS;
     }

@@ -19,6 +19,7 @@ class RapydMakeHomeCommand extends Command
         if (! file_exists(base_path(path_module('app/Livewire', $this->module) . '/Home.php'))) {
 
             $this->comment('generate home component');
+            $this->dropSkeletonWelcomeRoute();
 
             $routename = 'home';
             $routeuri = '/';
@@ -120,5 +121,24 @@ class RapydMakeHomeCommand extends Command
         //            file_put_contents(base_path('resources/views/menu.blade.php'), '<x-rpd::nav-link label="Home" route="home"  />', FILE_APPEND);
         //        }
 
+    }
+
+    /**
+     * A fresh Laravel skeleton ships a welcome route on "/": the home generated here takes its
+     * place, and leaving both would show two routes for the same path to whoever opens the file.
+     */
+    protected function dropSkeletonWelcomeRoute(): void
+    {
+        $file = base_path('routes/web.php');
+        if (! is_file($file)) {
+            return;
+        }
+
+        $content = file_get_contents($file);
+        $cleaned = preg_replace("/Route::get\\('\\/', function \\(\\) \\{\\s*return view\\('welcome'\\);\\s*\\}\\);\\s*/", '', $content, 1);
+
+        if ($cleaned !== null && $cleaned !== $content) {
+            file_put_contents($file, $cleaned);
+        }
     }
 }

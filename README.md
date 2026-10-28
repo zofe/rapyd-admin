@@ -24,7 +24,7 @@ Requires PHP 8.2+, Laravel 12 or 13 and Livewire 4.
 
 ```bash
 composer create-project laravel/laravel myapp && cd myapp
-composer require zofe/rapyd-admin:^9 -W
+composer require zofe/rapyd-admin:^9
 php artisan rpd:make:setup     # .env, database, configs, migrations, admin user, home page
 php artisan serve
 ```
@@ -33,7 +33,6 @@ php artisan serve
 change it. Set `RAPYD_ADMIN_PASSWORD` in `.env` to choose it yourself. You get a sidebar with Users, Companies,
 Roles & Permissions and Logs, a landing page, and an `app/Modules` folder ready for your own modules.
 
-> `-W` lets Composer downgrade Guzzle to 7 on Laravel 13: `laravel/socialite` still requires it through `league/oauth1-client`.
 > Google sign-in appears on the login page as soon as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set, see [docs/AUTH.md](docs/AUTH.md).
 
 ## What's included
