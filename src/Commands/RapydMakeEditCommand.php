@@ -25,32 +25,6 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         return File::exists(base_path($tablePath));
     }
 
-    /** The columns of the table as the driver describes them, read once: name => [type_name, nullable, …]. */
-    protected function columns(string $table): array
-    {
-        return $this->columns[$table] ??= collect(Schema::getColumns($table))->keyBy('name')->all();
-    }
-
-    protected array $columns = [];
-
-    /**
-     * What a column is, for the form: text, date, datetime, boolean, number or string. From the
-     * driver's type name, so it holds on sqlite (varchar, datetime, tinyint) and mysql (longtext, decimal) alike.
-     */
-    protected function columnKind(string $table, string $field): string
-    {
-        $type = strtolower((string) ($this->columns($table)[$field]['type_name'] ?? Schema::getColumnType($table, $field)));
-
-        return match (true) {
-            str_contains($type, 'text') || $type === 'json' => 'text',
-            $type === 'date' => 'date',
-            str_contains($type, 'datetime') || str_contains($type, 'timestamp') => 'datetime',
-            str_contains($type, 'bool') || $type === 'tinyint' || $type === 'tinyint(1)' => 'boolean',
-            str_contains($type, 'int') || in_array($type, ['float', 'double', 'decimal', 'numeric', 'real']) => 'number',
-            default => 'string',
-        };
-    }
-
     /**
      * The validation rules of a column: nullable or required from the schema, the type's rule, and what
      * the name says (email, url). A boolean is never required — an unticked box is a value.

@@ -314,6 +314,56 @@ class RapydMakeBaseCommand extends Command
         return ['method' => $method, 'target' => get_class($relation->getRelated()), 'table' => $table, 'label' => $this->labelColumnOf($table)];
     }
 
+    /** The columns of the table as the driver describes them, read once: name => [type_name, nullable, …]. */
+    protected function columns(string $table): array
+    {
+        return $this->columns[$table] ??= collect(Schema::getColumns($table))->keyBy('name')->all();
+    }
+
+    protected array $columns = [];
+
+    /**
+     * What a column is, for a form or a page: text, date, datetime, boolean, number or string. From the
+     * driver's type name, so it holds on sqlite (varchar, datetime, tinyint) and mysql (longtext, decimal) alike.
+     */
+    protected function columnKind(string $table, string $field): string
+    {
+        $type = strtolower((string) ($this->columns($table)[$field]['type_name'] ?? Schema::getColumnType($table, $field)));
+
+        return match (true) {
+            str_contains($type, 'text') || $type === 'json' => 'text',
+            $type === 'date' => 'date',
+            str_contains($type, 'datetime') || str_contains($type, 'timestamp') => 'datetime',
+            str_contains($type, 'bool') || $type === 'tinyint' || $type === 'tinyint(1)' => 'boolean',
+            str_contains($type, 'int') || in_array($type, ['float', 'double', 'decimal', 'numeric', 'real']) => 'number',
+            default => 'string',
+        };
+    }
+
+    /**
+     * How a column is shown on a list or a page: a boolean as a word with an icon, a date as a date
+     * (with the time and "3 days ago" when it has a time), a status as a badge, a relation by its
+     * label, a long text cut to one line on the list; the rest as it is.
+     */
+    protected function displayOf(string $modelClass, string $table, string $item, string $field, bool $inList): string
+    {
+        if ($relation = $this->belongsToOf($modelClass, $field)) {
+            return "{{ \${$item}->{$relation['method']}?->{$relation['label']} }}";
+        }
+
+        return match ($this->columnKind($table, $field)) {
+            'boolean' => "<x-rpd::bool :value=\"\${$item}->{$field}\" />",
+            'datetime' => "<x-rpd::date-formatted :date=\"\${$item}->{$field}\" />",
+            'date' => "<x-rpd::date-formatted :date=\"\${$item}->{$field}\" format=\"d/m/Y\" :ago=\"false\" />",
+            'text' => $inList
+                ? "{{ Str::limit(strip_tags((string) \${$item}->{$field}), 80) }}"
+                : "{!! nl2br(e(\${$item}->{$field})) !!}",
+            default => str_ends_with($field, 'status') || $field === 'state'
+                ? "<span class=\"badge bg-{{ \${$item}->{$field} === 'active' ? 'success' : 'secondary' }}\">{{ \${$item}->{$field} }}</span>"
+                : "{{ \${$item}->{$field} }}",
+        };
+    }
+
     /** The column of a table to show a record by: name, title…, else the first string column, else the id. */
     protected function labelColumnOf(string $table): string
     {

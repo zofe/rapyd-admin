@@ -1,22 +1,28 @@
 @props([
-'date',          // \Carbon\Carbon
+'date' => null,       // \Carbon\Carbon, a DateTime or a string Carbon can parse; null prints nothing
 'timestamp' => null,
 'format' => 'd/m/Y H:i',
+'ago' => true,        // the "3 days ago" after the date
 ])
 
 @php
-    $ts = $timestamp ?? $date->timestamp;
-    $dt = \Carbon\Carbon::createFromTimestamp($ts);
-    $full = $dt->format($format);
+    $dt = null;
+    if ($timestamp !== null) {
+        $dt = \Carbon\Carbon::createFromTimestamp($timestamp);
+    } elseif ($date instanceof \DateTimeInterface) {
+        $dt = \Carbon\Carbon::instance($date);
+    } elseif (filled($date)) {
+        try { $dt = \Carbon\Carbon::parse($date); } catch (\Throwable) { $dt = null; }
+    }
 
-    if (strpos($full, ' ') !== false) {
-        [$main, $timePart] = explode(' ', $full, 2);
-    } else {
-        $main     = $full;
-        $timePart = null;
+    $main = $timePart = null;
+    if ($dt) {
+        $full = $dt->format($format);
+        [$main, $timePart] = array_pad(explode(' ', $full, 2), 2, null);
     }
 @endphp
 
+@if($dt)
 <div class="d-flex g-1">
     <div>
         <span>{{ $main }}</span>
@@ -24,7 +30,8 @@
             <small> {{ $timePart }}</small>
         @endif
     </div>
-    <div class="ps-1"><small class="text-gray-500">{{ $dt->diffForHumans() }}</small></div>
+    @if($ago)
+        <div class="ps-1"><small class="text-gray-500">{{ $dt->diffForHumans() }}</small></div>
+    @endif
 </div>
-
-
+@endif

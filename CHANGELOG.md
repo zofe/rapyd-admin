@@ -4,6 +4,16 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Generated lists and pages print values in the form they read best.** A boolean was a `1` or a `0`, a
+  date `2026-07-23 04:04:57`, a status plain text. Now: a boolean through the new `x-rpd::bool` (an icon with
+  the colour, a word — *Yes* / *No*, or the two you pass — with the meaning), a date through
+  `x-rpd::date-formatted` (date, time in small, "3 days ago"; a `date` column without the time), `created_at` and
+  `updated_at` the same, a `status` or `state` column as a badge (green when `active`), a long text with its
+  line breaks on the page. The model gets `$casts` for its booleans, dates and decimals, so the values are what
+  they say in code and in tests too. `x-rpd::date-formatted` now accepts a string or nothing, not only a Carbon.
+
 ## [9.28.0] - 2026-10-28
 
 ### Added

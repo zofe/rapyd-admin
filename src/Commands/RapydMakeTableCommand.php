@@ -78,20 +78,13 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         //a relation shows the related record's label, not its id
         $items = '';
         $headings = [];
+        $modelClass = $this->getModelNamespace(true);
         foreach ($fields as $field) {
-            $headings[$field] = Str::headline($field);
-            if ($relation = $this->belongsToOf($this->getModelNamespace(true), $field)) {
-                $headings[$field] = Str::headline($relation['method']);
-                $items .= "                <td>{{ \$".$item."->{$relation['method']}?->{$relation['label']} }}</td>\n";
-
-                continue;
-            }
-            $type = Schema::getColumnType($table, $field);
-            if (str_contains((string) $type, 'text') || $type === 'json') {
-                $items .= "                <td class=\"text-truncate\" style=\"max-width: 20rem;\" title=\"{{ Str::limit(strip_tags((string) \$".$item."->$field), 300) }}\">{{ Str::limit(strip_tags((string) \$".$item."->$field), 80) }}</td>\n";
-            } else {
-                $items .= "                <td>{{ \$".$item."->$field }}</td>\n";
-            }
+            $headings[$field] = ($relation = $this->belongsToOf($modelClass, $field)) ? Str::headline($relation['method']) : Str::headline($field);
+            $cell = $this->displayOf($modelClass, $table, $item, $field, true);
+            $items .= $this->columnKind($table, $field) === 'text' && ! $relation
+                ? "                <td class=\"text-truncate\" style=\"max-width: 20rem;\" title=\"{{ Str::limit(strip_tags((string) \$".$item."->$field), 300) }}\">{$cell}</td>\n"
+                : "                <td>{$cell}</td>\n";
         }
 
 

@@ -92,6 +92,12 @@ and companies, or for any relation marked `:search`.
 
 <x-rpd::textarea model="body" label="Body" rows="5" />
 
+<!-- values on a list or a page -->
+<x-rpd::bool :value="$order->paid" />                                   <!-- Yes / No with an icon -->
+<x-rpd::bool :value="$order->paid" yes="Paid" no="Unpaid" />
+<x-rpd::date-formatted :date="$order->created_at" />                    <!-- 28/10/2026 14:25, "3 days ago" -->
+<x-rpd::date-formatted :date="$order->due_at" format="d/m/Y" :ago="false" />   <!-- a string or null is fine ->
+
 <!-- Quill WYSIWYG -->
 <x-rpd::rich-text model="body" label="Body" />
 

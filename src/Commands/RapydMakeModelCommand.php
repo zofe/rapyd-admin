@@ -219,14 +219,15 @@ class RapydMakeModelCommand extends Command
             $content
         );
 
-        $body = "    use HasFactory;\n";
+        // the trait with the other traits at the top of the class, the method at the bottom
+        $content = preg_replace_callback('/(class \\w+ extends Model\\s*\\{\\n)/', fn ($m) => $m[1] . "    use HasFactory;\n", $content, 1);
         if ($factoryClass) {
-            $body .= "\n    /** The factory lives in the module, where Laravel does not look by itself. */\n"
+            $method = "\n    /** The factory lives in the module, where Laravel does not look by itself. */\n"
                 . "    protected static function newFactory(): \\{$factoryClass}\n"
                 . "    {\n        return \\{$factoryClass}::new();\n    }\n";
+            $content = rtrim($content);
+            $content = substr($content, 0, strrpos($content, '}')) . ltrim($method, "\n") . "}\n";
         }
-
-        $content = preg_replace_callback('/(class \\w+ extends Model\\s*\\{\\n)/', fn ($m) => $m[1] . $body, $content, 1);
         File::put($modelFile, $content);
     }
 
@@ -285,6 +286,26 @@ class RapydMakeModelCommand extends Command
         if ($fields) {
             $names = implode(', ', array_map(fn ($f) => "'{$f['fieldName']}'", $fields));
             $body .= ($body ? "\n" : '') . "    protected \$fillable = [{$names}];\n";
+        }
+        // casts: a boolean is true or false, a date is a Carbon, a decimal keeps its two places —
+        // the pages print them through the components, the tests compare them without surprises
+        $casts = [];
+        foreach ($fields as $field) {
+            $cast = match ($field['fieldType']) {
+                'boolean' => 'boolean',
+                'date' => 'date',
+                'datetime', 'timestamp' => 'datetime',
+                'decimal' => 'decimal:2',
+                'float' => 'float',
+                'integer' => 'integer',
+                default => null,
+            };
+            if ($cast) {
+                $casts[] = "'{$field['fieldName']}' => '{$cast}'";
+            }
+        }
+        if ($casts) {
+            $body .= "\n    protected \$casts = [" . implode(', ', $casts) . "];\n";
         }
         if ($body) {
             $content = preg_replace('/(class \\w+ extends Model\\s*\\{\\n)(\\s*\\/\\/\\n)?/', '$1' . $body, $content, 1);

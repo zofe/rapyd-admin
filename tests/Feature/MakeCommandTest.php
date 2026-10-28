@@ -301,10 +301,18 @@ class MakeCommandTest extends TestCase
         $this->assertStringContainsString("\$table->string('website')->nullable();", $migration, '"website:nullable" alone: type defaults to string');
         $this->assertStringContainsString("\$table->string('email');", $migration);
 
-        // the list cuts a long text to one line; the other columns are printed as they are
+        // the list: a long text cut to one line, a boolean as a word, a date as a date, a status as a badge
         $table = File::get($this->base . '/app/Modules/Customers/Views/customers_table.blade.php');
         $this->assertStringContainsString('Str::limit(strip_tags((string) $customer->notes), 80)', $table);
         $this->assertStringContainsString('<td>{{ $customer->email }}</td>', $table);
+        $this->assertStringContainsString('<td><x-rpd::bool :value="$customer->active" /></td>', $table);
+        $this->assertStringContainsString('<td><x-rpd::date-formatted :date="$customer->signed_at" /></td>', $table);
+        $this->assertStringContainsString('<td><x-rpd::date-formatted :date="$customer->created_at" /></td>', $table);
+        $this->assertStringContainsString("<span class=\"badge bg-{{ \$customer->status === 'active' ? 'success' : 'secondary' }}\">{{ \$customer->status }}</span>", $table);
+        $view = File::get($this->base . '/app/Modules/Customers/Views/customers_view.blade.php');
+        $this->assertStringContainsString('<x-rpd::bool :value="$customer->active" />', $view);
+        $this->assertStringContainsString('{!! nl2br(e($customer->notes)) !!}', $view, 'the page keeps the whole text, with its line breaks');
+        $this->assertStringContainsString("protected \$casts = ['score' => 'integer', 'signed_at' => 'datetime', 'active' => 'boolean'];", File::get($this->base . '/app/Modules/Customers/Models/Customer.php'));
         $this->assertStringContainsString('icon="fas fa-fw fa-circle"', File::get($this->base . '/app/Modules/Customers/Views/menu.blade.php'), 'no --icon: the default');
     }
 
