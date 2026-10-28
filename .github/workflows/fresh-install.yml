@@ -65,51 +65,13 @@ jobs:
           test -f app/Modules/Blog/Database/Factories/ArticleFactory.php
           php artisan tinker --execute='echo App\Modules\Blog\Models\Article::count();' | grep -q '^10$'
 
-      # The one thing a reader of the README does next: fills the generated form and saves.
-      # 9.22.0 shipped with this broken (config/livewire.php missing), and nothing in the package suite could see it.
-      - name: The generated form saves and the pages answer
+      # The test rpd:make wrote with the module, run as a reader would: the list behind auth and the permission,
+      # the form saving what the factory makes (9.22.0 shipped with this broken and the package suite could not
+      # see it), an operator in, a plain user out.
+      - name: The generated test passes
         working-directory: app
         run: |
-          cat > tests/Feature/GeneratedModuleTest.php <<'PHP'
-          <?php
-
-          namespace Tests\Feature;
-
-          use App\Models\User;
-          use App\Modules\Blog\Livewire\ArticlesEdit;
-          use App\Modules\Blog\Models\Article;
-          use Illuminate\Foundation\Testing\RefreshDatabase;
-          use Livewire\Livewire;
-          use Tests\TestCase;
-          use Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder;
-
-          class GeneratedModuleTest extends TestCase
-          {
-              use RefreshDatabase;
-
-              public function test_the_dashboard_is_behind_auth_and_the_generated_form_saves(): void
-              {
-                  $this->seed(AuthSeeder::class);
-                  $admin = User::where('email', 'admin@laravel')->firstOrFail();
-
-                  $this->get('/admin')->assertRedirect('/login');
-                  $this->actingAs($admin)->get('/admin')->assertOk()->assertSee('Getting started');
-                  $this->actingAs($admin)->get('/articles/table')->assertOk();
-                  $this->actingAs($admin)->get('/articles/edit')->assertOk();
-
-                  Livewire::actingAs($admin)->test(ArticlesEdit::class)
-                      ->set('article.title', 'First article')
-                      ->set('article.body', 'Written from the CI')
-                      ->set('article.published_at', '2026-10-28 12:00:00')
-                      ->call('save')
-                      ->assertHasNoErrors()
-                      ->assertRedirect();
-
-                  $this->assertSame(1, Article::count());
-                  $this->assertSame('First article', Article::first()->title);
-              }
-          }
-          PHP
+          test -f tests/Feature/Modules/Blog/ArticlesTest.php
           php artisan test
 
       - name: The pages, served

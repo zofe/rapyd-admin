@@ -63,7 +63,9 @@ class MakeCommandTest extends TestCase
             '--fields' => 'name:string,vat_number,active:boolean',
             '--icon' => 'truck',
             '--no-interaction' => true,
-        ])->expectsOutputToContain('Fill the table with ten records')->assertSuccessful();   // without --seed, the command says how
+        ])->expectsOutputToContain('Fill the table with ten records')   // without --seed, the command says how
+            ->expectsOutputToContain('php artisan test --filter SuppliersTest')
+            ->assertSuccessful();
 
         $module = $this->base . '/app/Modules/Suppliers';
         $this->assertStringContainsString('namespace App\Modules\Suppliers\Models;', File::get("{$module}/Models/Supplier.php"));
@@ -128,6 +130,16 @@ class MakeCommandTest extends TestCase
         $supplier = \App\Modules\Suppliers\Models\Supplier::factory()->create();
         $this->assertNotEmpty($supplier->name);
         $this->assertContains($supplier->active, [0, 1, true, false]);
+
+        // a feature test for the module, where `php artisan test` finds it
+        $test = File::get($this->base . '/tests/Feature/Modules/Suppliers/SuppliersTest.php');
+        $this->assertStringContainsString('namespace Tests\Feature\Modules\Suppliers;', $test);
+        $this->assertStringContainsString("route('suppliers.table')", $test);
+        $this->assertStringContainsString("test(SuppliersEdit::class)", $test);
+        $this->assertStringContainsString("set('supplier.' . \$field", $test);
+        $this->assertStringContainsString('->assertSee($records->first()->name)', $test, 'the first string column is looked for in the list');
+        $this->assertStringContainsString('assertForbidden()', $test);
+        $this->assertStringContainsString('view suppliers, edit suppliers', $test);
     }
 
     public function test_with_seed_the_table_opens_with_ten_records()

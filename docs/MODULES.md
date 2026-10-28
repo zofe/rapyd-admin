@@ -28,6 +28,10 @@ app/Modules/Blog/
 Modules in `app/Modules` are discovered automatically: views are registered under the `blog::` namespace, Livewire
 components as `blog::articles-table`, routes and config are loaded, translations too. No service provider needed.
 
+The test of a module lives where `php artisan test` finds it: `tests/Feature/Modules/Blog/ArticlesTest.php`.
+`rpd:make` writes a first one (list behind auth and permission, form saving what the factory makes, operator in,
+plain user out) — grow it with the module.
+
 A full-page component:
 
 ```php

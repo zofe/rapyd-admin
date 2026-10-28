@@ -4,6 +4,10 @@ Rapyd Admin is built with and for AI agents. Three things matter: a brief the ag
 verification loop it can run alone (tests, browser), and one AI feature in the product itself (error analysis in
 the log viewer).
 
+The loop starts with what `rpd:make` leaves behind: a factory, a seeder and a feature test per module
+(`tests/Feature/Modules/<Module>/<Name>Test.php`), so `php artisan test` has something to say about a module
+from the minute it exists.
+
 ## Briefing an agent: `rpd:context`
 
 ```bash

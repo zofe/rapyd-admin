@@ -2,8 +2,10 @@
 
 namespace Zofe\Rapyd\Commands;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Zofe\Rapyd\Ai\GenerationLog;
+use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 
 /**
  * Entry point of the generators. The component is either a base name (rpd:make Articles Article
@@ -77,9 +79,61 @@ class RapydMakeCommand extends RapydMakeBaseCommand
             $this->comment(count($entry['files']) . ' files written (~' . number_format(GenerationLog::chars([$entry]) / 4) . ' tokens the model did not have to generate)');
         }
 
+        if (in_array('Table', $suffixes) && in_array('Edit', $suffixes)) {
+            $this->createTest($base);
+        }
+
         $this->seedOrSayHow();
 
         return self::SUCCESS;
+    }
+
+    /**
+     * A feature test for the module, in tests/Feature where `php artisan test` finds it: the list behind
+     * auth and the permission, the form saving what the factory makes, operator in and plain user out.
+     * The agent's "verify by yourself" starts from here.
+     */
+    protected function createTest(string $base): void
+    {
+        $model = Str::studly($this->argument('model'));
+        $module = $this->option('module') ? Str::studly($this->option('module')) : null;
+        $modelClass = namespace_module('App\\Models', $module) . "\\{$model}";
+        if (! class_exists($modelClass)) {
+            return;
+        }
+
+        $dir = base_path($module ? "tests/Feature/Modules/{$module}" : 'tests/Feature');
+        if (is_file("{$dir}/{$base}Test.php")) {
+            return;
+        }
+
+        $resource = Str::of($base)->headline()->lower();                       // "blog posts"
+        $route = (string) $resource->replace(' ', '.');                          // "blog.posts"
+        $table = (new $modelClass)->getTable();
+        // the first string column, looked for in the list (the uuid key is shown shortened, so not that one)
+        $seeField = collect(Schema::getColumnListing($table))
+            ->reject(fn ($column) => in_array($column, ['id', 'password']))
+            ->first(fn ($column) => str_contains((string) Schema::getColumnType($table, $column), 'char'));
+
+        StubGenerator::from(__DIR__.'/Templates/Test.stub', true)
+            ->to($dir, true, true)
+            ->as($base.'Test')
+            ->withReplacers([
+                'namespace' => $module ? "Tests\\Feature\\Modules\\{$module}" : 'Tests\\Feature',
+                'class' => $base.'Test',
+                'model' => $model,
+                'modelClass' => $modelClass,
+                'editClass' => namespace_module('App\\Livewire', $module) . "\\{$base}Edit",
+                'editClassShort' => $base.'Edit',
+                'item' => Str::singular($table),
+                'listRoute' => "{$route}.table",
+                'viewPermission' => "view {$resource}",
+                'editPermission' => "edit {$resource}",
+                'seeFirst' => $seeField ? "->assertSee(\$records->first()->{$seeField})" : '',
+            ])
+            ->save();
+
+        $this->line("  Test written: <fg=white>php artisan test --filter {$base}Test</>");
     }
 
     /** The seeder rpd:make:model wrote: run it with --seed, otherwise say how, so the table does not stay empty. */

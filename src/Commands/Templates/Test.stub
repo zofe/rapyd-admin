@@ -1,0 +1,62 @@
+<?php
+
+namespace {{namespace}};
+
+use App\Models\User;
+use {{modelClass}};
+use {{editClass}};
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
+use Tests\TestCase;
+use Zofe\Rapyd\Modules\Auth\Database\Seeders\AuthSeeder;
+
+/**
+ * Written by rpd:make with the module: the list is behind auth and the permission, the form saves
+ * what the factory makes, an operator gets in and a plain user does not. Grow it with the module.
+ */
+class {{class}} extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(AuthSeeder::class);   // roles, permissions ({{viewPermission}}, {{editPermission}}) and the first admin
+    }
+
+    protected function admin(): User
+    {
+        return User::where('email', 'admin@laravel')->firstOrFail();
+    }
+
+    public function test_the_list_is_behind_auth_and_shows_the_records(): void
+    {
+        $this->get(route('{{listRoute}}'))->assertRedirect(route('login'));
+
+        $records = {{model}}::factory()->count(3)->create();
+        $this->actingAs($this->admin())->get(route('{{listRoute}}'))->assertOk(){{seeFirst}};
+    }
+
+    public function test_the_form_saves_what_the_factory_makes(): void
+    {
+        $data = {{model}}::factory()->make();
+
+        $form = Livewire::actingAs($this->admin())->test({{editClassShort}}::class);
+        foreach ($data->getAttributes() as $field => $value) {
+            $form->set('{{item}}.' . $field, $value instanceof \DateTimeInterface ? $value->format('Y-m-d H:i:s') : $value);
+        }
+        $form->call('save')->assertHasNoErrors()->assertRedirect();
+
+        $this->assertSame(1, {{model}}::count());
+    }
+
+    public function test_an_operator_gets_in_and_a_plain_user_does_not(): void
+    {
+        $operator = User::factory()->create();
+        $operator->assignRole('operator');   // config.php gives operator the permissions of this module
+        $this->actingAs($operator)->get(route('{{listRoute}}'))->assertOk();
+
+        $plain = User::factory()->create();
+        $this->actingAs($plain)->get(route('{{listRoute}}'))->assertForbidden();
+    }
+}

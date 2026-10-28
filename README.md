@@ -78,7 +78,11 @@ app/Modules/Blog/
 ├── Authorizations/ArticleAuth.php   Limits/ArticleLimit.php   record check and data scoping, yours to restrict
 ├── config.php                   layout, menu entry, permissions (view / edit articles, given to operator)
 └── routes.php                   behind auth
+tests/Feature/Modules/Blog/ArticlesTest.php   the list behind auth, the form saves, operator in, plain user out
 ```
+
+`php artisan test` runs that test straight away: an agent that changes the module has something to run before
+it says it is done.
 
 The views are short because the work is done by the components:
 

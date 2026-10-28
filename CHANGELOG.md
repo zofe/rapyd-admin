@@ -4,6 +4,15 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`rpd:make` writes a feature test with the module.** `tests/Feature/Modules/<Module>/<Name>Test.php`, where
+  `php artisan test` finds it: the list redirects a visitor to the login and shows the records to the admin, the
+  form saves what the factory makes (every column set from a made record, dates formatted), an operator gets in
+  through the module's `role_permissions` and a plain user gets 403. Written only when the table and the form are
+  generated together, never over an existing file. The fresh-install job runs it in place of its own hand-written
+  check.
+
 ## [9.26.0] - 2026-10-28
 
 ### Added
