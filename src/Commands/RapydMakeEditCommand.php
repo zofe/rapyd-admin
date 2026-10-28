@@ -25,13 +25,21 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         return File::exists(base_path($tablePath));
     }
 
+    /** The columns of the table as the driver describes them, read once: name => [type_name, nullable, …]. */
+    protected function columns(string $table): array
+    {
+        return $this->columns[$table] ??= collect(Schema::getColumns($table))->keyBy('name')->all();
+    }
+
+    protected array $columns = [];
+
     /**
      * What a column is, for the form: text, date, datetime, boolean, number or string. From the
      * driver's type name, so it holds on sqlite (varchar, datetime, tinyint) and mysql (longtext, decimal) alike.
      */
     protected function columnKind(string $table, string $field): string
     {
-        $type = strtolower((string) Schema::getColumnType($table, $field));
+        $type = strtolower((string) ($this->columns($table)[$field]['type_name'] ?? Schema::getColumnType($table, $field)));
 
         return match (true) {
             str_contains($type, 'text') || $type === 'json' => 'text',
@@ -41,6 +49,37 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
             str_contains($type, 'int') || in_array($type, ['float', 'double', 'decimal', 'numeric', 'real']) => 'number',
             default => 'string',
         };
+    }
+
+    /**
+     * The validation rules of a column: nullable or required from the schema, the type's rule, and what
+     * the name says (email, url). A boolean is never required — an unticked box is a value.
+     */
+    protected function rulesFor(string $table, string $field): string
+    {
+        $column = $this->columns($table)[$field] ?? [];
+        $nullable = (bool) ($column['nullable'] ?? false);
+        $typeName = strtolower((string) ($column['type_name'] ?? ''));
+        $kind = $this->columnKind($table, $field);
+        $name = strtolower($field);
+
+        $rules = match ($kind) {
+            'boolean' => [],
+            'text' => [$typeName === 'json' ? 'json' : 'string'],
+            'date', 'datetime' => ['date'],
+            'number' => [str_contains($typeName, 'int') ? 'integer' : 'numeric'],
+            default => [match (true) {
+                str_contains($name, 'email') => 'email',
+                str_contains($name, 'url') || str_contains($name, 'website') => 'url',
+                default => 'string',
+            }, 'max:255'],
+        };
+
+        if ($kind === 'boolean') {
+            return $nullable ? 'nullable|boolean' : 'boolean';
+        }
+
+        return implode('|', [$nullable ? 'nullable' : 'required', ...$rules]);
     }
 
     public function hasView($component_name)
@@ -89,11 +128,10 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $modelNamespace = $this->getModelNamespace();
         $view = $this->getViewPath($component_name);
 
-        //component: an unticked box is a value, not a missing one
+        //component: the rules from the column (nullable, type, name), not "required" for everything
         $rules = "\n";
         foreach ($fields as $field) {
-            $rule = $this->columnKind($table, $field) === 'boolean' ? 'boolean' : 'required';
-            $rules .= "               '$item.$field' => '$rule',\n";
+            $rules .= "               '$item.$field' => '" . $this->rulesFor($table, $field) . "',\n";
         }
 
 

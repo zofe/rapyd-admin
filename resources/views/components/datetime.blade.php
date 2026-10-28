@@ -17,6 +17,8 @@
     $key = $attributes->get('name', $model ?? $wireModel);
     $id = $attributes->get('id', $model ?? $wireModel);
     $prefix = null;
+    // bold label when the component's rules say required, as x-rpd::input does
+    $required = $model && property_exists($this, 'rules') && isset($this->rules[$model]) && stristr(is_array($this->rules[$model]) ? implode('|', array_filter($this->rules[$model], 'is_string')) : $this->rules[$model], 'required');
     $attributes = $attributes->class([
         'form-control',
         'form-control-' . $size => $size,
@@ -32,7 +34,7 @@
 
 
 <div class="{{$col}}">
-    <x-rpd::label :for="$id" :label="$label"/>
+    <x-rpd::label :for="$id" :label="$label" :required="$required"/>
 
     <div class="input-group">
         <input

@@ -18,7 +18,7 @@ use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 class RapydMakeModelCommand extends Command
 {
     public $signature = 'rpd:make:model {model} {--module=}
-        {--fields= : Columns as name:type,name:type (types: string text integer boolean date datetime float decimal json timestamp)}
+        {--fields= : Columns as name:type,name:type:nullable (types: string text integer boolean date datetime float decimal json timestamp)}
         {--increments : Auto-increment integer id instead of the default uuid}';
 
     public $description = 'rapyd command to generate models';
@@ -215,16 +215,20 @@ class RapydMakeModelCommand extends Command
     }
 
     /**
-     * "name:string,vat_number,active:boolean" => [['fieldName' => 'name', 'fieldType' => 'string'], ...].
+     * "name:string,vat_number,phone:string:nullable,active:boolean"
+     *   => [['fieldName' => 'name', 'fieldType' => 'string', 'nullable' => false], ...].
+     * A third part, "nullable", makes the column optional ("phone:nullable" works too: type defaults to string).
      * Returns false (after an error message) on an unknown type or an invalid column name.
      */
     protected function parseFields(string $spec): array|false
     {
         $fields = [];
         foreach (array_filter(array_map('trim', explode(',', $spec))) as $item) {
-            [$name, $type] = array_pad(explode(':', $item, 2), 2, 'string');
-            $name = trim($name);
-            $type = trim($type) ?: 'string';
+            $parts = array_map('trim', explode(':', $item));
+            $name = array_shift($parts);
+            $nullable = in_array('nullable', $parts, true);
+            $parts = array_values(array_filter($parts, fn ($p) => $p !== '' && $p !== 'nullable'));
+            $type = $parts[0] ?? 'string';
             if (! preg_match('/^[a-z][a-z0-9_]*$/', $name)) {
                 $this->error("Invalid column name '{$name}' in --fields (use snake_case)");
 
@@ -235,7 +239,7 @@ class RapydMakeModelCommand extends Command
 
                 return false;
             }
-            $fields[] = ['fieldName' => $name, 'fieldType' => $type];
+            $fields[] = ['fieldName' => $name, 'fieldType' => $type, 'nullable' => $nullable];
         }
 
         return $fields;
@@ -258,7 +262,8 @@ class RapydMakeModelCommand extends Command
                 break;
             }
             $fieldType = $this->choice('Field Type?', self::TYPES, 0);
-            $fields[] = compact('fieldName', 'fieldType');
+            $nullable = $this->confirm('Nullable?', false);
+            $fields[] = compact('fieldName', 'fieldType', 'nullable');
         }
 
         return $fields;
@@ -281,7 +286,8 @@ class RapydMakeModelCommand extends Command
     {
         $fieldStrings = '';
         foreach ($fields as $field) {
-            $fieldStrings .= "            \$table->{$field['fieldType']}('{$field['fieldName']}');\n";
+            $nullable = ! empty($field['nullable']) ? '->nullable()' : '';
+            $fieldStrings .= "            \$table->{$field['fieldType']}('{$field['fieldName']}'){$nullable};\n";
         }
 
         return str_replace(

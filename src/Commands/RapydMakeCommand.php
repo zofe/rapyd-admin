@@ -18,7 +18,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         {component : Base name of the components (e.g. Articles, ArticlesTable) or all|table|view|edit}
         {model : The model (created with its migration when missing)}
         {--module= : Module to generate into (app/Modules/{Module})}
-        {--fields= : Columns of a new model, as name:type,name:type}
+        {--fields= : Columns of a new model, as name:type,name:type:nullable}
         {--increments : Auto-increment integer id for a new model instead of the default uuid}
         {--seed : Fill the table with ten records from the generated factory}
         {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}';

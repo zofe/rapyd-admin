@@ -66,8 +66,10 @@ php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,pu
 
 creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry (with
 the icon you name, a circle otherwise);
-when the model does not exist yet it is created with its migration from `--fields`, migrated, and — with `--seed` —
-filled with ten records from the generated factory, so the table opens with something in it. No prompts:
+when the model does not exist yet it is created with its migration from `--fields` (`name:type`, `:nullable` for an
+optional column), migrated, and — with `--seed` — filled with ten records from the generated factory, so the table
+opens with something in it. The form's rules follow the columns: required or nullable, `email` / `url` / `date` /
+`integer` by type and name. No prompts:
 
 ```
 app/Modules/Blog/

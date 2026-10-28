@@ -11,6 +11,16 @@ All notable changes to `rapyd-admin` will be documented in this file.
   week and fixed in a patch release with an advisory. The file also says which versions get fixes (9.x) and what a
   stock install exposes by default (open registration, the first admin's password, the rich-text allow-list).
 
+- **`--fields` knows `nullable`, and the generated rules follow the column.** `phone:string:nullable` (or
+  `phone:nullable`, type string by default) writes `->nullable()` in the migration; every other column stays
+  required. The form's rules used to be `required` for everything: they are now built from the column as the
+  database describes it — `nullable` or `required`, then `email` / `url` / `string|max:255` for strings by their
+  name, `string` or `json` for text, `date` for dates, `integer` or `numeric` for numbers, `boolean` alone for
+  booleans. Read from the schema, so a model written by hand gets the same treatment.
+- **Required fields are bold in every form component.** `x-rpd::textarea`, `date` and `datetime` now read the
+  component's rules as `x-rpd::input` always did; a form with a bold "Title" and a plain "Body", both required,
+  was telling the user something false.
+
 ### Fixed
 
 - **The generated form gave every column a one-line text input.** A `text` column had a single line for its

@@ -151,7 +151,7 @@ class MakeCommandTest extends TestCase
             'component' => 'all',
             'model' => 'Customer',
             '--module' => 'Customers',
-            '--fields' => 'company_name,email,status,notes:text,score:integer,signed_at:datetime,active:boolean',
+            '--fields' => 'company_name,email,status,notes:text,score:integer,signed_at:datetime,active:boolean,phone:string:nullable,website:nullable',
             '--seed' => true,
             '--no-interaction' => true,
         ])->doesntExpectOutputToContain('Fill the table')->assertSuccessful();
@@ -173,9 +173,20 @@ class MakeCommandTest extends TestCase
         $this->assertStringContainsString('<x-rpd::checkbox col="col-12" model="customer.active"', $edit);
         $this->assertStringContainsString('<x-rpd::input type="number" col="col-12" model="customer.score"', $edit);
         $this->assertStringContainsString('<x-rpd::input col="col-12" model="customer.email"', $edit);
+        // the rules follow the column: nullable or required, the type, what the name says
         $rules = File::get($this->base . '/app/Modules/Customers/Livewire/CustomersEdit.php');
         $this->assertStringContainsString("'customer.active' => 'boolean',", $rules, 'an unticked box is not a missing value');
-        $this->assertStringContainsString("'customer.email' => 'required',", $rules);
+        $this->assertStringContainsString("'customer.email' => 'required|email|max:255',", $rules);
+        $this->assertStringContainsString("'customer.website' => 'nullable|url|max:255',", $rules);
+        $this->assertStringContainsString("'customer.phone' => 'nullable|string|max:255',", $rules);
+        $this->assertStringContainsString("'customer.notes' => 'required|string',", $rules);
+        $this->assertStringContainsString("'customer.score' => 'required|integer',", $rules);
+        $this->assertStringContainsString("'customer.signed_at' => 'required|date',", $rules);
+
+        $migration = File::get(File::files($this->base . '/app/Modules/Customers/Database/Migrations')[0]->getPathname());
+        $this->assertStringContainsString("\$table->string('phone')->nullable();", $migration);
+        $this->assertStringContainsString("\$table->string('website')->nullable();", $migration, '"website:nullable" alone: type defaults to string');
+        $this->assertStringContainsString("\$table->string('email');", $migration);
 
         // the list cuts a long text to one line; the other columns are printed as they are
         $table = File::get($this->base . '/app/Modules/Customers/Views/customers_table.blade.php');
