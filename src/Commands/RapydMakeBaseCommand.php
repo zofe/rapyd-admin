@@ -251,6 +251,7 @@ class RapydMakeBaseCommand extends Command
         if (! method_exists($modelClass, $method)) {
             return null;
         }
+
         try {
             $relation = (new $modelClass)->{$method}();
         } catch (\Throwable) {
