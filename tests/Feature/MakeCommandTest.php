@@ -306,11 +306,12 @@ class MakeCommandTest extends TestCase
         $this->assertStringContainsString('Str::limit(strip_tags((string) $customer->notes), 80)', $table);
         $this->assertStringContainsString('<td>{{ $customer->email }}</td>', $table);
         $this->assertStringContainsString('<td><x-rpd::bool :value="$customer->active" /></td>', $table);
-        $this->assertStringContainsString('<td><x-rpd::date-formatted :date="$customer->signed_at" /></td>', $table);
-        $this->assertStringContainsString('<td><x-rpd::date-formatted :date="$customer->created_at" /></td>', $table);
+        $this->assertStringContainsString('<td><x-rpd::date-formatted :date="$customer->signed_at" :ago="false" /></td>', $table);
+        $this->assertStringContainsString('<td><x-rpd::date-formatted :date="$customer->created_at" :ago="false" /></td>', $table);
         $this->assertStringContainsString("<span class=\"badge bg-{{ \$customer->status === 'active' ? 'success' : 'secondary' }}\">{{ \$customer->status }}</span>", $table);
         $view = File::get($this->base . '/app/Modules/Customers/Views/customers_view.blade.php');
         $this->assertStringContainsString('<x-rpd::bool :value="$customer->active" />', $view);
+        $this->assertStringContainsString('<x-rpd::date-formatted :date="$customer->created_at" />', $view, 'the "ago" on the page');
         $this->assertStringContainsString('{!! nl2br(e($customer->notes)) !!}', $view, 'the page keeps the whole text, with its line breaks');
         $this->assertStringContainsString("protected \$casts = ['score' => 'integer', 'signed_at' => 'datetime', 'active' => 'boolean'];", File::get($this->base . '/app/Modules/Customers/Models/Customer.php'));
         $this->assertStringContainsString('icon="fas fa-fw fa-circle"', File::get($this->base . '/app/Modules/Customers/Views/menu.blade.php'), 'no --icon: the default');

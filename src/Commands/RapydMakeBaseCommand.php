@@ -353,7 +353,10 @@ class RapydMakeBaseCommand extends Command
 
         return match ($this->columnKind($table, $field)) {
             'boolean' => "<x-rpd::bool :value=\"\${$item}->{$field}\" />",
-            'datetime' => "<x-rpd::date-formatted :date=\"\${$item}->{$field}\" />",
+            // the "3 days ago" on the page only: in a list of ten columns it wraps into three lines
+            'datetime' => $inList
+                ? "<x-rpd::date-formatted :date=\"\${$item}->{$field}\" :ago=\"false\" />"
+                : "<x-rpd::date-formatted :date=\"\${$item}->{$field}\" />",
             'date' => "<x-rpd::date-formatted :date=\"\${$item}->{$field}\" format=\"d/m/Y\" :ago=\"false\" />",
             'text' => $inList
                 ? "{{ Str::limit(strip_tags((string) \${$item}->{$field}), 80) }}"
