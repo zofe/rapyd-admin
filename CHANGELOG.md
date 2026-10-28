@@ -4,6 +4,13 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`SECURITY.md`**, and private vulnerability reporting switched on for the repository: a security problem is
+  reported through *Security → Report a vulnerability* on GitHub, seen by the maintainer only, answered within a
+  week and fixed in a patch release with an advisory. The file also says which versions get fixes (9.x) and what a
+  stock install exposes by default (open registration, the first admin's password, the rich-text allow-list).
+
 ### Fixed
 
 - **The generated form gave every column a one-line text input.** A `text` column had a single line for its
