@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.27.0] - 2026-10-28
+
 ### Added
 
 - **`rpd:make` writes a feature test with the module.** `tests/Feature/Modules/<Module>/<Name>Test.php`, where
