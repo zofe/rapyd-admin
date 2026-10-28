@@ -127,6 +127,7 @@ jobs:
         run: |
           composer require laravel/boost --dev --no-interaction
           php artisan boost:install --no-interaction
-          grep -q 'zofe/rapyd-admin' AGENTS.md
+          # Boost writes the guideline to CLAUDE.md when the skeleton ships one, to AGENTS.md otherwise
+          grep -l 'zofe/rapyd-admin/core' AGENTS.md CLAUDE.md
           test -d .claude/skills/rapyd-module
           test -d .claude/skills/rapyd-workflow
