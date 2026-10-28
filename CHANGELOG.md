@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.26.0] - 2026-10-28
+
 ### Added
 
 - **`rpd:make --icon=newspaper`** names the Font Awesome icon of the module's sidebar entry; without it every
