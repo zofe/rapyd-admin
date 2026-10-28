@@ -58,9 +58,12 @@ jobs:
           grep -q "'web', 'auth'" routes/web.php
           grep -q zofe/rapyd-admin boost.json
 
-      - name: The first module, as in the README
+      - name: The first module, as in the README, seeded
         working-directory: app
-        run: php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --no-interaction
+        run: |
+          php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --seed --no-interaction
+          test -f app/Modules/Blog/Database/Factories/ArticleFactory.php
+          php artisan tinker --execute='echo App\Modules\Blog\Models\Article::count();' | grep -q '^10$'
 
       # The one thing a reader of the README does next: fills the generated form and saves.
       # 9.22.0 shipped with this broken (config/livewire.php missing), and nothing in the package suite could see it.

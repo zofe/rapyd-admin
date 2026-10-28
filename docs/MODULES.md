@@ -19,7 +19,7 @@ app/Modules/Blog/
 ├── Livewire/            ArticlesTable.php, ArticlesView.php, ArticlesEdit.php (+ *Embed.php for reusable blocks)
 ├── Views/               articles_table.blade.php … and menu.blade.php (the sidebar entry)
 ├── Models/              optional: models that belong to the module
-├── Database/Migrations/ optional
+├── Database/            optional: Migrations/, Factories/ and Seeders/ (rpd:make writes all three; the model's newFactory() points here)
 ├── Lang/                optional: `it.json` (English phrase => translation), `en/messages.php` for `__('blog::messages.sent')`
 ├── config.php           layout, menu, permissions
 └── routes.php           full-page Livewire routes

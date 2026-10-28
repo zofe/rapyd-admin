@@ -62,7 +62,7 @@ class MakeCommandTest extends TestCase
             '--module' => 'Suppliers',
             '--fields' => 'name:string,vat_number,active:boolean',
             '--no-interaction' => true,
-        ])->assertSuccessful();
+        ])->expectsOutputToContain('Fill the table with ten records')->assertSuccessful();   // without --seed, the command says how
 
         $module = $this->base . '/app/Modules/Suppliers';
         $this->assertStringContainsString('namespace App\Modules\Suppliers\Models;', File::get("{$module}/Models/Supplier.php"));
@@ -111,6 +111,43 @@ class MakeCommandTest extends TestCase
         $this->assertStringContainsString('public static string $model = Supplier::class;', File::get("{$module}/Authorizations/SupplierAuth.php"));
         $this->assertStringContainsString('public static function limit(', File::get("{$module}/Limits/SupplierLimit.php"));
         $this->assertStringContainsString('namespace App\Modules\Suppliers\Limits;', File::get("{$module}/Limits/SupplierLimit.php"));
+
+        // a factory from the columns and a seeder that uses it, wired into the model
+        $factory = File::get("{$module}/Database/Factories/SupplierFactory.php");
+        $this->assertStringContainsString('namespace App\Modules\Suppliers\Database\Factories;', $factory);
+        $this->assertStringContainsString("'name' => fake()->name(),", $factory, 'a column called name gets a name');
+        $this->assertStringContainsString("'vat_number' => fake()->words(3, true),", $factory, 'a string with no better guess');
+        $this->assertStringContainsString("'active' => fake()->boolean(),", $factory);
+        $this->assertStringContainsString('Supplier::factory()->count(10)->create();', File::get("{$module}/Database/Seeders/SupplierSeeder.php"));
+        $model = File::get("{$module}/Models/Supplier.php");
+        $this->assertStringContainsString('use HasFactory;', $model);
+        $this->assertStringContainsString('return \App\Modules\Suppliers\Database\Factories\SupplierFactory::new();', $model, 'Laravel would not find a factory in a module by itself');
+
+        $supplier = \App\Modules\Suppliers\Models\Supplier::factory()->create();
+        $this->assertNotEmpty($supplier->name);
+        $this->assertContains($supplier->active, [0, 1, true, false]);
+    }
+
+    public function test_with_seed_the_table_opens_with_ten_records()
+    {
+        $this->artisan('rpd:make', [
+            'component' => 'all',
+            'model' => 'Customer',
+            '--module' => 'Customers',
+            '--fields' => 'company_name,email,status,notes:text,score:integer,signed_at:datetime,active:boolean',
+            '--seed' => true,
+            '--no-interaction' => true,
+        ])->doesntExpectOutputToContain('Fill the table')->assertSuccessful();
+
+        $this->assertSame(10, \App\Modules\Customers\Models\Customer::count());
+
+        $customer = \App\Modules\Customers\Models\Customer::first();
+        $this->assertStringContainsString('@', $customer->email, 'a column called email gets an email');
+        $this->assertContains($customer->status, ['active', 'inactive']);
+        $this->assertNotEmpty($customer->notes);
+        $this->assertIsNumeric($customer->score);
+        $this->assertNotEmpty($customer->signed_at);
+        $this->assertNotEmpty($customer->company_name);
     }
 
     /**

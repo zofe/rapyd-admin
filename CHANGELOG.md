@@ -4,6 +4,16 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`rpd:make` writes a factory and a seeder with the model, and `--seed` fills the table.** A generated module
+  opened on an empty table — "tot. 0" for whoever tried it, and no factory for whoever wanted to write a test.
+  `rpd:make:model` now adds `Database/Factories/<Model>Factory.php`, with a value guessed for each column from its
+  name first (`email`, `phone`, `title`, `*_name`, `status`, `code`…) and its type otherwise, and
+  `Database/Seeders/<Model>Seeder.php` that creates ten records with it; in a module the model gets `HasFactory`
+  and a `newFactory()` pointing there, since Laravel only looks in `Database\Factories`. `rpd:make … --seed` runs
+  the seeder right away; without it the command prints the `db:seed` line. The README's first module uses `--seed`.
+
 ## [9.24.0] - 2026-10-28
 
 ### Added

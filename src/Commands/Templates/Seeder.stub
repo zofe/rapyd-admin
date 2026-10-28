@@ -1,0 +1,15 @@
+<?php
+
+namespace {{namespace}};
+
+use {{modelClass}};
+use Illuminate\Database\Seeder;
+
+/** Ten records to look at: php artisan db:seed --class="{{namespace}}\{{model}}Seeder" */
+class {{model}}Seeder extends Seeder
+{
+    public function run(): void
+    {
+        {{model}}::factory()->count(10)->create();
+    }
+}

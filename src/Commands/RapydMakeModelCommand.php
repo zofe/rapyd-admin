@@ -6,10 +6,11 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Zofe\Rapyd\Stubs\Facades\StubGenerator;
 
 /**
- * Creates a model and its migration, in the application or in a module. The key is a uuid
- * (HasUuids + ShortId, like the bundled models) unless --increments is given.
+ * Creates a model, its migration, a factory and a seeder, in the application or in a module.
+ * The key is a uuid (HasUuids + ShortId, like the bundled models) unless --increments is given.
  * The columns come from --fields ("name:string,active:boolean", type defaults to string);
  * without --fields the command asks for them only when a terminal is attached,
  * so agents and CI get a table with the default columns and no hang.
@@ -78,9 +79,113 @@ class RapydMakeModelCommand extends Command
 
         }
 
-        $this->info('Model and migration created.');
+        $this->createFactoryAndSeeder($modelName, $fields);
+
+        $this->info('Model, migration, factory and seeder created.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * A factory from the columns and a seeder that uses it, next to the migration: the table opens
+     * with something in it, and a test has data to work with. The model gets HasFactory and, in a
+     * module, newFactory() — Laravel looks for factories in Database\Factories only.
+     */
+    protected function createFactoryAndSeeder(string $modelName, array $fields): void
+    {
+        $module = $this->module;
+        $modelClass = namespace_module('App\\Models', $module) . "\\{$modelName}";
+        $factoryNamespace = $module ? namespace_module('App\\Database\\Factories', $module) : 'Database\\Factories';
+        $seederNamespace = $module ? namespace_module('App\\Database\\Seeders', $module) : 'Database\\Seeders';
+        $factoryPath = base_path($module ? path_module('app/Database/Factories', $module) : 'database/factories');
+        $seederPath = base_path($module ? path_module('app/Database/Seeders', $module) : 'database/seeders');
+
+        $definition = [];
+        foreach ($fields as $field) {
+            $definition[] = "            '{$field['fieldName']}' => " . $this->fakeFor($field['fieldName'], $field['fieldType']) . ',';
+        }
+
+        StubGenerator::from(__DIR__.'/Templates/Factory.stub', true)
+            ->to($factoryPath, true, true)
+            ->as($modelName.'Factory')
+            ->withReplacers([
+                'namespace' => $factoryNamespace,
+                'model' => $modelName,
+                'modelClass' => $modelClass,
+                'definition' => implode("\n", $definition),
+            ])
+            ->save();
+
+        StubGenerator::from(__DIR__.'/Templates/Seeder.stub', true)
+            ->to($seederPath, true, true)
+            ->as($modelName.'Seeder')
+            ->withReplacers([
+                'namespace' => $seederNamespace,
+                'model' => $modelName,
+                'modelClass' => $modelClass,
+            ])
+            ->save();
+
+        $this->addFactoryToModel(
+            base_path(path_module("app/Models/{$modelName}.php", $module)),
+            $module ? "{$factoryNamespace}\\{$modelName}Factory" : null
+        );
+    }
+
+    protected function addFactoryToModel(string $modelFile, ?string $factoryClass): void
+    {
+        $content = File::get($modelFile);
+        $content = str_replace(
+            "use Illuminate\\Database\\Eloquent\\Model;\n",
+            "use Illuminate\\Database\\Eloquent\\Factories\\HasFactory;\nuse Illuminate\\Database\\Eloquent\\Model;\n",
+            $content
+        );
+
+        $body = "    use HasFactory;\n";
+        if ($factoryClass) {
+            $body .= "\n    /** The factory lives in the module, where Laravel does not look by itself. */\n"
+                . "    protected static function newFactory(): \\{$factoryClass}\n"
+                . "    {\n        return \\{$factoryClass}::new();\n    }\n";
+        }
+
+        $content = preg_replace_callback('/(class \\w+ extends Model\\s*\\{\\n)/', fn ($m) => $m[1] . $body, $content, 1);
+        File::put($modelFile, $content);
+    }
+
+    /** A believable value for a column: from its name when the name says something, from its type otherwise. */
+    protected function fakeFor(string $name, string $type): string
+    {
+        $n = strtolower($name);
+        $byName = match (true) {
+            str_contains($n, 'email') => 'fake()->unique()->safeEmail()',
+            str_contains($n, 'phone') => 'fake()->phoneNumber()',
+            str_contains($n, 'url') || str_contains($n, 'website') => 'fake()->url()',
+            str_contains($n, 'slug') => 'fake()->unique()->slug()',
+            str_contains($n, 'city') => 'fake()->city()',
+            str_contains($n, 'country') => 'fake()->country()',
+            str_contains($n, 'address') => 'fake()->streetAddress()',
+            str_contains($n, 'zip') || str_contains($n, 'postal') => 'fake()->postcode()',
+            str_contains($n, 'title') || str_contains($n, 'subject') => 'fake()->sentence(4)',
+            str_contains($n, 'business') || str_contains($n, 'company') => 'fake()->company()',
+            str_ends_with($n, 'name') => 'fake()->name()',
+            str_contains($n, 'status') => "fake()->randomElement(['active', 'inactive'])",
+            str_contains($n, 'code') || str_contains($n, 'sku') => "fake()->unique()->bothify('??-####')",
+            default => null,
+        };
+        if ($byName && in_array($type, ['string', 'text'])) {
+            return $byName;
+        }
+
+        return match ($type) {
+            'text' => 'fake()->paragraphs(2, true)',
+            'integer' => 'fake()->numberBetween(1, 1000)',
+            'boolean' => 'fake()->boolean()',
+            'date' => 'fake()->date()',
+            'datetime', 'timestamp' => "fake()->dateTimeBetween('-1 year', 'now')",
+            'float', 'decimal' => 'fake()->randomFloat(2, 1, 1000)',
+            'json' => "json_encode(['note' => fake()->word()])",
+            default => 'fake()->words(3, true)',
+        };
     }
 
     /**

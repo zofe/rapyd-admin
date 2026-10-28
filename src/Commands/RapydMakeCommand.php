@@ -17,7 +17,8 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         {model : The model (created with its migration when missing)}
         {--module= : Module to generate into (app/Modules/{Module})}
         {--fields= : Columns of a new model, as name:type,name:type}
-        {--increments : Auto-increment integer id for a new model instead of the default uuid}';
+        {--increments : Auto-increment integer id for a new model instead of the default uuid}
+        {--seed : Fill the table with ten records from the generated factory}';
 
     public $description = 'rapyd command to generate components (table, view and edit) for a model';
 
@@ -71,6 +72,27 @@ class RapydMakeCommand extends RapydMakeBaseCommand
             $this->comment(count($entry['files']) . ' files written (~' . number_format(GenerationLog::chars([$entry]) / 4) . ' tokens the model did not have to generate)');
         }
 
+        $this->seedOrSayHow();
+
         return self::SUCCESS;
+    }
+
+    /** The seeder rpd:make:model wrote: run it with --seed, otherwise say how, so the table does not stay empty. */
+    protected function seedOrSayHow(): void
+    {
+        $model = Str::studly($this->argument('model'));
+        $module = $this->option('module') ? Str::studly($this->option('module')) : null;
+        $seeder = ($module ? namespace_module('App\\Database\\Seeders', $module) : 'Database\\Seeders') . "\\{$model}Seeder";
+        $file = base_path($module ? path_module("app/Database/Seeders/{$model}Seeder.php", $module) : "database/seeders/{$model}Seeder.php");
+
+        if (! is_file($file)) {
+            return;
+        }
+        if ($this->option('seed')) {
+            $this->call('db:seed', ['--class' => $seeder, '--force' => true]);
+
+            return;
+        }
+        $this->line("  Fill the table with ten records: <fg=white>php artisan db:seed --class=\"{$seeder}\"</>  (or rpd:make … --seed)");
     }
 }

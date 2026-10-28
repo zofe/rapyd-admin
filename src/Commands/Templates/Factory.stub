@@ -1,0 +1,24 @@
+<?php
+
+namespace {{namespace}};
+
+use {{modelClass}};
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * Written by rpd:make from the columns of the model: the values are a guess from each column's
+ * name and type, adjust them to your domain.
+ *
+ * @extends Factory<{{model}}>
+ */
+class {{model}}Factory extends Factory
+{
+    protected $model = {{model}}::class;
+
+    public function definition(): array
+    {
+        return [
+{{definition}}
+        ];
+    }
+}

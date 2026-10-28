@@ -61,17 +61,19 @@ Details in [docs/MODULES.md](docs/MODULES.md).
 ## Your first module in two minutes
 
 ```bash
-php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime"
+php artisan rpd:make Articles Article --module=Blog --fields="title,body:text,published_at:datetime" --seed
 ```
 
 creates `app/Modules/Blog` with a table, a detail page and a form for `Article`, its routes and a sidebar entry;
-when the model does not exist yet it is created with its migration from `--fields`, and migrated. No prompts:
+when the model does not exist yet it is created with its migration from `--fields`, migrated, and — with `--seed` —
+filled with ten records from the generated factory, so the table opens with something in it. No prompts:
 
 ```
 app/Modules/Blog/
 ├── Livewire/ArticlesTable.php   ArticlesView.php   ArticlesEdit.php   (authorization and scoping built in)
 ├── Views/articles_table.blade.php   articles_view.blade.php   articles_edit.blade.php   menu.blade.php
-├── Models/Article.php           uuid key, ShortId
+├── Models/Article.php           uuid key, ShortId, HasFactory
+├── Database/Migrations/…        Factories/ArticleFactory.php   Seeders/ArticleSeeder.php   values guessed from the columns
 ├── Authorizations/ArticleAuth.php   Limits/ArticleLimit.php   record check and data scoping, yours to restrict
 ├── config.php                   layout, menu entry, permissions (view / edit articles, given to operator)
 └── routes.php                   behind auth
