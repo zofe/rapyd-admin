@@ -34,6 +34,10 @@ change it. Set `RAPYD_ADMIN_PASSWORD` in `.env` to choose it yourself. You get a
 Roles & Permissions and Logs, a landing page, a dashboard with what is left to set up, and an `app/Modules`
 folder ready for your own modules.
 
+Working with an AI agent? With [Laravel Boost](https://laravel.com/docs/boost), `php artisan boost:install` also
+brings the Rapyd Admin guideline and skills to it (`boost.json` lists the package already); without Boost,
+`php artisan rpd:ai` does the same. Details in [docs/AI.md](docs/AI.md).
+
 > Google sign-in appears on the login page as soon as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set, see [docs/AUTH.md](docs/AUTH.md).
 
 ## What's included

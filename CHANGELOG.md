@@ -4,6 +4,18 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`rpd:install` lists the package in `boost.json`, so an agent's `boost:install` brings the Rapyd guideline
+  and skills along.** A fresh Laravel 13 skeleton ships an `AGENTS.md` that tells the agent to install Laravel
+  Boost and run `boost:install` before anything else; run without a terminal, as agents run it, Boost asks
+  nobody which third-party guidelines to add and takes the `packages` of `boost.json` as they are — and with
+  no file, nothing of Rapyd reached the agent (verified on a fresh install: no guideline, no skills, with
+  `--discover` too). `rpd:install` now writes `boost.json` with `"packages": ["zofe/rapyd-admin"]`, merging into
+  an existing file and leaving alone one that already lists it; from there `boost:install` and `boost:update`
+  add `zofe/rapyd-admin/core` to `AGENTS.md` / `CLAUDE.md` and `rapyd-module`, `rapyd-workflow` to the skills.
+  Without Boost, `php artisan rpd:ai` does the same by itself, as before.
+
 ## [9.23.0] - 2026-10-28
 
 ### Added

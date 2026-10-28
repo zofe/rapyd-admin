@@ -41,8 +41,10 @@ php artisan boost:update           # after a package update; --discover looks fo
 ```
 
 Boost writes the guideline into `AGENTS.md` / `CLAUDE.md` (and the files of the agents you chose) and the skills into
-`.claude/skills` or the equivalent. In CI, in non-interactive mode, `boost:update --discover` may skip a package: add
-`zofe/rapyd-admin` to the packages of `boost.json` by hand in that case.
+`.claude/skills` or the equivalent. It takes third-party guidelines only from the packages listed in `boost.json`,
+and without a terminal (the way an agent runs it) it asks nobody: `rpd:install` writes that file with
+`"packages": ["zofe/rapyd-admin"]` — merged into an existing one — so `boost:install` finds Rapyd Admin from the
+first run. If you removed it, add it back by hand or run `boost:update --discover` in a terminal.
 
 Without Boost:
 

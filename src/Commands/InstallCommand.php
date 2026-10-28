@@ -25,6 +25,7 @@ class InstallCommand extends Command
 
         $this->publishConfigs($files);
         $this->publishPermissionMigrations();
+        $this->listPackageForBoost($files);
 
         if (! $this->option('no-user-model')) {
             $this->injectUserTraits($files);
@@ -75,6 +76,35 @@ class InstallCommand extends Command
             $this->line("  <fg=green>DONE</> Published config/{$name}");
         }
 
+        $this->newLine();
+    }
+
+    /**
+     * Laravel Boost installs the guideline and the skills of a third-party package only when the
+     * package is listed in boost.json: run without a terminal (as agents run it) it asks nobody and
+     * takes that list as it is. A fresh Laravel skeleton already tells the agent to run boost:install,
+     * so the list has to be there before — written here, merged into an existing file.
+     */
+    protected function listPackageForBoost(Filesystem $files): void
+    {
+        $path = base_path('boost.json');
+        $config = $files->exists($path) ? json_decode($files->get($path), true) : [];
+        if (! is_array($config)) {
+            $this->line("  <fg=yellow>SKIP</> boost.json is not valid JSON: add \"zofe/rapyd-admin\" to its \"packages\" by hand");
+
+            return;
+        }
+
+        $packages = array_values((array) ($config['packages'] ?? []));
+        if (in_array('zofe/rapyd-admin', $packages, true)) {
+            $this->line("  <fg=yellow>SKIP</> boost.json already lists zofe/rapyd-admin");
+
+            return;
+        }
+
+        $config['packages'] = [...$packages, 'zofe/rapyd-admin'];
+        $files->put($path, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+        $this->line("  <fg=green>DONE</> boost.json lists zofe/rapyd-admin: boost:install brings its guideline and skills to your agent");
         $this->newLine();
     }
 

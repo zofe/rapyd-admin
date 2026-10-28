@@ -96,6 +96,39 @@ PHP;
             ->assertSuccessful();
     }
 
+    public function test_install_lists_the_package_in_boost_json_so_a_non_interactive_boost_install_picks_it_up()
+    {
+        $this->artisan('rpd:install', ['--no-user-model' => true, '--no-next-steps' => true])
+            ->expectsOutputToContain('boost.json lists zofe/rapyd-admin')
+            ->assertSuccessful();
+
+        $this->assertSame(['packages' => ['zofe/rapyd-admin']], json_decode(File::get($this->base . '/boost.json'), true));
+    }
+
+    public function test_an_existing_boost_json_keeps_its_settings_and_gains_the_package()
+    {
+        File::put($this->base . '/boost.json', json_encode(['agents' => ['claude_code'], 'packages' => ['spatie/laravel-permission'], 'mcp' => true]));
+
+        $this->artisan('rpd:install', ['--no-user-model' => true, '--no-next-steps' => true])->assertSuccessful();
+
+        $this->assertSame(
+            ['agents' => ['claude_code'], 'packages' => ['spatie/laravel-permission', 'zofe/rapyd-admin'], 'mcp' => true],
+            json_decode(File::get($this->base . '/boost.json'), true)
+        );
+    }
+
+    public function test_a_boost_json_that_already_lists_the_package_is_left_untouched()
+    {
+        $original = "{\n    \"packages\": [\n        \"zofe/rapyd-admin\"\n    ],\n    \"skills\": []\n}\n";
+        File::put($this->base . '/boost.json', $original);
+
+        $this->artisan('rpd:install', ['--no-user-model' => true, '--no-next-steps' => true])
+            ->expectsOutputToContain('already lists zofe/rapyd-admin')
+            ->assertSuccessful();
+
+        $this->assertSame($original, File::get($this->base . '/boost.json'), 'byte for byte: nothing to rewrite');
+    }
+
     public function test_the_favicon_the_config_points_to_is_shipped_with_the_assets()
     {
         $this->assertFileExists(dirname(__DIR__, 2) . '/public/img/favicon.svg');

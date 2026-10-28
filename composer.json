@@ -94,6 +94,7 @@
         }
     ],
     "suggest": {
+        "laravel/boost": "Brings the Rapyd Admin guideline and skills to your AI agent (boost:install; rpd:install lists the package in boost.json)",
         "laravel/scout": "Full-text search behind Zofe\\Rapyd\\Traits\\SSearch (set RAPYD_SEARCH_USE_SCOUT=true)",
         "meilisearch/meilisearch-php": "Meilisearch driver for Laravel Scout"
     }
