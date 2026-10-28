@@ -58,6 +58,7 @@ class RapydMakeHomeCommand extends Command
                 'class' => "\\".$classNamespace."\\Home",
                 'routepath' => $routeuri,
                 'routename' => $routename,
+                'middleware' => "'web'",
             ]));
 
             $substituted = $strSubstitutor->replace(file_get_contents(__DIR__.'/Templates/routes/home.stub'));
@@ -77,22 +78,20 @@ class RapydMakeHomeCommand extends Command
             $viewPrefix = $this->module? Str::lower($this->module).'::' : "";
             $viewPath = $viewPrefix.'livewire.admin_home';
 
-            //component
-            StubGenerator::from(__DIR__.'/Templates/Livewire/Home.stub', true)
+            //component: the dashboard (tiles, getting started, recent activity), not the landing again
+            StubGenerator::from(__DIR__.'/Templates/Livewire/AdminHome.stub', true)
                 ->to(base_path($classPath), true, true)
                 ->as('AdminHome')
                 ->withReplacers([
                     'class' => 'AdminHome',
                     'view' => $viewPath,
                     'layout' => 'layout::admin',
-                    'baseClass' => 'Livewire\\Component',
-                    'baseClassName' => 'Component',
                     'classNamespace' => $classNamespace,
                 ])
                 ->save();
 
             //view
-            StubGenerator::from(__DIR__.'/Templates/resources/livewire/home.blade.stub', true)
+            StubGenerator::from(__DIR__.'/Templates/resources/livewire/admin_home.blade.stub', true)
                 ->to(base_path('resources/views/livewire'), true, true)
                 ->as('admin_home.blade')
                 ->withReplacers([
@@ -100,11 +99,12 @@ class RapydMakeHomeCommand extends Command
                 ])
                 ->save();
 
-            //rotta
+            //rotta: behind auth, a dashboard has nothing to say to a visitor
             $strSubstitutor = (new StrReplacer([
                 'class' => "\\".$classNamespace."\\AdminHome",
                 'routepath' => $routeuri,
                 'routename' => $routename,
+                'middleware' => "'web', 'auth'",
             ]));
 
             $substituted = $strSubstitutor->replace(file_get_contents(__DIR__.'/Templates/routes/home.stub'));

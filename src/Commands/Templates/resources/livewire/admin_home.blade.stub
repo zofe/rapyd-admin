@@ -1,0 +1,74 @@
+<div>
+    {{-- Tiles: one per thing the core manages, each a link to its page --}}
+    @if(count($tiles))
+        <div class="row g-3 mb-3">
+            @foreach($tiles as $tile)
+                <div class="col-6 col-lg-3">
+                    <a href="{{ route_lang($tile['route']) }}" class="card h-100 text-decoration-none shadow-sm border-0">
+                        <div class="card-body d-flex align-items-center gap-3">
+                            <span class="rounded-circle bg-primary bg-opacity-10 text-primary d-inline-flex align-items-center justify-content-center flex-shrink-0" style="width: 44px; height: 44px;">
+                                <i class="fas fa-{{ $tile['icon'] }}"></i>
+                            </span>
+                            <span class="min-w-0">
+                                <span class="d-block fs-3 fw-semibold lh-1 text-body">{{ $tile['count'] }}</span>
+                                <span class="d-block small text-body-secondary text-truncate">{{ $tile['label'] }}</span>
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
+    <div class="row g-3">
+        {{-- Getting started: real checks, the card goes away once everything is ticked --}}
+        @if(count($steps) && collect($steps)->contains('done', false))
+            <div class="col-lg-7">
+                <x-rpd::card title="Getting started" mb="0">
+                    <ul class="list-unstyled mb-0">
+                        @foreach($steps as $step)
+                            <li class="d-flex align-items-start gap-2 py-2 border-bottom">
+                                @if($step['done'])
+                                    <i class="fas fa-check-circle text-success mt-1"></i>
+                                @else
+                                    <i class="far fa-circle text-body-secondary mt-1"></i>
+                                @endif
+                                <span class="min-w-0">
+                                    <span class="d-block {{ $step['done'] ? 'text-body-secondary' : '' }}">{{ $step['label'] }}</span>
+                                    @if(! $step['done'] && $step['hint'])
+                                        <code class="small text-wrap">{{ $step['hint'] }}</code>
+                                    @endif
+                                </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </x-rpd::card>
+            </div>
+        @endif
+
+        {{-- Recent activity: the last rows of the log the core keeps --}}
+        @if($recent !== null && Route::has('log.activity') && auth()->user()->hasRoleOrPermission('admin|view everything|view logs'))
+            <div class="{{ count($steps) && collect($steps)->contains('done', false) ? 'col-lg-5' : 'col-12' }}">
+                <x-rpd::card title="Recent activity" mb="0">
+                    @forelse($recent as $activity)
+                        <div class="d-flex gap-2 py-2 border-bottom small">
+                            <span class="text-body-secondary text-nowrap" title="{{ $activity->created_at->format('d/m/Y H:i:s') }}">{{ $activity->created_at->diffForHumans(short: true) }}</span>
+                            <span class="min-w-0">
+                                <strong>{{ $activity->causer?->name ?? 'system' }}</strong>
+                                {{ $activity->description }}
+                                @if($activity->subject_type)
+                                    <span class="text-body-secondary">{{ class_basename($activity->subject_type) }}</span>
+                                @endif
+                            </span>
+                        </div>
+                    @empty
+                        <p class="text-body-secondary small mb-0">Nothing yet: logins, edits and deletions will show up here.</p>
+                    @endforelse
+                    <div class="pt-2 small">
+                        <a href="{{ route_lang('log.activity') }}">All activity <i class="fas fa-arrow-right ms-1"></i></a>
+                    </div>
+                </x-rpd::card>
+            </div>
+        @endif
+    </div>
+</div>

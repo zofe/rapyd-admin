@@ -4,6 +4,18 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`/admin` is a dashboard now, not the landing page again.** `rpd:make:home` used to generate the same hero
+  for `/` and `/admin`, with a "Go to Dashboard" button that sent each page to the other. The admin home is
+  now generated from its own template, into the application (yours to change): a row of tiles with the
+  numbers the core already keeps — users, companies, roles, activity of the last 24 hours — each linking to
+  its page and shown only to who may open it; a **Getting started** card whose items are real checks (the
+  admin exists, its password was changed, a brand is set, a first module exists, Google sign-in, the AI
+  guideline installed) and that disappears once all are ticked; and the last rows of the activity log. The
+  route is behind `auth`: a dashboard has nothing to say to a visitor. An application that already has
+  `app/Livewire/AdminHome.php` is not touched.
+
 ## [9.22.1] - 2026-10-28
 
 The release of a fresh install done as a stranger would do it: Laravel 13.39, the README to the letter, then the

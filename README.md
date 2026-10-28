@@ -31,7 +31,8 @@ php artisan serve
 
 `rpd:make:setup` creates the first admin, `admin@laravel`, and prints a random password once: log in with it and
 change it. Set `RAPYD_ADMIN_PASSWORD` in `.env` to choose it yourself. You get a sidebar with Users, Companies,
-Roles & Permissions and Logs, a landing page, and an `app/Modules` folder ready for your own modules.
+Roles & Permissions and Logs, a landing page, a dashboard with what is left to set up, and an `app/Modules`
+folder ready for your own modules.
 
 > Google sign-in appears on the login page as soon as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set, see [docs/AUTH.md](docs/AUTH.md).
 
