@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.24.0] - 2026-10-28
+
 ### Added
 
 - **`rpd:install` lists the package in `boost.json`, so an agent's `boost:install` brings the Rapyd guideline
