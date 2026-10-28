@@ -75,8 +75,12 @@ class ThemeManager
 
     protected function removeHint(string $namespace, string $path): void
     {
+        // The finder may keep the hint through realpath() (Laravel 13.3x does): a theme registered
+        // with ".." or through a symlink would never match its own path, and survive the switch.
+        $wanted = realpath($path) ?: $path;
+
         $hints = $this->view->getFinder()->getHints()[$namespace] ?? [];
-        $left = array_values(array_filter($hints, fn ($hint) => $hint !== $path));
+        $left = array_values(array_filter($hints, fn ($hint) => (realpath($hint) ?: $hint) !== $wanted));
         if ($left !== $hints) {
             $this->view->replaceNamespace($namespace, $left);
         }

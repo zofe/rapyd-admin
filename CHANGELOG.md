@@ -24,6 +24,11 @@ pages in a browser. The install itself took under a minute; what follows is what
   appending its own.
 - **`rpd:make` said "you can run `php artisan migrate`" and then migrated by itself.** The model command just
   reports what it created.
+- **Switching back to the bundled theme stopped working on Laravel 13.3x.** The view finder now stores
+  namespace hints through `realpath()`, so a theme registered with `..` in its path or through a symlink (a
+  path repository, say) never matched its own path in `ThemeManager::removeHint()` and stayed active after
+  `?rapyd_theme=default`. Both sides are compared resolved now. The theme test caught it in CI the day the
+  dependency moved.
 - **The README asked for `composer require … -W`.** Not since 19 September: `league/oauth1-client` 1.12 and
   `laravel/socialite` 5.31 accept Guzzle 8, which a new Laravel 13 locks. Verified on a fresh install; the flag and
   its note are gone.
