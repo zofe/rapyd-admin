@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1
+# Written by `php artisan rpd:deploy`. One image, three jobs: the web server (default), the queue
+# worker and the scheduler, each the same image with a different command (see compose.yml).
+#
+#   docker build -t {{ name }} .
+#   docker run --rm -p 8080:8080 --env-file .env -e DB_CONNECTION=sqlite -e DB_DATABASE=/var/www/html/storage/database.sqlite {{ name }}
+#
+# Coolify: an Application from this repository with the Dockerfile build pack; a database and the
+# secrets (APP_KEY, APP_URL, DB_*, MAIL_*) as its variables. Forge or a plain server: no Docker needed,
+# the README says what to run.
+#
+# Base: serversideup/php — PHP-FPM and Nginx in one, on port 8080, running as www-data. At start it
+# migrates, links storage and caches config, routes, views and events (AUTORUN_*).
+
+FROM serversideup/php:8.3-fpm-nginx
+
+ENV AUTORUN_ENABLED=true \
+    AUTORUN_LARAVEL_MIGRATION=true \
+    AUTORUN_LARAVEL_STORAGE_LINK=true \
+    AUTORUN_LARAVEL_CONFIG_CACHE=true \
+    AUTORUN_LARAVEL_ROUTE_CACHE=true \
+    AUTORUN_LARAVEL_VIEW_CACHE=true \
+    AUTORUN_LARAVEL_EVENT_CACHE=true \
+    PHP_OPCACHE_ENABLE=1 \
+    APP_ENV=production \
+    APP_DEBUG=false \
+    LOG_CHANNEL=stderr
+
+WORKDIR /var/www/html
+
+# The application (what .dockerignore leaves in), its dependencies, the package assets into public/vendor
+COPY --chown=www-data:www-data . .
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress \
+ && php artisan vendor:publish --tag=laravel-assets --force --no-interaction \
+ && chown -R www-data:www-data storage bootstrap/cache
+
+USER www-data
+EXPOSE 8080

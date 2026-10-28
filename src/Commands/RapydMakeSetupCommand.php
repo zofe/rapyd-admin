@@ -48,6 +48,9 @@ class RapydMakeSetupCommand extends Command
         if (config('rapyd.companies.enabled', true)) {
             $this->call('db:seed', ['--class' => \Zofe\Rapyd\Modules\Companies\Database\Seeders\CompaniesSeeder::class, '--force' => true]);
         }
+
+        $this->newLine();
+        $this->line('Registration is closed: the admin adds users. <fg=white>RAPYD_REGISTRATION=true</> in .env opens it for a SaaS that signs people up.');
     }
 
     /**

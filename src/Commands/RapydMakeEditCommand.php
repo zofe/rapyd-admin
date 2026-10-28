@@ -166,7 +166,10 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'date' => "<x-rpd::date col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
                 'datetime' => "<x-rpd::datetime col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
                 'boolean' => "<x-rpd::checkbox col=\"col-12\" model=\"$item.$field\" label=\"$label\" checkLabel=\"$label\" />",
-                'number' => "<x-rpd::input type=\"number\" col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
+                // step: a browser's default is 1, and a form with 418.75 in a number input would not even submit
+                'number' => str_contains(strtolower((string) ($this->columns($table)[$field]['type_name'] ?? '')), 'int')
+                    ? "<x-rpd::input type=\"number\" step=\"1\" col=\"col-12\" model=\"$item.$field\" label=\"$label\" />"
+                    : "<x-rpd::input type=\"number\" step=\"any\" col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
                 default => "<x-rpd::input col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
             } . "\n";
         }

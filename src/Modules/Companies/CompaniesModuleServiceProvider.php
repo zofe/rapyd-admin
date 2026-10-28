@@ -37,7 +37,11 @@ class CompaniesModuleServiceProvider extends RapydModuleServiceProvider
 
         $this->loadMigrationsFrom($this->srcPath('Database/Migrations'));
 
-        $this->loadViewsFrom($this->srcPath('Views'), 'companies');
+        // the views live in app/Modules/Companies (bootAppModule); src has none, and a registered folder
+        // that does not exist stops view:cache — and with it every production image
+        if (is_dir($this->srcPath('Views'))) {
+            $this->loadViewsFrom($this->srcPath('Views'), 'companies');
+        }
         $this->bootAppModule('companies');
 
         $this->registerLimit(CompanyLimit::class);

@@ -284,7 +284,7 @@ class MakeCommandTest extends TestCase
         $this->assertStringContainsString('<x-rpd::textarea col="col-12" model="customer.notes"', $edit);
         $this->assertStringContainsString('<x-rpd::datetime col="col-12" model="customer.signed_at"', $edit);
         $this->assertStringContainsString('<x-rpd::checkbox col="col-12" model="customer.active"', $edit);
-        $this->assertStringContainsString('<x-rpd::input type="number" col="col-12" model="customer.score"', $edit);
+        $this->assertStringContainsString('<x-rpd::input type="number" step="1" col="col-12" model="customer.score"', $edit);
         $this->assertStringContainsString('<x-rpd::input col="col-12" model="customer.email"', $edit);
         // the rules follow the column: nullable or required, the type, what the name says
         $rules = File::get($this->base . '/app/Modules/Customers/Livewire/CustomersEdit.php');
@@ -313,7 +313,7 @@ class MakeCommandTest extends TestCase
         $this->assertStringContainsString('<x-rpd::bool :value="$customer->active" />', $view);
         $this->assertStringContainsString('<x-rpd::date-formatted :date="$customer->created_at" />', $view, 'the "ago" on the page');
         $this->assertStringContainsString('{!! nl2br(e($customer->notes)) !!}', $view, 'the page keeps the whole text, with its line breaks');
-        $this->assertStringContainsString("protected \$casts = ['score' => 'integer', 'signed_at' => 'datetime', 'active' => 'boolean'];", File::get($this->base . '/app/Modules/Customers/Models/Customer.php'));
+        $this->assertStringContainsString("protected \$casts = ['score' => 'integer', 'signed_at' => 'datetime:Y-m-d\\TH:i', 'active' => 'boolean'];", File::get($this->base . '/app/Modules/Customers/Models/Customer.php'), 'the datetime in the format of the datetime-local input it is bound to');
         $this->assertStringContainsString('icon="fas fa-fw fa-circle"', File::get($this->base . '/app/Modules/Customers/Views/menu.blade.php'), 'no --icon: the default');
     }
 

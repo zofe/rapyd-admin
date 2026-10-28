@@ -4,6 +4,38 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`php artisan rpd:deploy`** writes what the application needs to go online as containers: a `Dockerfile` on
+  serversideup/php (PHP-FPM and Nginx, migrations and caches at start, one image for the web, the queue worker
+  and the scheduler), a `compose.yml` with the three and a MariaDB, a `.dockerignore` that keeps `.env`, `vendor`
+  and `node_modules` out of the image. Files the application owns from then on — never overwritten unless
+  `--force`. The README's "Online in ten minutes" says what to do on Coolify, on Forge, or on a plain server.
+  The fresh-install job builds the image and asks it for the login page.
+
+### Changed
+
+- **Registration is closed by default.** A new installation let anyone create an account — with no role, so
+  harmless, but open on an admin panel for no reason. `config/fortify.php` now enables `Features::registration()`
+  only with `RAPYD_REGISTRATION=true`: a SaaS that signs people up sets it, an admin panel adds its users itself.
+  The Register links follow the route, `rpd:make:setup` says so at the end, `rpd:doctor` reports the state.
+  An application with its own `config/fortify.php` — every existing one — is not affected.
+
+### Fixed
+
+- **A generated form with a decimal would not save — silently.** `total` was a `<input type="number">` with
+  the browser's default step of 1: a value like 418.75 fails the browser's own validation, and the submit never
+  leaves the page (no error on screen, no request). Decimals get `step="any"`, integers `step="1"`.
+- **A date field of a generated form came up empty when editing a record.** The model's date reached the input
+  as Livewire serializes a Carbon — `2013-08-09T00:00:00.000000Z` — and `<input type="date">` takes `Y-m-d`
+  only, so the browser dropped it (and said so in the console). The casts `rpd:make` writes now carry the
+  input's format: `date:Y-m-d`, `datetime:Y-m-d\TH:i`. For a model written by hand, `docs/COMPONENTS.md` says
+  which cast to give a date bound to `x-rpd::date` or `x-rpd::datetime`.
+- **`php artisan view:cache` failed in an application with a generated module.** The module loader registered
+  `Views`, `Livewire` and `Components` as view folders for every module whether they existed or not, and
+  `view:cache` stops at the first missing folder (`app/Modules/Blog/Components`). A production image caches views
+  at start, so this broke the deploy of every application with a module. Only existing folders are registered now.
+
 ## [9.30.0] - 2026-10-28
 
 ### Added

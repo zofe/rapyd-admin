@@ -1,5 +1,8 @@
 # Auth
 
+Registration is closed by default — an admin panel adds its users itself; `RAPYD_REGISTRATION=true` opens it for
+a SaaS that signs people up, and the Register links appear with the route.
+
 Login, registration, password reset, email verification and two-factor authentication come from Laravel Fortify,
 with Bootstrap views rendered by the theme. Roles and permissions come from `spatie/laravel-permission`, configured
 in one file and seeded. Google sign-in is built in. Impersonation too.

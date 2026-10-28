@@ -89,6 +89,17 @@ and companies, or for any relation marked `:search`.
 
 <x-rpd::date model="date" format="dd/MM/yyyy" value-format="yyyy-MM-dd" label="Date" />
 <x-rpd::datetime model="date_time" format="dd/MM/yyyy HH:mm" value-format="yyyy-MM-dd HH:mm:ss" label="DateTime" />
+```
+
+A date bound to a model attribute (`model="article.published_at"`) needs a cast in the format of the input, or the
+browser shows the field empty on edit: Livewire sends the model's serialized value, and `<input type="date">` takes
+`Y-m-d` only, `datetime-local` `Y-m-d\TH:i`. `rpd:make` writes them; by hand:
+
+```php
+protected $casts = ['issued_at' => 'date:Y-m-d', 'published_at' => 'datetime:Y-m-d\TH:i'];
+```
+
+```html
 
 <x-rpd::textarea model="body" label="Body" rows="5" />
 

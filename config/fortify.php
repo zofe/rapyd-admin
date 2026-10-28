@@ -20,8 +20,10 @@ return [
 
     'views' => true,
 
-    'features' => [
-        Features::registration(),
+    // Registration is closed unless RAPYD_REGISTRATION=true: an admin panel adds its users itself, a SaaS
+    // that signs people up opens it (the Register links appear with the route).
+    'features' => array_values(array_filter([
+        env('RAPYD_REGISTRATION', false) ? Features::registration() : null,
         Features::resetPasswords(),
         Features::emailVerification(),
         Features::updateProfileInformation(),
@@ -29,6 +31,6 @@ return [
         Features::twoFactorAuthentication([
             'confirmPassword' => false,
         ]),
-    ],
+    ])),
 
 ];

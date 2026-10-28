@@ -22,8 +22,8 @@ and what you were able to see or do that you should not.
 
 ## What a stock install exposes
 
-- Registration is open by default (`Features::registration()` in `config/fortify.php`): a visitor can create an
-  account with no role, which sees nothing but the home. Turn it off if your application does not need it.
+- Registration is closed by default; `RAPYD_REGISTRATION=true` opens it (`config/fortify.php`). Open, a visitor
+  can create an account with no role, which sees nothing but the home.
 - The first admin is `admin@laravel`, with a password printed once by `rpd:make:setup` (or `RAPYD_ADMIN_PASSWORD`).
   Change it, or delete the account, before the application is reachable.
 - Rich-text values go through `rapyd_clean_html()` before display; `rapyd.html_allowed` in `config/rapyd.php` is

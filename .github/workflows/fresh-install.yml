@@ -82,6 +82,7 @@ jobs:
           curl -sf -o /dev/null http://127.0.0.1:8000/login
           curl -sf -o /dev/null http://127.0.0.1:8000/
           curl -s -o /dev/null -w '%{http_code} %{redirect_url}\n' http://127.0.0.1:8000/admin | grep -q '^302 .*/login'
+          curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8000/register | grep -q '^404'   # closed by default
           curl -sf -o /dev/null http://127.0.0.1:8000/vendor/rapyd/img/favicon.svg
           ! grep -i "exception\|error" serve.log
 
@@ -103,3 +104,34 @@ jobs:
         env:
           RAPYD_ADMIN_PASSWORD: fresh-install-ci
         run: php artisan rpd:doctor --fail
+
+      # What a production image does at start: every cache has to build, with a generated module in place
+      - name: The production caches build
+        working-directory: app
+        run: |
+          php artisan config:cache && php artisan config:clear
+          php artisan route:cache && php artisan route:clear
+          php artisan view:cache && php artisan view:clear
+          php artisan event:cache && php artisan event:clear
+
+      # The README's "Online in ten minutes": the image builds from the files rpd:deploy writes, and answers
+      - name: rpd:deploy, then the image answers the login page
+        working-directory: app
+        run: |
+          php artisan rpd:deploy
+          docker compose config > /dev/null
+          # the package comes from this checkout, which the image cannot see from ../package: a copy inside the context
+          rsync -a --exclude vendor --exclude .git --exclude node_modules ../package/ ./.package/
+          composer config repositories.rapyd '{"type":"path","url":"./.package","options":{"symlink":false,"versions":{"zofe/rapyd-admin":"9.999.0"}}}'
+          composer update zofe/rapyd-admin --no-install --no-interaction
+          docker build -t rapyd-fresh .
+          docker run -d --name rapyd-fresh -p 8080:8080 \
+            -e APP_KEY="$(php artisan key:generate --show)" -e APP_URL=http://localhost:8080 \
+            -e DB_CONNECTION=sqlite -e DB_DATABASE=/var/www/html/database/database.sqlite \
+            -e AUTORUN_LARAVEL_MIGRATION=false \
+            rapyd-fresh
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:8080/login && break; sleep 2; done
+          curl -sf -o /dev/null -w 'login %{http_code}\n' http://localhost:8080/login
+          curl -sf -o /dev/null http://localhost:8080/vendor/rapyd/rapyd.css
+          docker logs rapyd-fresh 2>&1 | tail -20
+          docker rm -f rapyd-fresh

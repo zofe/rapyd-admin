@@ -11,6 +11,7 @@ use Zofe\Rapyd\Commands\InstallCommand;
 use Zofe\Rapyd\Commands\RapydAiCommand;
 use Zofe\Rapyd\Commands\RapydAiDevelopCommand;
 use Zofe\Rapyd\Commands\RapydContextCommand;
+use Zofe\Rapyd\Commands\RapydDeployCommand;
 use Zofe\Rapyd\Commands\RapydDoctorCommand;
 use Zofe\Rapyd\Commands\RapydLangCommand;
 use Zofe\Rapyd\Commands\RapydMakeCommand;
@@ -79,6 +80,7 @@ class RapydServiceProvider extends ServiceProvider
                 ThemeCheckCommand::class,
                 EjectCommand::class,
                 RapydContextCommand::class,
+                RapydDeployCommand::class,
                 RapydDoctorCommand::class,
                 RapydMakeCommand::class,
                 RapydMakeSetupCommand::class,
@@ -93,9 +95,13 @@ class RapydServiceProvider extends ServiceProvider
             ]);
         }
 
-        $this->loadViewsFrom(resource_path('views/vendor/rapyd'), 'rpd');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'rpd');
-        $this->loadViewsFrom(__DIR__ . '/../resources/views/livewire', 'livewire');
+        // the application's overrides first, when it has any; only folders that exist, since view:cache
+        // walks every registered path and stops at a missing one
+        foreach ([[resource_path('views/vendor/rapyd'), 'rpd'], [__DIR__ . '/../resources/views', 'rpd'], [__DIR__ . '/../resources/views/livewire', 'livewire']] as [$path, $namespace]) {
+            if (is_dir($path)) {
+                $this->loadViewsFrom($path, $namespace);
+            }
+        }
 
         Blade::directive('rapydScripts', function () {
             $scripts = "<script src=\"{{ asset(config('rapyd.theme_assets', 'vendor/rapyd') . '/rapyd.js') }}\"></script>\n";

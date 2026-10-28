@@ -1,0 +1,18 @@
+# Written by `php artisan rpd:deploy`: what the image must not carry
+.git
+.github
+.env
+.env.*
+!.env.example
+node_modules
+vendor
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+tests
+.claude
+.junie
+boost.json
+.mcp.json
+*.md

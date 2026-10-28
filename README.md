@@ -42,6 +42,20 @@ brings the Rapyd Admin guideline and skills to it (`boost.json` lists the packag
 Not sure the installation is in order — after a `composer update`, say? `php artisan rpd:doctor` checks it and
 says what to do.
 
+## Online in ten minutes
+
+```bash
+php artisan rpd:deploy           # Dockerfile, compose.yml, .dockerignore — yours to edit
+docker compose up -d --build     # the app on :8080, with its queue worker, scheduler and database
+```
+
+One image does the three jobs (web, `queue:work`, `schedule:work`), on [serversideup/php](https://serversideup.net/open-source/docker-php/):
+at start it migrates and caches config, routes and views. On **Coolify**, make an Application from the repository
+with the Dockerfile build pack, add a database resource and the variables (`APP_KEY`, `APP_URL`, `DB_*`, `MAIL_*`);
+the queue and the scheduler are the same image with their command. On **Forge** or any server with PHP 8.3 there is
+no Docker to speak of: nginx on `public/`, `composer install --no-dev`, `php artisan migrate --force`, a queue
+worker and the scheduler in cron. Either way, `php artisan rpd:doctor` first.
+
 > Google sign-in appears on the login page as soon as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set, see [docs/AUTH.md](docs/AUTH.md).
 
 ## What's included
@@ -134,6 +148,7 @@ RAPYD_SIDEBAR_TEXT="#f8fafc"
 
 **Brand**: `RAPYD_BRAND`, `RAPYD_LOGO_SIDEBAR`, `RAPYD_LOGO_LOGIN`, `RAPYD_FAVICON`, `RAPYD_CUSTOM_CSS`.
 `RAPYD_THEME=<name>` activates an installed theme, `RAPYD_THEME_SWITCH=true` lets each visitor pick one from the navbar (see `docs/THEMES.md`).
+`RAPYD_REGISTRATION=true` opens registration: closed by default, an admin panel adds its users itself; a SaaS that signs people up turns it on (the Register links appear with the route).
 `RAPYD_AUTH_LINKS=false` hides the Login / Register links of the frontend navbar (the routes stay, e.g. a public site whose login is reached from `/login`).
 
 **A different look**: the admin shell is a theme, a folder of Blade layouts plus compiled assets activated with

@@ -145,10 +145,10 @@ class RapydDoctorCommand extends Command
     protected function registration(): array
     {
         if (class_exists(Features::class) && Features::enabled(Features::registration())) {
-            return [self::NOTE, 'registration is open: anyone can create an account (it gets no role) — Features::registration() in config/fortify.php'];
+            return [self::NOTE, 'registration is open: anyone can create an account (it gets no role) — RAPYD_REGISTRATION=false closes it'];
         }
 
-        return [self::OK, 'registration closed'];
+        return [self::OK, 'registration closed (RAPYD_REGISTRATION=true opens it)'];
     }
 
     protected function modules(): array

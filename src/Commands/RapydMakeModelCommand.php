@@ -288,13 +288,15 @@ class RapydMakeModelCommand extends Command
             $body .= ($body ? "\n" : '') . "    protected \$fillable = [{$names}];\n";
         }
         // casts: a boolean is true or false, a date is a Carbon, a decimal keeps its two places —
-        // the pages print them through the components, the tests compare them without surprises
+        // the pages print them through the components, the tests compare them without surprises.
+        // Dates carry the format of the HTML input they are bound to (date, datetime-local): Livewire
+        // sends the model's serialized value to the input, and a browser leaves an ISO value blank.
         $casts = [];
         foreach ($fields as $field) {
             $cast = match ($field['fieldType']) {
                 'boolean' => 'boolean',
-                'date' => 'date',
-                'datetime', 'timestamp' => 'datetime',
+                'date' => 'date:Y-m-d',
+                'datetime', 'timestamp' => 'datetime:Y-m-d\TH:i',
                 'decimal' => 'decimal:2',
                 'float' => 'float',
                 'integer' => 'integer',

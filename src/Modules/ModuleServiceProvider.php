@@ -44,7 +44,10 @@ class ModuleServiceProvider extends ServiceProvider
         }
 
 
-        $this->loadViewsFrom($componentsPath, 'livewire');
+        // only folders that exist: view:cache walks every registered path and stops at a missing one
+        if (File::isDirectory($componentsPath)) {
+            $this->loadViewsFrom($componentsPath, 'livewire');
+        }
 
         if (File::isDirectory($componentsBasePath)) {
             Livewire::addNamespace('livewire', null, 'App\\Livewire', $componentsBasePath);
@@ -97,9 +100,12 @@ class ModuleServiceProvider extends ServiceProvider
                 //                    }
                 //                }
 
-                $this->loadViewsFrom($modulePath . 'Views', $moduleName);
-                $this->loadViewsFrom($modulePath . 'Livewire', $moduleName);
-                $this->loadViewsFrom($modulePath . 'Components', $moduleName);
+                // only folders that exist: view:cache walks every registered path and stops at a missing one
+                foreach (['Views', 'Livewire', 'Components'] as $dir) {
+                    if (File::isDirectory($modulePath . $dir)) {
+                        $this->loadViewsFrom($modulePath . $dir, $moduleName);
+                    }
+                }
                 $this->loadMigrationsFrom($modulePath . 'Database/Migrations');
                 $this->loadTranslationsFrom($modulePath . 'Lang', $moduleName);
                 $this->loadJsonTranslationsFrom($modulePath . 'Lang');   // Lang/{locale}.json: English phrase => translation

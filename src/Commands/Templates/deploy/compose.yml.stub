@@ -1,0 +1,81 @@
+# Written by `php artisan rpd:deploy`. The application with its queue worker, scheduler and database:
+#
+#   docker compose up -d --build        then open http://localhost:8080
+#
+# The values come from .env (APP_KEY, APP_NAME, MAIL_*…); DB_* are set here to reach the db service.
+# A hosted database instead of the db service: drop it, set DB_HOST and friends in .env.
+
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    env_file: .env
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-{{ name }}}
+      DB_USERNAME: ${DB_USERNAME:-{{ name }}}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  queue:
+    build: .
+    command: ["php", "/var/www/html/artisan", "queue:work", "--tries=3", "--max-time=3600"]
+    env_file: .env
+    environment:
+      AUTORUN_ENABLED: "false"
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-{{ name }}}
+      DB_USERNAME: ${DB_USERNAME:-{{ name }}}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      app:
+        condition: service_started
+    stop_grace_period: 1h
+
+  scheduler:
+    build: .
+    command: ["php", "/var/www/html/artisan", "schedule:work"]
+    env_file: .env
+    environment:
+      AUTORUN_ENABLED: "false"
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-{{ name }}}
+      DB_USERNAME: ${DB_USERNAME:-{{ name }}}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      app:
+        condition: service_started
+
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: ${DB_DATABASE:-{{ name }}}
+      MARIADB_USER: ${DB_USERNAME:-{{ name }}}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-secret}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  app-storage:
+  db-data:
