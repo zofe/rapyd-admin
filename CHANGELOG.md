@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.29.0] - 2026-10-28
+
 ### Added
 
 - **Generated lists and pages print values in the form they read best.** A boolean was a `1` or a `0`, a
