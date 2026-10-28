@@ -4,6 +4,8 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+## [9.30.0] - 2026-10-28
+
 ### Added
 
 - **`php artisan rpd:doctor`** looks at the installation and says what is wrong, changing nothing: the config
