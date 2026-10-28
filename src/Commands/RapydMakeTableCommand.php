@@ -3,7 +3,6 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 use Zofe\Rapyd\Stubs\Facades\StubGenerator;
