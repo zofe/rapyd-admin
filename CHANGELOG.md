@@ -4,6 +4,18 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The generated form gave every column a one-line text input.** A `text` column had a single line for its
+  paragraphs, a `datetime` had no picker, a `boolean` was typed by hand. `rpd:make:edit` now reads the column type
+  and writes the matching component: `x-rpd::textarea` for text and json, `x-rpd::date` and `x-rpd::datetime`
+  for dates, `x-rpd::checkbox` for booleans, a number input for integers and decimals, the text input for the
+  rest. A boolean's rule is `boolean` instead of `required`: an unticked box is a value, not a missing one.
+- **"Create" pages of a generated module hung under Home in the breadcrumb instead of under the list.**
+  `hasTable()` of the edit generator looked for the list's view in `resources/views/livewire`, where it is only
+  outside a module: in a module it never found it and fell back to `home`. It looks in the module now, as the
+  view generator already did.
+
 ## [9.27.0] - 2026-10-28
 
 ### Added

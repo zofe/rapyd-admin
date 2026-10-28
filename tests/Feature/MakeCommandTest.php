@@ -92,6 +92,8 @@ class MakeCommandTest extends TestCase
         }
         $this->assertStringContainsString("authorize('admin|edit suppliers', \$this->supplier)", File::get("{$module}/Livewire/SuppliersEdit.php"));
         $this->assertSame(3, substr_count(File::get("{$module}/routes.php"), "middleware(['web', 'auth'])"), 'no guest access');
+        $this->assertStringContainsString("parent('suppliers.table')->push('Create Supplier'", File::get("{$module}/routes.php"), 'the form hangs under the list in the breadcrumb');
+        $this->assertStringContainsString("parent('suppliers.view', \$supplier->id)->push('Update Supplier'", File::get("{$module}/routes.php"));
 
         $this->assertFileExists("{$module}/Views/suppliers_table.blade.php");
         $this->assertStringContainsString('vat_number', File::get("{$module}/Views/suppliers_table.blade.php"), 'columns read from the schema');
@@ -163,6 +165,17 @@ class MakeCommandTest extends TestCase
         $this->assertIsNumeric($customer->score);
         $this->assertNotEmpty($customer->signed_at);
         $this->assertNotEmpty($customer->company_name);
+
+        // the form gets the component of each column's type, not a text input for everything
+        $edit = File::get($this->base . '/app/Modules/Customers/Views/customers_edit.blade.php');
+        $this->assertStringContainsString('<x-rpd::textarea col="col-12" model="customer.notes"', $edit);
+        $this->assertStringContainsString('<x-rpd::datetime col="col-12" model="customer.signed_at"', $edit);
+        $this->assertStringContainsString('<x-rpd::checkbox col="col-12" model="customer.active"', $edit);
+        $this->assertStringContainsString('<x-rpd::input type="number" col="col-12" model="customer.score"', $edit);
+        $this->assertStringContainsString('<x-rpd::input col="col-12" model="customer.email"', $edit);
+        $rules = File::get($this->base . '/app/Modules/Customers/Livewire/CustomersEdit.php');
+        $this->assertStringContainsString("'customer.active' => 'boolean',", $rules, 'an unticked box is not a missing value');
+        $this->assertStringContainsString("'customer.email' => 'required',", $rules);
 
         // the list cuts a long text to one line; the other columns are printed as they are
         $table = File::get($this->base . '/app/Modules/Customers/Views/customers_table.blade.php');

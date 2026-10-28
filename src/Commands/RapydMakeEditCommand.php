@@ -3,6 +3,7 @@
 namespace Zofe\Rapyd\Commands;
 
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 use Zofe\Rapyd\Mechanisms\RapydTagPrecompiler;
@@ -18,7 +19,28 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
 
     public function hasTable($component_name)
     {
-        return File::exists(base_path('resources/views/livewire/'.str_replace('edit', 'table', $component_name).'.blade.php'));
+        // in a module the list's view is in app/Modules/<M>/Views: path_module knows, a bare path does not
+        $tablePath = path_module('resources/views/livewire/'.str_replace('edit', 'table', $component_name).'.blade.php', $this->module);
+
+        return File::exists(base_path($tablePath));
+    }
+
+    /**
+     * What a column is, for the form: text, date, datetime, boolean, number or string. From the
+     * driver's type name, so it holds on sqlite (varchar, datetime, tinyint) and mysql (longtext, decimal) alike.
+     */
+    protected function columnKind(string $table, string $field): string
+    {
+        $type = strtolower((string) Schema::getColumnType($table, $field));
+
+        return match (true) {
+            str_contains($type, 'text') || $type === 'json' => 'text',
+            $type === 'date' => 'date',
+            str_contains($type, 'datetime') || str_contains($type, 'timestamp') => 'datetime',
+            str_contains($type, 'bool') || $type === 'tinyint' || $type === 'tinyint(1)' => 'boolean',
+            str_contains($type, 'int') || in_array($type, ['float', 'double', 'decimal', 'numeric', 'real']) => 'number',
+            default => 'string',
+        };
     }
 
     public function hasView($component_name)
@@ -67,10 +89,11 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $modelNamespace = $this->getModelNamespace();
         $view = $this->getViewPath($component_name);
 
-        //component
+        //component: an unticked box is a value, not a missing one
         $rules = "\n";
         foreach ($fields as $field) {
-            $rules .= "               '$item.$field' => 'required',\n";
+            $rule = $this->columnKind($table, $field) === 'boolean' ? 'boolean' : 'required';
+            $rules .= "               '$item.$field' => '$rule',\n";
         }
 
 
@@ -93,11 +116,19 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
             ->save();
 
 
-        //view
+        //view: the component of each column's type, not a text input for everything
         $items = "\n";
 
         foreach ($fields as $field) {
-            $items .= "       <x-rpd::input col=\"col-12\" model=\"$item.$field\" label=\"" . \Illuminate\Support\Str::headline($field) . "\" />\n";
+            $label = Str::headline($field);
+            $items .= '       ' . match ($this->columnKind($table, $field)) {
+                'text' => "<x-rpd::textarea col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
+                'date' => "<x-rpd::date col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
+                'datetime' => "<x-rpd::datetime col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
+                'boolean' => "<x-rpd::checkbox col=\"col-12\" model=\"$item.$field\" label=\"$label\" checkLabel=\"$label\" />",
+                'number' => "<x-rpd::input type=\"number\" col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
+                default => "<x-rpd::input col=\"col-12\" model=\"$item.$field\" label=\"$label\" />",
+            } . "\n";
         }
 
         StubGenerator::from(__DIR__.'/Templates/resources/livewire/edit.blade.stub', true)
