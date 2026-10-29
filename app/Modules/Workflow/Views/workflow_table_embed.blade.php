@@ -20,10 +20,19 @@
 
     {{-- In a table row (no history) the embed stays compact: buttons only, no heading, no diagram --}}
     @if($showHistory && ($transitions->count() || $blocked->count()))
-        <div class="small text-body-secondary text-uppercase mb-2">{{ __('Next step') }}</div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small text-body-secondary text-uppercase">{{ __('Next step') }}</span>
+            {{-- the steps back: one quiet "Back" menu above the buttons, smaller than them; exceptions, not the road --}}
+            @if($backs->count())
+                @include('workflow::back_menu', ['backs' => $backs, 'entity' => $entity, 'labelOf' => $labelOf, 'clickOf' => $clickOf])
+            @endif
+        </div>
     @endif
 
     <div class="d-flex flex-wrap align-items-start gap-2">
+        @if(! $showHistory && $backs->count())
+            @include('workflow::back_menu', ['backs' => $backs, 'entity' => $entity, 'labelOf' => $labelOf, 'clickOf' => $clickOf])
+        @endif
         @foreach($forward as $transition)
             <x-rpd::button
                 size="sm"
@@ -65,29 +74,6 @@
             </div>
         @endif
     </div>
-
-    {{-- the steps back, condensed in one "Back" menu on a row of their own, at the right: exceptions, not the road --}}
-    @if($backs->count())
-        <div class="d-flex justify-content-end mt-2">
-            <div class="dropdown">
-                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-undo me-1"></i>{{ __('Back') }}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    @foreach($backs as $transition)
-                        @php $action = $entity->workflow_metadata('action', $transition->getName(), false); @endphp
-                        <li>
-                            @if($action)
-                                <a class="dropdown-item" href="#" x-data x-on:click.prevent="{!! $clickOf($transition->getName()) !!}">{{ __($labelOf($transition->getName())) }}</a>
-                            @else
-                                <a class="dropdown-item" href="#" x-data x-on:click.prevent="modbox.confirm({body: '{{ addslashes(__('Go back a step?')) }}', okButton: {label: 'Confirm'}}).then(() => { $wire.{{ $clickOf($transition->getName()) }}; })">{{ __($labelOf($transition->getName())) }}</a>
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
-    @endif
 
     {{-- The process: a state diagram drawn by Mermaid, fetched the first time it is opened; redrawn when the state changes --}}
     @if($showHistory)
