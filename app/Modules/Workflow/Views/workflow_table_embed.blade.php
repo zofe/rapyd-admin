@@ -24,6 +24,7 @@
     <div class="d-flex flex-wrap align-items-start gap-2">
         @foreach($forward as $transition)
             <x-rpd::button
+                size="sm"
                 :label="$labelOf($transition->getName())"
                 :color="$entity->workflow_metadata('class', $transition->getName(), false) ?: 'primary'"
                 click="{!! $clickOf($transition->getName()) !!}"
@@ -34,6 +35,7 @@
             @php $action = $entity->workflow_metadata('action', $name, false); @endphp
             <div class="text-center">
                 <x-rpd::button
+                    size="sm"
                     :label="$labelOf($name)"
                     color="{{ $action ? 'outline-secondary' : 'outline-secondary disabled' }}"
                     click="{!! $action ? $clickOf($name) : null !!}"
@@ -50,6 +52,7 @@
             <div class="ms-auto d-flex gap-2">
                 @foreach($aborts as $transition)
                     <x-rpd::button
+                        size="sm"
                         :label="$labelOf($transition->getName())"
                         color="outline-danger"
                         click="{!! $clickOf($transition->getName()) !!}"
