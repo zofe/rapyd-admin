@@ -80,9 +80,17 @@
                             if (! window.mermaid) {
                                 await new Promise((ok, ko) => { const s = document.createElement('script'); s.src = '{{ \App\Modules\Workflow\Livewire\WorkflowTableEmbed::MERMAID_URL }}'; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
                             }
-                            window.mermaid.initialize({ startOnLoad: false, theme: document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'neutral' });
+                            // compact: small type, little space between the states (a process of ten steps fits a screen)
+                            window.mermaid.initialize({
+                                startOnLoad: false,
+                                theme: document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'neutral',
+                                themeVariables: { fontSize: '11px' },
+                            });
                             const { svg } = await window.mermaid.render('wf' + Math.random().toString(36).slice(2), this.$refs.src.textContent);
                             this.$refs.out.innerHTML = svg;
+                            // fit the screen: the whole process at a glance, no scrolling (the SVG keeps its proportions)
+                            const el = this.$refs.out.querySelector('svg');
+                            if (el) { el.style.cssText = 'max-height: 70vh; max-width: 100%; width: auto; height: auto;'; }
                         }
                      }" x-init="draw()">
                     <pre x-ref="src" class="d-none">{{ $diagram }}</pre>
