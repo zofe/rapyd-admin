@@ -142,5 +142,10 @@
     "Customers must pay orders online with Stripe; mark the order paid when the gateway confirms and email the customer.": "I clienti devono pagare gli ordini online con Stripe; segna l'ordine come pagato quando il gateway conferma e invia un'email al cliente.",
     "The Stripe gateway configured, the order workflow moving to paid on the webhook, the notification.": "Il gateway Stripe configurato, il workflow dell'ordine che passa a pagato sul webhook, la notifica.",
     "—": "—",
-    "…": "…"
+    "…": "…",
+    "Next step": "Prossimo passo",
+    "Show process": "Mostra il processo",
+    "Process": "Processo",
+    "Go back a step?": "Tornare indietro di un passo?",
+    "This cannot be undone. Continue?": "Non si può annullare. Continuare?"
 }
