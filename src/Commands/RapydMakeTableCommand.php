@@ -10,7 +10,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeTableCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company}
+    public $signature = 'rpd:make:table {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company} {--force}
         {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}';
 
     public $description = 'rapyd command to generate DataTable component';
@@ -27,6 +27,9 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
+        if ($this->refusesToOverwrite($componentName, $component_name)) {
+            return self::FAILURE;
+        }
         if (! $this->createModel($model)) {
             return self::FAILURE;
         }
@@ -70,6 +73,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
                 'traitClass' => 'WithDataTable',
                 'classNamespace' => $classNamespace,
             ])
+            ->replace($this->overwrites())
             ->save();
 
 
@@ -98,6 +102,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
                 'fieldNames' => implode("\n", array_map(fn ($field) => "                <th>{{ __('" . $headings[$field] . "') }}</th>", $fields)),
                 'fieldValues' => $items,
             ])
+            ->replace($this->overwrites())
             ->save();
 
 
@@ -111,15 +116,7 @@ class RapydMakeTableCommand extends RapydMakeBaseCommand
             'routetitle' => $routetitle,
             'homeroute' => $this->homeRoute,
         ]));
-        $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/table.stub'));
-
-        if ($this->module) {
-            if (! File::exists(base_path($routePath))) {
-                File::ensureDirectoryExists(dirname(base_path($routePath)));
-                File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
-            }
-        }
-        File::append(base_path($routePath), $substituted);
+        $this->appendRouteOnce($routePath, $routename, $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/table.stub')));
 
         $this->comment("component url: $routeuri ".$routename);
 

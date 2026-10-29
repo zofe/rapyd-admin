@@ -108,6 +108,10 @@ Add `--company` and the module is multi-tenant: `company_id` on the model, each 
 their own company (and its children), a new record takes the user's company, and the generated test proves it with
 two companies and an operator in each.
 
+Run the same command again and it stops before touching anything: once generated, the components are yours.
+`rpd:make edit Article --module=Blog --force` rewrites the form (component, view and test), and keeps the model,
+the migration, the routes and the menu entry.
+
 The views are short because the work is done by the components:
 
 ```html

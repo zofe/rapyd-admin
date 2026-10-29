@@ -394,6 +394,30 @@ class MakeCommandTest extends TestCase
         $this->assertCount(1, File::files($this->base . '/database/migrations'), 'the existing model is not created twice');
     }
 
+    public function test_an_existing_component_is_rewritten_only_with_force()
+    {
+        // a model name no other test loads: a class stays in memory for the whole process
+        $this->artisan('rpd:make', ['component' => 'Gadgets', 'model' => 'Gadget', '--fields' => 'label', '--no-interaction' => true])
+            ->assertSuccessful();
+
+        $view = $this->base . '/resources/views/livewire/gadgets_edit.blade.php';
+        File::put($view, '<div>mine</div>');
+
+        // without --force it stops before touching anything, and says how to go on
+        $this->artisan('rpd:make', ['component' => 'edit', 'model' => 'Gadget', '--no-interaction' => true])
+            ->expectsOutputToContain('GadgetsEdit is already there')
+            ->expectsOutputToContain('--force')
+            ->assertFailed();
+        $this->assertSame('<div>mine</div>', File::get($view));
+
+        // with --force the component and the view are rewritten; the route is not added a second time
+        $this->artisan('rpd:make', ['component' => 'edit', 'model' => 'Gadget', '--no-interaction' => true, '--force' => true])
+            ->assertSuccessful();
+        $this->assertStringContainsString('model="gadget.label"', File::get($view));
+        $this->assertSame(1, substr_count(File::get($this->base . '/routes/web.php'), "->name('gadgets.edit')"));
+        $this->assertCount(1, File::files($this->base . '/database/migrations'), 'the model is kept');
+    }
+
     public function test_without_fields_and_without_a_terminal_the_table_has_only_the_default_columns()
     {
         $this->artisan('rpd:make:model', ['model' => 'Note', '--no-interaction' => true])

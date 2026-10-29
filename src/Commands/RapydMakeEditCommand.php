@@ -13,7 +13,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeEditCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:edit {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company}';
+    public $signature = 'rpd:make:edit {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company} {--force}';
 
     public $description = 'rapyd command to generate DataEdit component';
 
@@ -93,6 +93,9 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
+        if ($this->refusesToOverwrite($componentName, $component_name)) {
+            return self::FAILURE;
+        }
         if (! $this->createModel($model)) {
             return self::FAILURE;
         }
@@ -188,6 +191,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'routeparent_view' => $routeparent_view,
                 'routeparent_view_parameter' => $routeparent_view_parameter,
             ])
+            ->replace($this->overwrites())
             ->save();
 
         //component (after the view: the relations found there become its properties, filled in mount())
@@ -209,6 +213,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
                 'properties' => $properties,
                 'mountOptions' => $mountOptions,
             ])
+            ->replace($this->overwrites())
             ->save();
 
 
@@ -228,14 +233,7 @@ class RapydMakeEditCommand extends RapydMakeBaseCommand
             'item' => Str::camel($model),
         ]));
 
-        $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/edit.stub'));
-        if ($this->module) {
-            if (! File::exists(base_path($routePath))) {
-                File::ensureDirectoryExists(dirname(base_path($routePath)));
-                File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
-            }
-        }
-        File::append(base_path($routePath), $substituted);
+        $this->appendRouteOnce($routePath, $routename, $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/edit.stub')));
 
 
         $edit_view = $viewPath.'/'.str_replace('edit', 'view', $component_name).'.blade.php';

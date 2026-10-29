@@ -91,6 +91,12 @@ class {{class}} extends Component
             ];
         }
 
+        // the same check as rpd:doctor: with the log or array mailer "forgot password" reaches nobody
+        $steps[] = [
+            'label' => 'Send real mail',
+            'done' => ! in_array(config('mail.default'), ['log', 'array'], true),
+            'hint' => 'MAIL_MAILER=' . config('mail.default') . ' sends nothing: set MAIL_MAILER and MAIL_HOST in .env',
+        ];
         $steps[] = [
             'label' => 'Set your brand',
             'done' => filled(config('rapyd.layout.brand')) || filled(config('rapyd.layout.logo_sidebar')),

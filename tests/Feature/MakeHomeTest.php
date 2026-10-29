@@ -87,6 +87,7 @@ class MakeHomeTest extends TestCase
         $page->assertSee('Getting started')
             ->assertSee('First admin created')
             ->assertSee('Change the password of admin@laravel')
+            ->assertSee('Send real mail')->assertSee('MAIL_MAILER=' . config('mail.default') . ' sends nothing')
             ->assertSee('Generate your first module')
             ->assertSee('Your AI agent knows Rapyd Admin');
 

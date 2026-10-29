@@ -4,6 +4,15 @@ All notable changes to `rapyd-admin` will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`rpd:make … --force`**: a component that is already there is not rewritten by chance. Without the option the
+  command stops before the model, the migration and the routes, lists the files and says how to go on (until now
+  it died with a stack trace, after the model step). With `--force` the component, its view and the module test
+  are rewritten; the model, the migration, the route (appended once) and the menu entry are kept.
+- The dashboard's *Getting started* has a **mail** item: with `MAIL_MAILER=log` (or `array`) "forgot password"
+  and invitations reach nobody; the same check `rpd:doctor` makes, now where an admin looks first.
+
 ## [9.31.0] - 2026-10-28
 
 ### Added

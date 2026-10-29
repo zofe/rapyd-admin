@@ -22,7 +22,8 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         {--increments : Auto-increment integer id for a new model instead of the default uuid}
         {--seed : Fill the table with ten records from the generated factory}
         {--icon= : Font Awesome icon of the sidebar entry, e.g. newspaper (default: circle)}
-        {--company : Multi-tenant: company_id on the model, each user sees the records of their company (and its children)}';
+        {--company : Multi-tenant: company_id on the model, each user sees the records of their company (and its children)}
+        {--force : Rewrite components, views and test that are already there (model, migration, routes and menu entry are kept)}';
 
     public $description = 'rapyd command to generate components (table, view and edit) for a model';
 
@@ -65,6 +66,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 '--fields' => $this->option('fields'),
                 '--increments' => (bool) $this->option('increments'),
                 '--company' => (bool) $this->option('company'),
+                '--force' => (bool) $this->option('force'),
             ];
             if ($suffix === 'Table') {
                 $options['--icon'] = $this->option('icon');   // the sidebar entry is written with the table
@@ -107,7 +109,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
         }
 
         $dir = base_path($module ? "tests/Feature/Modules/{$module}" : 'tests/Feature');
-        if (is_file("{$dir}/{$base}Test.php")) {
+        if (is_file("{$dir}/{$base}Test.php") && ! $this->overwrites()) {
             return;
         }
 
@@ -136,6 +138,7 @@ class RapydMakeCommand extends RapydMakeBaseCommand
                 'seeFirst' => $seeField ? "->assertSee(\$records->first()->{$seeField})" : '',
                 'extraTests' => $this->option('company') ? $this->companyTest($model, $route) : '',
             ])
+            ->replace($this->overwrites())
             ->save();
 
         $this->line("  Test written: <fg=white>php artisan test --filter {$base}Test</>");

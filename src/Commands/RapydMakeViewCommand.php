@@ -11,7 +11,7 @@ use Zofe\Rapyd\Utilities\StrReplacer;
 
 class RapydMakeViewCommand extends RapydMakeBaseCommand
 {
-    public $signature = 'rpd:make:view {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company}';
+    public $signature = 'rpd:make:view {component} {model} {--module=} {--table=} {--fields=} {--increments} {--company} {--force}';
 
     public $description = 'rapyd command to generate DataView component';
 
@@ -32,6 +32,9 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
         $componentName = $component;
         $component_name = Str::snake($componentName);
 
+        if ($this->refusesToOverwrite($componentName, $component_name)) {
+            return self::FAILURE;
+        }
         if (! $this->createModel($model)) {
             return self::FAILURE;
         }
@@ -76,6 +79,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
                 'classNamespace' => $classNamespace,
                 'item' => Str::camel($model),
             ])
+            ->replace($this->overwrites())
             ->save();
 
 
@@ -100,6 +104,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
                 'fieldNames' => $items,
                 'routeparent' => $routeparent,
             ])
+            ->replace($this->overwrites())
             ->save();
 
 
@@ -115,15 +120,7 @@ class RapydMakeViewCommand extends RapydMakeBaseCommand
             'item' => Str::camel($model),
         ]));
 
-        $substituted = $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/view.stub'));
-
-        if ($this->module) {
-            if (! File::exists(base_path($routePath))) {
-                File::ensureDirectoryExists(dirname(base_path($routePath)));
-                File::put(base_path($routePath), "<?php \n"."use Illuminate\Support\Facades\Route;\n");
-            }
-        }
-        File::append(base_path($routePath), $substituted);
+        $this->appendRouteOnce($routePath, $routename, $strSubstitutor->replace(File::get(__DIR__.'/Templates/routes/view.stub')));
 
         $table_view = $viewPath.'/'.str_replace('view', 'table', $component_name).'.blade.php';
         $this->buildLinkToView(base_path($table_view), $routename);

@@ -27,6 +27,50 @@ class RapydMakeBaseCommand extends Command
     }
 
     /**
+     * A component that is already there is not rewritten by chance: without --force the command stops
+     * here, before the model, the migration and the routes, and says how to rewrite it. Like make:* in Laravel.
+     */
+    protected function refusesToOverwrite(string $componentName, string $component_name): bool
+    {
+        $existing = array_filter([
+            path_module('app/Livewire', $this->module) . "/{$componentName}.php",
+            path_module('resources/views/livewire', $this->module) . "/{$component_name}.blade.php",
+        ], fn ($file) => file_exists(base_path($file)));
+
+        if (! $existing || $this->overwrites()) {
+            return false;
+        }
+
+        $this->error("{$componentName} is already there:");
+        foreach ($existing as $file) {
+            $this->line("  {$file}");
+        }
+        $this->line('  Run again with --force to rewrite it (what was changed by hand in these files is lost).');
+
+        return true;
+    }
+
+    /** --force: rewrite the components and views that exist; the routes and the menu entry are kept. */
+    protected function overwrites(): bool
+    {
+        return $this->hasOption('force') && (bool) $this->option('force');
+    }
+
+    /** The route of a component is appended once: a second generation of the same component finds it there. */
+    protected function appendRouteOnce(string $routePath, string $routename, string $route): void
+    {
+        $file = base_path($routePath);
+        if ($this->module && ! file_exists($file)) {
+            \Illuminate\Support\Facades\File::ensureDirectoryExists(dirname($file));
+            file_put_contents($file, "<?php \n"."use Illuminate\Support\Facades\Route;\n");
+        }
+        if (file_exists($file) && str_contains(file_get_contents($file), "->name('{$routename}')")) {
+            return;
+        }
+        file_put_contents($file, $route, FILE_APPEND);
+    }
+
+    /**
      * The module's config.php (layout, menu, permissions) and menu.blade.php, created once.
      * Each model adds its own "view <table>" / "edit <table>" permissions, given to the operator
      * role, and AuthSeeder creates them so the generated pages are usable right away.
