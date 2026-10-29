@@ -50,9 +50,26 @@
             </div>
         @endforeach
 
-        {{-- the steps back, condensed in one "Back" menu: they are exceptions, not the road --}}
-        @if($backs->count())
-            <div class="dropdown ms-2">
+        @if($aborts->count())
+            {{-- next to the others, a step apart: not at the far edge --}}
+            <div class="d-flex gap-2 ms-3">
+                @foreach($aborts as $transition)
+                    <x-rpd::button
+                        size="sm"
+                        :label="$labelOf($transition->getName())"
+                        color="outline-danger"
+                        click="{!! $clickOf($transition->getName()) !!}"
+                        :confirm="$entity->workflow_metadata('action', $transition->getName(), false) ? false : __('This cannot be undone. Continue?')"
+                    />
+                @endforeach
+            </div>
+        @endif
+    </div>
+
+    {{-- the steps back, condensed in one "Back" menu on a row of their own, at the right: exceptions, not the road --}}
+    @if($backs->count())
+        <div class="d-flex justify-content-end mt-2">
+            <div class="dropdown">
                 <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-undo me-1"></i>{{ __('Back') }}
                 </button>
@@ -69,23 +86,8 @@
                     @endforeach
                 </ul>
             </div>
-        @endif
-
-        @if($aborts->count())
-            {{-- next to the others, a step apart: not at the far edge --}}
-            <div class="d-flex gap-2 ms-3">
-                @foreach($aborts as $transition)
-                    <x-rpd::button
-                        size="sm"
-                        :label="$labelOf($transition->getName())"
-                        color="outline-danger"
-                        click="{!! $clickOf($transition->getName()) !!}"
-                        :confirm="$entity->workflow_metadata('action', $transition->getName(), false) ? false : __('This cannot be undone. Continue?')"
-                    />
-                @endforeach
-            </div>
-        @endif
-    </div>
+        </div>
+    @endif
 
     {{-- The process: a state diagram drawn by Mermaid, fetched the first time it is opened; redrawn when the state changes --}}
     @if($showHistory)
