@@ -49,7 +49,8 @@
         @endforeach
 
         @if($aborts->count())
-            <div class="ms-auto d-flex gap-2">
+            {{-- next to the others, a step apart: not at the far edge --}}
+            <div class="d-flex gap-2 ms-3">
                 @foreach($aborts as $transition)
                     <x-rpd::button
                         size="sm"
