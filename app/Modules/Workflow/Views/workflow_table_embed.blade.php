@@ -115,7 +115,9 @@
     @endif
 
     @if($showHistory)
-        <table class="table table-sm small text-body-secondary mt-3 mb-0">
+        {{-- the history: tiny, and it scrolls instead of pushing the card down when a record has lived a lot --}}
+        <div class="overflow-auto mt-3" style="max-height: 160px;">
+        <table class="table table-sm text-body-secondary mb-0" style="font-size: .72rem; line-height: 1.2;">
             @foreach($steps as $step)
                 @php $back = $step->last_transition && (string) $entity->workflow_metadata('kind', $step->last_transition, false) === 'back'; @endphp
                 <tr>
@@ -134,5 +136,6 @@
                 </tr>
             @endforeach
         </table>
+        </div>
     @endif
 </div>
