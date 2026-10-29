@@ -113,6 +113,8 @@ class TestCase extends Orchestra
                 'close' => ['from' => 'open', 'to' => 'closed', 'metadata' => ['label' => 'Close ticket']],
                 // an abort: the embed draws it apart, outlined in red, behind a confirmation
                 'discard' => ['from' => 'open', 'to' => 'discarded', 'metadata' => ['label' => 'Discard', 'kind' => 'abort']],
+                // a step back: small, with the undo arrow, behind a confirmation
+                'reopen' => ['from' => 'closed', 'to' => 'open', 'metadata' => ['label' => 'Reopen', 'kind' => 'back']],
             ],
         ]);
     }

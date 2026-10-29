@@ -47,6 +47,15 @@ class WorkflowTest extends TestCase
             ->html();
 
         $this->assertLessThan(strpos($html, 'Discard'), strpos($html, 'Close ticket'), 'the work first, the abort apart');
+
+        // once closed, the only move is a step back: small, with the undo arrow, confirmed; and it works
+        $this->ticket->workflow_apply('close', 'ticket');
+        $this->ticket->save();
+        Livewire::test('workflow::workflow-table-embed', ['workfloableType' => 'ticket', 'workfloableId' => $this->ticket->id, 'editable' => true, 'showHistory' => true])
+            ->assertSee('Reopen')->assertSeeHtml('fa-undo')->assertSeeHtml('btn btn-outline-secondary')->assertSeeHtml('Go back a step?')
+            ->assertDontSeeHtml('btn btn-primary')
+            ->call('applyTransition', 'reopen');
+        $this->assertSame('open', $this->ticket->fresh()->status);
     }
 
     public function test_the_diagram_describes_the_workflow_and_marks_the_current_place()
@@ -56,7 +65,7 @@ class WorkflowTest extends TestCase
             ->assertDontSee('stateDiagram-v2');
 
         $diagram = $component->instance()->diagram();
-        foreach (['stateDiagram-v2', '[*] --> open', 'open --> closed: Close ticket', 'open --> discarded: Discard', 'closed --> [*]', 'class open current'] as $line) {
+        foreach (['stateDiagram-v2', '[*] --> open', 'open --> closed: Close ticket', 'open --> discarded: Discard', 'closed --> open: ↩ Reopen', 'closed --> [*]', 'class open current'] as $line) {
             $this->assertStringContainsString($line, $diagram);
         }
         $this->assertStringNotContainsString('class closed current', $diagram);

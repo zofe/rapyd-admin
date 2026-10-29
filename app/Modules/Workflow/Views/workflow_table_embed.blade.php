@@ -4,8 +4,10 @@
         // abort (cancel, fail: apart, outlined in red, behind a confirmation). 'kind' => 'abort' in the metadata.
         $transitions = collect($entity->workflow_transitions());
         // (string): the trait renders string metadata through Blade and hands back a View
-        $aborts = $transitions->filter(fn ($t) => (string) $entity->workflow_metadata('kind', $t->getName(), false) === 'abort');
-        $forward = $transitions->reject(fn ($t) => $aborts->contains($t));
+        $kindOf = fn ($t) => (string) $entity->workflow_metadata('kind', $t->getName(), false);
+        $aborts = $transitions->filter(fn ($t) => $kindOf($t) === 'abort');
+        $backs = $transitions->filter(fn ($t) => $kindOf($t) === 'back');      // a step back: small, with the undo arrow
+        $forward = $transitions->reject(fn ($t) => $aborts->contains($t) || $backs->contains($t));
         $blocked = collect($entity->workflow_transition_blocked())->filter(fn ($messages) => implode('', $messages) !== '');
         $labelOf = fn (string $name) => ucfirst($entity->workflow_metadata('label', $name, false) ?: str_replace('_', ' ', $name));
         $clickOf = function (string $name) use ($entity) {
@@ -46,6 +48,17 @@
                     @endforeach
                 @endif
             </div>
+        @endforeach
+
+        @foreach($backs as $transition)
+            <x-rpd::button
+                size="sm"
+                icon="undo"
+                :label="$labelOf($transition->getName())"
+                color="outline-secondary"
+                click="{!! $clickOf($transition->getName()) !!}"
+                :confirm="$entity->workflow_metadata('action', $transition->getName(), false) ? false : __('Go back a step?')"
+            />
         @endforeach
 
         @if($aborts->count())

@@ -134,7 +134,9 @@ class WorkflowTableEmbed extends Component
             $lines[] = "    [*] --> {$place}";
         }
         foreach ($definition->getTransitions() as $transition) {
-            $label = $text($store->getTransitionMetadata($transition)['label'] ?? null, $transition->getName());
+            $meta = $store->getTransitionMetadata($transition);
+            // a step back wears the undo arrow: the drawing tells the exception from the road
+            $label = (($meta['kind'] ?? null) === 'back' ? '↩ ' : '') . $text($meta['label'] ?? null, $transition->getName());
             foreach ($transition->getFroms() as $from) {
                 foreach ($transition->getTos() as $to) {
                     $lines[] = "    {$from} --> {$to}: {$label}";

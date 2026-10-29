@@ -233,7 +233,9 @@ A model with a lifecycle (an order, a ticket, a request) gets the `Zofe\Rapyd\Mo
 and a state machine declared in the module's `workflow.php` (`app/Modules/{Name}/workflow.php`, or the root of a
 package module): places, transitions and their metadata (`label`, `class` for the button colour, `final` on terminal
 places, `action` for a transition that opens a modal, `kind => 'abort'` for a transition that cancels or fails: the
-embed draws it apart, outlined in red, behind a confirmation). The definitions of every module are merged into
+embed draws it apart, outlined in red, behind a confirmation; `kind => 'back'` for a step back, such as "unassign" or
+"reopen": small, with the undo arrow, behind a confirmation. A step back is a transition like any other, with its guard
+and its listener that undoes the work, never a status written by hand). The definitions of every module are merged into
 `config('workflow')`, read by `zerodahero/laravel-workflow`.
 
 With `:showHistory="true"` (the embed of a detail page) the transitions of the moment sit under *Next step*, and a
