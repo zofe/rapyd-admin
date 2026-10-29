@@ -135,8 +135,10 @@ class WorkflowTableEmbed extends Component
         }
         foreach ($definition->getTransitions() as $transition) {
             $meta = $store->getTransitionMetadata($transition);
-            // a step back wears the undo arrow: the drawing tells the exception from the road
-            $label = (($meta['kind'] ?? null) === 'back' ? '↩ ' : '') . $text($meta['label'] ?? null, $transition->getName());
+            if (($meta['kind'] ?? null) === 'back') {
+                continue;   // the drawing shows the road, not the ways back: they would cross everything
+            }
+            $label = $text($meta['label'] ?? null, $transition->getName());
             foreach ($transition->getFroms() as $from) {
                 foreach ($transition->getTos() as $to) {
                     $lines[] = "    {$from} --> {$to}: {$label}";

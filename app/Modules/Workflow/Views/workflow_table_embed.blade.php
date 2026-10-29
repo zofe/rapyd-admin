@@ -50,16 +50,26 @@
             </div>
         @endforeach
 
-        @foreach($backs as $transition)
-            <x-rpd::button
-                size="sm"
-                icon="undo"
-                :label="$labelOf($transition->getName())"
-                color="outline-secondary"
-                click="{!! $clickOf($transition->getName()) !!}"
-                :confirm="$entity->workflow_metadata('action', $transition->getName(), false) ? false : __('Go back a step?')"
-            />
-        @endforeach
+        {{-- the steps back, condensed in one "Back" menu: they are exceptions, not the road --}}
+        @if($backs->count())
+            <div class="dropdown ms-2">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-undo me-1"></i>{{ __('Back') }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    @foreach($backs as $transition)
+                        @php $action = $entity->workflow_metadata('action', $transition->getName(), false); @endphp
+                        <li>
+                            @if($action)
+                                <a class="dropdown-item" href="#" x-data x-on:click.prevent="{!! $clickOf($transition->getName()) !!}">{{ __($labelOf($transition->getName())) }}</a>
+                            @else
+                                <a class="dropdown-item" href="#" x-data x-on:click.prevent="modbox.confirm({body: '{{ addslashes(__('Go back a step?')) }}', okButton: {label: 'Confirm'}}).then(() => { $wire.{{ $clickOf($transition->getName()) }}; })">{{ __($labelOf($transition->getName())) }}</a>
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         @if($aborts->count())
             {{-- next to the others, a step apart: not at the far edge --}}

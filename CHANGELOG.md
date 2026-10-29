@@ -16,7 +16,7 @@ All notable changes to `rapyd-admin` will be documented in this file.
   fetched from cdnjs the first time, redrawn when the state changes) with the current place marked. The diagram is
   built from the definition: any `workflow.php` gets it. A page may put its own "Show process" link where it likes
   (`show-process` event with type and id, `:processLink="false"` on the embed). `'kind' => 'back'` marks a step back
-  (unassign, reopen): small, with the undo arrow, behind a confirmation, and "↩" in the diagram.
+  (unassign, reopen): gathered in a small "Back" menu, behind a confirmation, and left out of the diagram.
 - The dashboard's *Getting started* has a **mail** item: with `MAIL_MAILER=log` (or `array`) "forgot password"
   and invitations reach nobody; the same check `rpd:doctor` makes, now where an admin looks first.
 

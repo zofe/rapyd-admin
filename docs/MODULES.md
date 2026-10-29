@@ -234,8 +234,9 @@ and a state machine declared in the module's `workflow.php` (`app/Modules/{Name}
 package module): places, transitions and their metadata (`label`, `class` for the button colour, `final` on terminal
 places, `action` for a transition that opens a modal, `kind => 'abort'` for a transition that cancels or fails: the
 embed draws it apart, outlined in red, behind a confirmation; `kind => 'back'` for a step back, such as "unassign" or
-"reopen": small, with the undo arrow, behind a confirmation. A step back is a transition like any other, with its guard
-and its listener that undoes the work, never a status written by hand). The definitions of every module are merged into
+"reopen": gathered in a small "Back" menu, behind a confirmation, and left out of the diagram. A step back is a
+transition like any other, with its guard and its listener that undoes the work, never a status written by hand). The
+definitions of every module are merged into
 `config('workflow')`, read by `zerodahero/laravel-workflow`.
 
 With `:showHistory="true"` (the embed of a detail page) the transitions of the moment sit under *Next step*, and a
