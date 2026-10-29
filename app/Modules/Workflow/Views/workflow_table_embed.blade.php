@@ -129,8 +129,12 @@
     @if($showHistory)
         <table class="table table-sm small text-body-secondary mt-3 mb-0">
             @foreach($steps as $step)
+                @php $back = $step->last_transition && (string) $entity->workflow_metadata('kind', $step->last_transition, false) === 'back'; @endphp
                 <tr>
-                    <td>{{ implode(', ', array_keys($step->places ?? [])) }}</td>
+                    <td>
+                        {{-- a step back wears the same arrow as the Back menu: the history tells it from the road --}}
+                        @if($back)<i class="fas fa-undo me-1" title="{{ ucfirst(str_replace('_', ' ', $step->last_transition)) }}"></i>@endif{{ implode(', ', array_keys($step->places ?? [])) }}
+                    </td>
                     <td>
                         @if($step->company)
                             {{ $step->company->business_name }}

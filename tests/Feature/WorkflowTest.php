@@ -54,7 +54,8 @@ class WorkflowTest extends TestCase
         Livewire::test('workflow::workflow-table-embed', ['workfloableType' => 'ticket', 'workfloableId' => $this->ticket->id, 'editable' => true, 'showHistory' => true])
             ->assertSee('Reopen')->assertSeeHtml('fa-undo')->assertSeeHtml('dropdown-item')->assertSeeHtml('Go back a step?')
             ->assertDontSeeHtml('btn btn-primary')
-            ->call('applyTransition', 'reopen');
+            ->call('applyTransition', 'reopen')
+            ->assertSeeHtml('fa-undo me-1" title="Reopen"');   // the history row of the step back wears the arrow
         $this->assertSame('open', $this->ticket->fresh()->status);
     }
 
