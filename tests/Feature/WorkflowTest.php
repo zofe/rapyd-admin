@@ -62,6 +62,12 @@ class WorkflowTest extends TestCase
         $this->assertStringNotContainsString('class closed current', $diagram);
 
         // open: the source is in the page, not fetched by the server; after a transition the current place moves
+        // a page with its own link: the embed answers the event for its own record only, and hides the inline link
+        Livewire::test('workflow::workflow-table-embed', ['workfloableType' => 'ticket', 'workfloableId' => $this->ticket->id, 'showHistory' => true, 'processLink' => false])
+            ->assertDontSee('Show process')
+            ->dispatch('show-process', type: 'ticket', id: 'another-one')->assertNotDispatched('show-modal')
+            ->dispatch('show-process', type: 'ticket', id: $this->ticket->id)->assertDispatched('show-modal');
+
         $component->call('openDiagram')->assertDispatched('show-modal')->assertSee('class open current')
             ->call('applyTransition', 'close')->assertSee('class closed current')->assertDontSee('class open current');
     }

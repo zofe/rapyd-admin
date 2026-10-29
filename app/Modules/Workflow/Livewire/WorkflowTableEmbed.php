@@ -29,10 +29,13 @@ class WorkflowTableEmbed extends Component
     /** "Show process": the state diagram of the workflow, drawn in the browser by Mermaid (loaded on demand). */
     public bool $showDiagram = false;
 
+    /** The "Show process" link under the buttons; false when the page has its own (see showProcess()). */
+    public bool $processLink = true;
+
     public const MERMAID_URL = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/12.1.0/mermaid.min.js';
 
     // Parameter names are kept as the shop views pass them.
-    public function mount(string $workfloableType, string $workfloableId, bool $editable = false, bool $showHistory = false): void
+    public function mount(string $workfloableType, string $workfloableId, bool $editable = false, bool $showHistory = false, bool $processLink = true): void
     {
         $modelClass = Relation::getMorphedModel($workfloableType) ?? $workfloableType;
         abort_unless(class_exists($modelClass), 404);
@@ -40,6 +43,7 @@ class WorkflowTableEmbed extends Component
         $this->entity = $modelClass::findOrFail($workfloableId);
         $this->editable = $editable;
         $this->showHistory = $showHistory;
+        $this->processLink = $processLink;
         $this->workflowName = $workfloableType;
 
         $this->authorize('admin|view everything|edit everything|view workflow|edit workflow', $this->entity);
@@ -95,6 +99,19 @@ class WorkflowTableEmbed extends Component
     {
         $this->showDiagram = true;
         $this->dispatch('show-modal', ['process-' . $this->entity->getKey()]);
+    }
+
+    /**
+     * The same, asked from outside: a page puts its own "Show process" link where it likes (the header of a card)
+     * and dispatches `show-process` with the type and the id. Only the embed with the history answers.
+     */
+    #[On('show-process')]
+    public function showProcess(?string $type = null, ?string $id = null): void
+    {
+        if (! $this->showHistory || ($type && $type !== $this->workflowName) || ($id && (string) $id !== (string) $this->entity->getKey())) {
+            return;
+        }
+        $this->openDiagram();
     }
 
     /**

@@ -66,11 +66,13 @@
 
     {{-- The process: a state diagram drawn by Mermaid, fetched the first time it is opened; redrawn when the state changes --}}
     @if($showHistory)
-        <div class="mt-2 small">
-            <a href="#" wire:click.prevent="openDiagram" class="text-decoration-none">
-                <i class="fas fa-project-diagram me-1"></i>{{ __('Show process') }}
-            </a>
-        </div>
+        @if($processLink)
+            <div class="mt-2 small">
+                <a href="#" wire:click.prevent="openDiagram" class="text-decoration-none">
+                    <i class="fas fa-project-diagram me-1"></i>{{ __('Show process') }}
+                </a>
+            </div>
+        @endif
 
         {{-- a wide modal: a state machine is drawn left to right and needs room; the SVG keeps its size, the body scrolls --}}
         <x-rpd::modal name="process-{{ $entity->getKey() }}" title="{{ __('Process') }}: {{ ucfirst(str_replace('_', ' ', $workflowName)) }}" width="lg" :nobuttons="true">
