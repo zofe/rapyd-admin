@@ -1,78 +1,96 @@
-<div class="space-y-4">
-    {{-- Stato attuale --}}
+<div>
+    @php
+        // The transitions of the moment, split by what they do: forward (the work), blocked (with the reason),
+        // abort (cancel, fail: apart, outlined in red, behind a confirmation). 'kind' => 'abort' in the metadata.
+        $transitions = collect($entity->workflow_transitions());
+        // (string): the trait renders string metadata through Blade and hands back a View
+        $aborts = $transitions->filter(fn ($t) => (string) $entity->workflow_metadata('kind', $t->getName(), false) === 'abort');
+        $forward = $transitions->reject(fn ($t) => $aborts->contains($t));
+        $blocked = collect($entity->workflow_transition_blocked())->filter(fn ($messages) => implode('', $messages) !== '');
+        $labelOf = fn (string $name) => ucfirst($entity->workflow_metadata('label', $name, false) ?: str_replace('_', ' ', $name));
+        $clickOf = function (string $name) use ($entity) {
+            $action = $entity->workflow_metadata('action', $name, false);
+            return $action
+                ? '$dispatch(\'' . $action . "', { morphableType: '" . $entity->getMorphClass() . "', morphableId: '" . $entity->id . "'});"
+                : "applyTransition('" . $name . "')";
+        };
+    @endphp
 
+    {{-- In a table row (no history) the embed stays compact: buttons only, no heading, no diagram --}}
+    @if($showHistory && ($transitions->count() || $blocked->count()))
+        <div class="small text-body-secondary text-uppercase mb-2">{{ __('Next step') }}</div>
+    @endif
 
-    <div class="d-flex justify-content-around">
-
-        @foreach ($entity->workflow_transition_blocked() as $transition_name => $messages)
-
-            @if(implode('',$messages) != '')
-
-                @php
-                    $class = 'outline-secondary';
-                    $label = $entity->workflow_metadata('label', $transition_name, false );
-                    $action = $entity->workflow_metadata('action', $transition_name, false);
-
-                    if($action) {
-                      $click = '$dispatch(\''.$action."', { morphableType: '".$entity->getMorphClass()."', morphableId: '".$entity->id."'});";
-                    } else {
-                      $click = null;
-                      $class = 'outline-secondary disabled';
-                    }
-                @endphp
-
-                <div class="text-gray-500 text-center">
-
-                    <x-rpd::button
-                        label="{{ $label }}"
-                        color="{{ $class }}"
-                        click="{!!$click !!}"
-                    />
-
-                    @if(!$action)
-                        @foreach($messages as $message)
-                            <div>
-                                <div class="small text-warning text-center">
-                                    {{ $message }}
-                                </div>
-                            </div>
-                        @endforeach
-                    @endif
-                </div>
-            @endif
-
+    <div class="d-flex flex-wrap align-items-start gap-2">
+        @foreach($forward as $transition)
+            <x-rpd::button
+                :label="$labelOf($transition->getName())"
+                :color="$entity->workflow_metadata('class', $transition->getName(), false) ?: 'primary'"
+                click="{!! $clickOf($transition->getName()) !!}"
+            />
         @endforeach
 
-    @foreach($entity->workflow_transitions() as $transition)
+        @foreach($blocked as $name => $messages)
+            @php $action = $entity->workflow_metadata('action', $name, false); @endphp
+            <div class="text-center">
+                <x-rpd::button
+                    :label="$labelOf($name)"
+                    color="{{ $action ? 'outline-secondary' : 'outline-secondary disabled' }}"
+                    click="{!! $action ? $clickOf($name) : null !!}"
+                />
+                @if(! $action)
+                    @foreach($messages as $message)
+                        <div class="small text-warning">{{ $message }}</div>
+                    @endforeach
+                @endif
+            </div>
+        @endforeach
 
-        @php
-            $class = $entity->workflow_metadata('class', $transition, false)?? 'primary';
-            $label = $entity->workflow_metadata('label', $transition, false );
-
-            $action = $entity->workflow_metadata('action', $transition, false);
-            if($action) {
-              $click = '$dispatch(\''.$action."', { morphableType: '".$entity->getMorphClass()."', morphableId: '".$entity->id."'});";
-            } else {
-              $click = "applyTransition('".$transition->getName()."')";
-            }
-        @endphp
-        <div>
-
-            <x-rpd::button
-                label="{{ $label }}"
-                color="{{ $class }}"
-                click="{!!$click !!}"
-            />
-
-        </div>
-
-    @endforeach
+        @if($aborts->count())
+            <div class="ms-auto d-flex gap-2">
+                @foreach($aborts as $transition)
+                    <x-rpd::button
+                        :label="$labelOf($transition->getName())"
+                        color="outline-danger"
+                        click="{!! $clickOf($transition->getName()) !!}"
+                        :confirm="$entity->workflow_metadata('action', $transition->getName(), false) ? false : __('This cannot be undone. Continue?')"
+                    />
+                @endforeach
+            </div>
+        @endif
     </div>
 
+    {{-- The process: a state diagram drawn by Mermaid, fetched the first time it is opened; redrawn when the state changes --}}
+    @if($showHistory)
+        <div class="mt-2 small">
+            <a href="#" wire:click.prevent="openDiagram" class="text-decoration-none">
+                <i class="fas fa-project-diagram me-1"></i>{{ __('Show process') }}
+            </a>
+        </div>
+
+        {{-- a wide modal: a state machine is drawn left to right and needs room; the SVG keeps its size, the body scrolls --}}
+        <x-rpd::modal name="process-{{ $entity->getKey() }}" title="{{ __('Process') }}: {{ ucfirst(str_replace('_', ' ', $workflowName)) }}" width="lg" :nobuttons="true">
+            @if($diagram)
+                <div wire:key="diagram-{{ md5($diagram) }}"
+                     x-data="{
+                        async draw() {
+                            if (! window.mermaid) {
+                                await new Promise((ok, ko) => { const s = document.createElement('script'); s.src = '{{ \App\Modules\Workflow\Livewire\WorkflowTableEmbed::MERMAID_URL }}'; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+                            }
+                            window.mermaid.initialize({ startOnLoad: false, theme: document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'dark' : 'neutral' });
+                            const { svg } = await window.mermaid.render('wf' + Math.random().toString(36).slice(2), this.$refs.src.textContent);
+                            this.$refs.out.innerHTML = svg;
+                        }
+                     }" x-init="draw()">
+                    <pre x-ref="src" class="d-none">{{ $diagram }}</pre>
+                    <div x-ref="out" class="overflow-auto text-center"></div>
+                </div>
+            @endif
+        </x-rpd::modal>
+    @endif
 
     @if($showHistory)
-    <div>
-        <table class="table table-sm small text-gray-500">
+        <table class="table table-sm small text-body-secondary mt-3 mb-0">
             @foreach($steps as $step)
                 <tr>
                     <td>{{ implode(', ', array_keys($step->places ?? [])) }}</td>
@@ -87,6 +105,5 @@
                 </tr>
             @endforeach
         </table>
-    </div>
     @endif
 </div>

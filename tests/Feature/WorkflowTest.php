@@ -28,8 +28,42 @@ class WorkflowTest extends TestCase
     public function test_trait_exposes_transitions_and_metadata()
     {
         $this->assertTrue($this->ticket->workflow_can('close', 'ticket'));
-        $this->assertEquals(['close'], array_map(fn ($t) => $t->getName(), $this->ticket->workflow_transitions('ticket')));
+        $this->assertEquals(['close', 'discard'], array_map(fn ($t) => $t->getName(), $this->ticket->workflow_transitions('ticket')));
         $this->assertEquals('Close ticket', $this->ticket->workflow_metadata('label', 'close', false, 'ticket'));
+    }
+
+    public function test_the_embed_tells_the_next_step_apart_from_the_abort()
+    {
+        // in a table row (no history) the embed is compact: the buttons, nothing else
+        Livewire::test('workflow::workflow-table-embed', ['workfloableType' => 'ticket', 'workfloableId' => $this->ticket->id, 'editable' => true])
+            ->assertSee('Close ticket')->assertDontSee('Next step')->assertDontSee('Show process');
+
+        $html = Livewire::test('workflow::workflow-table-embed', ['workfloableType' => 'ticket', 'workfloableId' => $this->ticket->id, 'editable' => true, 'showHistory' => true])
+            ->assertSee('Next step')
+            ->assertSee('Close ticket')
+            ->assertSee('Discard')
+            ->assertSeeHtml('btn btn-outline-danger')
+            ->assertSeeHtml('This cannot be undone')
+            ->html();
+
+        $this->assertLessThan(strpos($html, 'Discard'), strpos($html, 'Close ticket'), 'the work first, the abort apart');
+    }
+
+    public function test_the_diagram_describes_the_workflow_and_marks_the_current_place()
+    {
+        $component = Livewire::test('workflow::workflow-table-embed', ['workfloableType' => 'ticket', 'workfloableId' => $this->ticket->id, 'editable' => true, 'showHistory' => true])
+            ->assertSee('Show process')
+            ->assertDontSee('stateDiagram-v2');
+
+        $diagram = $component->instance()->diagram();
+        foreach (['stateDiagram-v2', '[*] --> open', 'open --> closed: Close ticket', 'open --> discarded: Discard', 'closed --> [*]', 'class open current'] as $line) {
+            $this->assertStringContainsString($line, $diagram);
+        }
+        $this->assertStringNotContainsString('class closed current', $diagram);
+
+        // open: the source is in the page, not fetched by the server; after a transition the current place moves
+        $component->call('openDiagram')->assertDispatched('show-modal')->assertSee('class open current')
+            ->call('applyTransition', 'close')->assertSee('class closed current')->assertDontSee('class open current');
     }
 
     public function test_embed_applies_a_transition_and_records_the_step()

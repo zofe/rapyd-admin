@@ -10,6 +10,11 @@ All notable changes to `rapyd-admin` will be documented in this file.
   command stops before the model, the migration and the routes, lists the files and says how to go on (until now
   it died with a stack trace, after the model step). With `--force` the component, its view and the module test
   are rewritten; the model, the migration, the route (appended once) and the menu entry are kept.
+- **Workflow embed**: the transitions of the moment sit under a *Next step* heading; a transition with
+  `'kind' => 'abort'` in its metadata (cancel, fail) is drawn apart, outlined in red, behind a confirmation, so it no
+  longer looks like the next thing to press. A *Show process* link draws the state machine as a diagram (Mermaid,
+  fetched from cdnjs the first time, redrawn when the state changes) with the current place marked. The diagram is
+  built from the definition: any `workflow.php` gets it.
 - The dashboard's *Getting started* has a **mail** item: with `MAIL_MAILER=log` (or `array`) "forgot password"
   and invitations reach nobody; the same check `rpd:doctor` makes, now where an admin looks first.
 

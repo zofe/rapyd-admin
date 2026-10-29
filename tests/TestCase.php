@@ -104,8 +104,16 @@ class TestCase extends Orchestra
             'marking_store' => ['type' => 'single_state', 'property' => 'status'],
             'initial_marking' => 'open',
             'supports' => [\Zofe\Rapyd\Tests\Models\Ticket::class],
-            'places' => ['open' => ['metadata' => ['label' => 'Open']], 'closed' => ['metadata' => ['label' => 'Closed', 'final' => true]]],
-            'transitions' => ['close' => ['from' => 'open', 'to' => 'closed', 'metadata' => ['label' => 'Close ticket']]],
+            'places' => [
+                'open' => ['metadata' => ['label' => 'Open']],
+                'closed' => ['metadata' => ['label' => 'Closed', 'final' => true]],
+                'discarded' => ['metadata' => ['label' => 'Discarded', 'final' => true]],
+            ],
+            'transitions' => [
+                'close' => ['from' => 'open', 'to' => 'closed', 'metadata' => ['label' => 'Close ticket']],
+                // an abort: the embed draws it apart, outlined in red, behind a confirmation
+                'discard' => ['from' => 'open', 'to' => 'discarded', 'metadata' => ['label' => 'Discard', 'kind' => 'abort']],
+            ],
         ]);
     }
 }

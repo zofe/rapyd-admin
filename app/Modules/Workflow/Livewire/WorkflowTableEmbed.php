@@ -26,6 +26,11 @@ class WorkflowTableEmbed extends Component
 
     public array $marking = [];
 
+    /** "Show process": the state diagram of the workflow, drawn in the browser by Mermaid (loaded on demand). */
+    public bool $showDiagram = false;
+
+    public const MERMAID_URL = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/12.1.0/mermaid.min.js';
+
     // Parameter names are kept as the shop views pass them.
     public function mount(string $workfloableType, string $workfloableId, bool $editable = false, bool $showHistory = false): void
     {
@@ -85,8 +90,57 @@ class WorkflowTableEmbed extends Component
         $this->dispatch('refresh');
     }
 
+    /** "Show process": the diagram is rendered from now on (and redrawn at every state change) and its modal opens. */
+    public function openDiagram(): void
+    {
+        $this->showDiagram = true;
+        $this->dispatch('show-modal', ['process-' . $this->entity->getKey()]);
+    }
+
+    /**
+     * The workflow as a Mermaid state diagram: every place with its label, every transition as an arrow,
+     * the entry and the final places, and the current place(s) marked. Built from the definition, so it is
+     * true for any state machine declared in a workflow.php.
+     */
+    public function diagram(): string
+    {
+        $definition = \Workflow::get($this->entity, $this->workflowName)->getDefinition();
+        $store = $definition->getMetadataStore();
+        $text = fn (?string $label, string $fallback) => ucfirst(str_replace([':', '"', "\n", '_'], ' ', $label ?: $fallback));
+
+        // top to bottom: a process reads like a list, and a tall drawing scrolls where a wide one shrinks
+        $lines = ['stateDiagram-v2', '    direction TB'];
+        foreach ($definition->getPlaces() as $place) {
+            $lines[] = "    {$place}: " . $text($store->getPlaceMetadata($place)['label'] ?? null, $place);
+        }
+        foreach ($definition->getInitialPlaces() as $place) {
+            $lines[] = "    [*] --> {$place}";
+        }
+        foreach ($definition->getTransitions() as $transition) {
+            $label = $text($store->getTransitionMetadata($transition)['label'] ?? null, $transition->getName());
+            foreach ($transition->getFroms() as $from) {
+                foreach ($transition->getTos() as $to) {
+                    $lines[] = "    {$from} --> {$to}: {$label}";
+                }
+            }
+        }
+        foreach ($definition->getPlaces() as $place) {
+            if ($store->getPlaceMetadata($place)['final'] ?? false) {
+                $lines[] = "    {$place} --> [*]";
+            }
+        }
+        $lines[] = '    classDef current fill:#0d6efd,stroke:#0d6efd,color:#fff';
+        foreach ($this->marking as $place) {
+            $lines[] = "    class {$place} current";
+        }
+
+        return implode("\n", $lines);
+    }
+
     public function render()
     {
-        return view('workflow::workflow_table_embed');
+        return view('workflow::workflow_table_embed', [
+            'diagram' => $this->showDiagram ? $this->diagram() : null,
+        ]);
     }
 }

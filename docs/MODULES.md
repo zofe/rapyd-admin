@@ -232,8 +232,14 @@ server's IP when you pass it), so it is safe in the `.env` of the server.
 A model with a lifecycle (an order, a ticket, a request) gets the `Zofe\Rapyd\Modules\Workflow\Traits\WorkflowTrait`
 and a state machine declared in the module's `workflow.php` (`app/Modules/{Name}/workflow.php`, or the root of a
 package module): places, transitions and their metadata (`label`, `class` for the button colour, `final` on terminal
-places, `action` for a transition that opens a modal). The definitions of every module are merged into
+places, `action` for a transition that opens a modal, `kind => 'abort'` for a transition that cancels or fails: the
+embed draws it apart, outlined in red, behind a confirmation). The definitions of every module are merged into
 `config('workflow')`, read by `zerodahero/laravel-workflow`.
+
+With `:showHistory="true"` (the embed of a detail page) the transitions of the moment sit under *Next step*, and a
+*Show process* link draws the whole state machine as a diagram (Mermaid, fetched from a CDN the first time it is
+opened) with the current place marked: the operator sees where the record is and what comes next, without reading
+`workflow.php`. Without the history (the embed in a table row) only the buttons are drawn.
 
 **The name of the workflow must be the morph alias of its model** (`Relation::morphMap(['order' => Order::class])`):
 the embed takes one value, `workfloableType`, and uses it both to find the model and to pick the workflow.
