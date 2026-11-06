@@ -9,7 +9,7 @@
 
 **Rapyd Admin** is an open-source admin panel for Laravel: a light alternative to Nova, Filament and Backpack for teams
 building SaaS products, and for development with AI agents. Plain Livewire + Blade files that live in your codebase,
-auth and multi-tenancy included, one command to start.
+auth and multi-tenancy included, an AI assistant inside the application when you want one, one command to start.
 
 **[Live demo →](https://rapyd.dev)**
 
@@ -17,7 +17,8 @@ auth and multi-tenancy included, one command to start.
 
 - **Plain code, no DSL.** No resource classes to learn: the generators write ordinary Livewire components and Blade views into `app/Modules`, yours to edit. A unified `x-rpd::` component set gives every table, form and detail page the same shape.
 - **Built for SaaS.** Login, registration, 2FA and Google sign-in (Fortify + Socialite), roles and permissions (Spatie), multi-tenant Companies with 1–3 tiers, activity log, workflows. All bundled, all optional.
-- **Agent-friendly.** Flat, self-contained module folders with consistent naming, `php artisan rpd:context` to brief an agent, and a verification loop (tests, browser) an agent can run by itself.
+- **Built with agents.** Flat, self-contained module folders with consistent naming, `php artisan rpd:context` to brief an agent, the guideline and skills it follows, and a verification loop (tests, browser) an agent can run by itself.
+- **AI inside the application.** [ai-module](https://github.com/zofe/ai-module): a chat for visitors or operators, tools the modules declare (each one reads its own window of the data), personal data masked before they leave, a daily budget and a ledger of what it cost. See it on [rapyd.dev/ai/develop](https://rapyd.dev/ai/develop).
 
 ## Quick start
 
@@ -163,7 +164,11 @@ it with `php artisan rpd:theme:check`. Ready to use: [zofe/theme-tabler](https:/
 **A single view**: publish it to `resources/views/vendor/rpd` (components) or `resources/views/vendor/layout`
 (layouts) and edit the copy. **A whole module**: `php artisan rpd:eject Auth`.
 
-## Working with AI agents
+## AI, two ways
+
+The agents build the application; the assistant lives inside it. Two different things, two different tools.
+
+### Building with agents
 
 ```bash
 php artisan rpd:context            # JSON brief: modules, routes, models, config, extension patterns
@@ -179,12 +184,34 @@ module or a state machine.
 The package itself is developed this way: see [docs/AI.md](docs/AI.md) for the agent brief, the AI error analysis in
 the log viewer and the browser verification loop.
 
+### AI inside the application
+
+```bash
+composer require zofe/ai-module
+```
+
+[ai-module](https://github.com/zofe/ai-module) brings an assistant into the application: a chat widget in any layout
+(`@aiWidget`, the reference theme prints it already), one service for Anthropic, OpenAI-compatible APIs (OpenAI,
+DeepSeek, Groq, Mistral…) and Ollama, and the rules that keep the data inside.
+
+- **The developers decide, in the code.** A module declares what the assistant may read as `AiTool`s
+  (`Zofe\Rapyd\Contracts\AiToolProvider`): each one answers one question and reads its own window of the data. The
+  rest of the database does not exist for the AI. The Log module ships two, the demo module two more; an allow-list
+  says which ones a given installation offers, and which ones the visitors get, if any.
+- **Personal data stay inside.** Names, addresses and credentials become placeholders before a text leaves, with
+  Microsoft Presidio for the names in free text; the answer gets the real values back.
+- **What it costs stays visible.** A daily budget stops the spend, a ledger keeps what each activity cost by day and
+  by month, and the page "AI overview" in the admin shows all of it — the tools, the filter, the knowledge, the costs.
+
+The live demo runs it: [rapyd.dev/ai/develop](https://rapyd.dev/ai/develop) is that page, open to everyone, and the
+chat there answers from the demo data.
+
 ## Modules and marketplace
 
 Anything beyond the bundle is a Composer package with the same structure as a bundled module: `composer require`,
-`php artisan migrate`, done. Available today: `zofe/shop-module`, `zofe/payments-module` (Stripe, GoCardless, Paddle),
-`zofe/ai-module`. Premium modules and themes will be distributed through a private Composer repository for subscribers.
-How to write one: [docs/MODULES.md](docs/MODULES.md).
+`php artisan migrate`, done. Available today: `zofe/ai-module` (the assistant above), `zofe/shop-module`,
+`zofe/payments-module` (Stripe, GoCardless, Paddle). Premium modules and themes will be distributed through a private
+Composer repository for subscribers. How to write one: [docs/MODULES.md](docs/MODULES.md).
 
 ## Testing
 

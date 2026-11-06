@@ -101,6 +101,12 @@ shape, and, with a self-hosted Microsoft Presidio, the names of people in free t
 the tools run inside the application. How it works, with a diagram:
 [ai-module/docs/DATA-PROTECTION.md](https://github.com/zofe/ai-module/blob/main/docs/DATA-PROTECTION.md).
 
+What the assistant may read is decided in the code: a module declares its `AiTool`s, an allow-list says which ones
+an installation offers (`AI_WIDGET_TOOLS`) and which ones the visitors get, none by default (`AI_WIDGET_GUEST_TOOLS`).
+The page "AI overview" of the admin (`/ai/develop`, public on a demo with `AI_OVERVIEW_PUBLIC=true`) shows the
+tools, the filter, the knowledge and what the AI cost, by day and by month:
+[rapyd.dev/ai/develop](https://rapyd.dev/ai/develop).
+
 ## The verification loop
 
 - Package tests: `vendor/bin/phpunit` (PHPUnit + Orchestra Testbench, the CI suite). Livewire pages are tested with
