@@ -92,6 +92,15 @@ The same report is the "Develop with AI" page of the admin with [ai-module](http
 (route `ai/develop`, permission `develop with ai`), with a copy button on every prompt, plus what the AI runtime of
 the application (widget, tools, provider) costs per day.
 
+## AI inside the application: ai-module
+
+The AI features of an application (a chat or report page, the assistant widget, the tools that read the application's
+data) come from [ai-module](https://github.com/zofe/ai-module). Before anything leaves for the AI provider it masks
+the personal data: the names the application knows, IP addresses, host names, credentials and the other values with a
+shape, and, with a self-hosted Microsoft Presidio, the names of people in free text. The provider reads placeholders;
+the tools run inside the application. How it works, with a diagram:
+[ai-module/docs/DATA-PROTECTION.md](https://github.com/zofe/ai-module/blob/main/docs/DATA-PROTECTION.md).
+
 ## The verification loop
 
 - Package tests: `vendor/bin/phpunit` (PHPUnit + Orchestra Testbench, the CI suite). Livewire pages are tested with
@@ -102,7 +111,8 @@ the application (widget, tools, provider) costs per day.
 
 ## AI error analysis in the log viewer
 
-Set `ANTHROPIC_API_KEY` (and optionally `LOG_AI_MODEL`, default `claude-haiku-4-5-20251001`) and an **Analyze with AI** button appears in the stack-trace modal of `/log/app`: probable cause and suggested fix, computed server-side, stack truncated to 3000 characters, visible to admins only. **Copy for AI** copies text and stack for any external assistant. Each analysis costs about $0.001 with Haiku.
+Set `ANTHROPIC_API_KEY` (and optionally `LOG_AI_MODEL`, default `claude-haiku-4-5-20251001`) and an **Analyze with AI** button appears in the stack-trace modal of `/log/app`: probable cause and suggested fix, computed server-side, stack truncated to 3000 characters, visible to admins only. **Copy for AI** copies text and stack for any external assistant. Each analysis costs about $0.001 with Haiku. The analysis calls Anthropic directly, not through ai-module, so the
+personal data filter does not apply to it: the stack trace leaves as it is.
 
 <details><summary>Guida in italiano</summary>
 
